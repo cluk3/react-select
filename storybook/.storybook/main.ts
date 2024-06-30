@@ -1,31 +1,29 @@
-import type { StorybookConfig } from '@storybook/core-common';
-import postcss from 'postcss';
+import type { StorybookConfig } from '@storybook/react-vite';
 
+import { join, dirname } from 'path';
+
+/**
+ * This function is used to resolve the absolute path of a package.
+ * It is needed in projects that use Yarn PnP or are set up within a monorepo.
+ */
+function getAbsolutePath(value: string): any {
+  return dirname(require.resolve(join(value, 'package.json')));
+}
 const config: StorybookConfig = {
-  addons: [
-    '@storybook/addon-a11y',
-    '@storybook/addon-essentials',
-    {
-      name: '@storybook/addon-postcss',
-      options: {
-        postcssLoaderOptions: {
-          implementation: postcss,
-        },
-      },
-    },
+  stories: [
+    '../stories/**/*.mdx',
+    '../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)',
   ],
-  core: {
-    builder: 'webpack4',
+  addons: [
+    getAbsolutePath('@storybook/addon-links'),
+    getAbsolutePath('@storybook/addon-essentials'),
+    getAbsolutePath('@chromatic-com/storybook'),
+    getAbsolutePath('@storybook/addon-interactions'),
+    getAbsolutePath('@storybook/addon-a11y'),
+  ],
+  framework: {
+    name: getAbsolutePath('@storybook/react-vite'),
+    options: {},
   },
-  features: {
-    /**
-     * Enable code splitting
-     * @see https://storybook.js.org/docs/react/builders/webpack#code-splitting
-     */
-    storyStoreV7: true,
-  },
-  framework: '@storybook/react',
-  stories: ['../stories/**/*.stories.@(js|jsx|ts|tsx)'],
 };
-
 export default config;
