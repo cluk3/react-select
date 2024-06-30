@@ -3,15 +3,18 @@ import { jsx } from '@emotion/react';
 import { Fragment, ReactElement, RefCallback, MouseEvent } from 'react';
 import useScrollCapture from './useScrollCapture';
 import useScrollLock from './useScrollLock';
+import * as React from 'react';
 
 interface Props {
   readonly children: (ref: RefCallback<HTMLElement>) => ReactElement;
   readonly lockEnabled: boolean;
   readonly captureEnabled: boolean;
-  readonly onBottomArrive?: (event: WheelEvent | TouchEvent) => void;
-  readonly onBottomLeave?: (event: WheelEvent | TouchEvent) => void;
-  readonly onTopArrive?: (event: WheelEvent | TouchEvent) => void;
-  readonly onTopLeave?: (event: WheelEvent | TouchEvent) => void;
+  readonly onBottomArrive?: (
+    event: React.WheelEvent | React.TouchEvent
+  ) => void;
+  readonly onBottomLeave?: (event: React.WheelEvent | React.TouchEvent) => void;
+  readonly onTopArrive?: (event: React.WheelEvent | React.TouchEvent) => void;
+  readonly onTopLeave?: (event: React.WheelEvent | React.TouchEvent) => void;
 }
 
 const blurSelectInput = (event: MouseEvent<HTMLDivElement>) => {

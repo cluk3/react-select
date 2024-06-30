@@ -47,7 +47,7 @@ import {
   MultiValueProps,
   multiValueRemoveCSS,
 } from './components/MultiValue';
-import { CSSObjectWithLabel, GroupBase } from './types';
+import type { CSSObjectWithLabel, GroupBase, StylesConfig } from './types';
 
 export interface StylesProps<
   Option,
@@ -106,27 +106,6 @@ export const defaultStyles: {
   placeholder: placeholderCSS,
   singleValue: singleValueCSS,
   valueContainer: valueContainerCSS,
-};
-
-export type StylesConfig<
-  Option = unknown,
-  IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
-> = {
-  [K in keyof StylesProps<Option, IsMulti, Group>]?: (
-    base: CSSObjectWithLabel,
-    props: StylesProps<Option, IsMulti, Group>[K]
-  ) => CSSObjectWithLabel;
-};
-
-export type ClassNamesConfig<
-  Option = unknown,
-  IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
-> = {
-  [K in keyof StylesProps<Option, IsMulti, Group>]?: (
-    props: StylesProps<Option, IsMulti, Group>[K]
-  ) => string;
 };
 
 // Merge Utility
