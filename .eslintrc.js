@@ -38,8 +38,9 @@ module.exports = {
     'react/react-in-jsx-scope': 1,
     'react/self-closing-comp': 1,
     'react/sort-prop-types': 1,
-    '@typescript-eslint/semi': 2,
+    // '@typescript-eslint/semi': 2,
     '@typescript-eslint/no-inferrable-types': 2,
+    '@typescript-eslint/consistent-type-imports': 'error',
     strict: 0,
   },
   settings: {

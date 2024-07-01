@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { FocusEventHandler, FunctionComponent } from 'react';
+import type { FocusEventHandler, FunctionComponent } from 'react';
 import { jsx } from '@emotion/react';
 
 const RequiredInput: FunctionComponent<{

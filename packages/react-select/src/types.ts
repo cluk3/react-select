@@ -5,7 +5,7 @@ import type {
   FocusEventHandler,
   AriaAttributes,
 } from 'react';
-import * as React from 'react';
+import type * as React from 'react';
 
 import type { FilterOptionOption } from './filters';
 import type { StylesProps } from './styles';
@@ -17,8 +17,10 @@ export interface GroupBase<Option> {
   readonly label?: string;
 }
 
-export type OptionsOrGroups<Option, Group extends GroupBase<Option>> =
-  readonly (Option | Group)[];
+export type OptionsOrGroups<
+  Option,
+  Group extends GroupBase<Option>,
+> = readonly (Option | Group)[];
 
 export type Options<Option> = readonly Option[];
 
@@ -27,8 +29,10 @@ export type MultiValue<Option> = readonly Option[];
 
 export type PropsValue<Option> = MultiValue<Option> | SingleValue<Option>;
 
-export type OnChangeValue<Option, IsMulti extends boolean> =
-  IsMulti extends true ? MultiValue<Option> : SingleValue<Option>;
+export type OnChangeValue<
+  Option,
+  IsMulti extends boolean,
+> = IsMulti extends true ? MultiValue<Option> : SingleValue<Option>;
 
 export interface Colors {
   primary: string;
@@ -73,7 +77,7 @@ export type CX = (
 export type GetStyles<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > = <Key extends keyof StylesProps<Option, IsMulti, Group>>(
   propertyName: Key,
   props: StylesProps<Option, IsMulti, Group>[Key]
@@ -82,7 +86,7 @@ export type GetStyles<
 export interface CommonProps<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > {
   clearValue: () => void;
   cx: CX;
@@ -114,7 +118,7 @@ export interface CommonProps<
 export interface CommonPropsAndClassName<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > extends CommonProps<Option, IsMulti, Group> {
   className?: string | undefined;
 }
@@ -212,7 +216,7 @@ export type CSSObjectWithLabel = CSSObject & { label?: string };
 export interface State<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > {
   ariaSelection: AriaSelection<Option, IsMulti> | null;
   inputIsHidden: boolean;
@@ -265,7 +269,7 @@ export interface FormatOptionLabelMeta<Option> {
 export interface SelectProps<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > {
   /** HTML ID of an element containing an error message related to the input**/
   'aria-errormessage'?: AriaAttributes['aria-errormessage'];
@@ -473,7 +477,7 @@ export type ThemeConfig = Theme | ((theme: Theme) => Theme);
 export type StylesConfig<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > = {
   [K in keyof StylesProps<Option, IsMulti, Group>]?: (
     base: CSSObjectWithLabel,
@@ -484,7 +488,7 @@ export type StylesConfig<
 export type ClassNamesConfig<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > = {
   [K in keyof StylesProps<Option, IsMulti, Group>]?: (
     props: StylesProps<Option, IsMulti, Group>[K]

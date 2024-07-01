@@ -1,8 +1,8 @@
 /** @jsx jsx */
-import { ReactNode, Ref } from 'react';
+import type { ReactNode, Ref } from 'react';
 import { jsx } from '@emotion/react';
 
-import {
+import type {
   CommonPropsAndClassName,
   CSSObjectWithLabel,
   GroupBase,
@@ -12,7 +12,7 @@ import { getStyleProps } from '../utils';
 export interface ControlProps<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > extends CommonPropsAndClassName<Option, IsMulti, Group> {
   /** Children to render. */
   children: ReactNode;
@@ -30,7 +30,7 @@ export interface ControlProps<
 export const css = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   {
     isDisabled,
@@ -56,8 +56,8 @@ export const css = <
         borderColor: isDisabled
           ? colors.neutral10
           : isFocused
-          ? colors.primary
-          : colors.neutral20,
+            ? colors.primary
+            : colors.neutral20,
         borderRadius: borderRadius,
         borderStyle: 'solid',
         borderWidth: 1,
@@ -71,7 +71,7 @@ export const css = <
 const Control = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: ControlProps<Option, IsMulti, Group>
 ) => {

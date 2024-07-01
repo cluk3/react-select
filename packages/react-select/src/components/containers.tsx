@@ -1,7 +1,7 @@
 /** @jsx jsx */
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { jsx } from '@emotion/react';
-import {
+import type {
   CommonPropsAndClassName,
   CSSObjectWithLabel,
   GroupBase,
@@ -15,7 +15,7 @@ import { getStyleProps } from '../utils';
 export interface ContainerProps<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > extends CommonPropsAndClassName<Option, IsMulti, Group> {
   /** Whether the select is disabled. */
   isDisabled: boolean;
@@ -28,7 +28,7 @@ export interface ContainerProps<
 export const containerCSS = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >({
   isDisabled,
   isRtl,
@@ -41,7 +41,7 @@ export const containerCSS = <
 export const SelectContainer = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: ContainerProps<Option, IsMulti, Group>
 ) => {
@@ -66,7 +66,7 @@ export const SelectContainer = <
 export interface ValueContainerProps<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > extends CommonPropsAndClassName<Option, IsMulti, Group> {
   /** Props to be passed to the value container element. */
   innerProps?: JSX.IntrinsicElements['div'];
@@ -77,7 +77,7 @@ export interface ValueContainerProps<
 export const valueContainerCSS = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   {
     theme: { spacing },
@@ -103,7 +103,7 @@ export const valueContainerCSS = <
 export const ValueContainer = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: ValueContainerProps<Option, IsMulti, Group>
 ) => {
@@ -130,7 +130,7 @@ export const ValueContainer = <
 export interface IndicatorsContainerProps<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > extends CommonPropsAndClassName<Option, IsMulti, Group> {
   isDisabled: boolean;
   /** The children to be rendered. */
@@ -148,7 +148,7 @@ export const indicatorsContainerCSS = (): CSSObjectWithLabel => ({
 export const IndicatorsContainer = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: IndicatorsContainerProps<Option, IsMulti, Group>
 ) => {

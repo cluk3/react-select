@@ -1,37 +1,40 @@
 import {
   containerCSS,
-  ContainerProps,
   indicatorsContainerCSS,
-  IndicatorsContainerProps,
   valueContainerCSS,
+} from './components/containers';
+import type {
+  ContainerProps,
+  IndicatorsContainerProps,
   ValueContainerProps,
 } from './components/containers';
-import { ControlProps, css as controlCSS } from './components/Control';
-import {
-  groupCSS,
-  groupHeadingCSS,
-  GroupHeadingProps,
-  GroupProps,
-} from './components/Group';
+import { css as controlCSS } from './components/Control';
+import type { ControlProps } from './components/Control';
+import { groupCSS, groupHeadingCSS } from './components/Group';
+import type { GroupHeadingProps, GroupProps } from './components/Group';
 import {
   clearIndicatorCSS,
   dropdownIndicatorCSS,
   loadingIndicatorCSS,
   indicatorSeparatorCSS,
+} from './components/indicators';
+import type {
   ClearIndicatorProps,
   DropdownIndicatorProps,
   IndicatorSeparatorProps,
   LoadingIndicatorProps,
 } from './components/indicators';
-import { inputCSS, InputProps } from './components/Input';
-import { placeholderCSS, PlaceholderProps } from './components/Placeholder';
-import { optionCSS, OptionProps } from './components/Option';
+import { inputCSS, type InputProps } from './components/Input';
+import { placeholderCSS, type PlaceholderProps } from './components/Placeholder';
+import { optionCSS, type OptionProps } from './components/Option';
 import {
   menuCSS,
   menuListCSS,
   menuPortalCSS,
   noOptionsMessageCSS,
   loadingMessageCSS,
+} from './components/Menu';
+import type {
   NoticeProps,
   MenuProps,
   MenuListProps,
@@ -39,13 +42,13 @@ import {
 } from './components/Menu';
 import {
   css as singleValueCSS,
-  SingleValueProps,
+  type SingleValueProps,
 } from './components/SingleValue';
 import {
   multiValueCSS,
   multiValueLabelCSS,
-  MultiValueProps,
-  multiValueRemoveCSS,
+  type MultiValueProps,
+   multiValueRemoveCSS,
 } from './components/MultiValue';
 import type { CSSObjectWithLabel, GroupBase, StylesConfig } from './types';
 

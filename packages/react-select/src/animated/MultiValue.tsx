@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { ReactElement } from 'react';
-import { TransitionProps } from 'react-transition-group/Transition';
-import { MultiValueProps } from '../components/MultiValue';
+import type { ReactElement } from 'react';
+import type { TransitionProps } from 'react-transition-group/Transition';
+import type { MultiValueProps } from '../components/MultiValue';
 import { Collapse } from './transitions';
-import { GroupBase } from '../types';
+import type { GroupBase } from '../types';
 
 export type MultiValueComponent = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: MultiValueProps<Option, IsMulti, Group>
 ) => ReactElement;
@@ -16,7 +16,7 @@ export type MultiValueComponent = <
 export type AnimatedMultiValueProps<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > = MultiValueProps<Option, IsMulti, Group> & Partial<TransitionProps>;
 
 // strip transition props off before spreading onto actual component

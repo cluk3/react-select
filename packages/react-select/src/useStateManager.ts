@@ -1,11 +1,11 @@
-import {
+import type {
   ActionMeta,
   GroupBase,
   InputActionMeta,
   OnChangeValue,
   PropsValue,
 } from './types';
-import { PublicBaseSelectProps } from './Select';
+import type { PublicBaseSelectProps } from './Select';
 import { useCallback, useState } from 'react';
 
 type StateManagedPropKeys =

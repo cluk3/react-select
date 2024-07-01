@@ -1,8 +1,8 @@
 /** @jsx jsx */
-import { ReactNode, RefCallback } from 'react';
+import type { ReactNode, RefCallback } from 'react';
 import { jsx } from '@emotion/react';
 
-import {
+import type {
   CommonPropsAndClassName,
   CSSObjectWithLabel,
   GroupBase,
@@ -12,7 +12,7 @@ import { getStyleProps } from '../utils';
 export interface OptionProps<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > extends CommonPropsAndClassName<Option, IsMulti, Group> {
   /** The children to be rendered. */
   children: ReactNode;
@@ -38,7 +38,7 @@ export interface OptionProps<
 export const optionCSS = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   {
     isDisabled,
@@ -61,13 +61,13 @@ export const optionCSS = <
         backgroundColor: isSelected
           ? colors.primary
           : isFocused
-          ? colors.primary25
-          : 'transparent',
+            ? colors.primary25
+            : 'transparent',
         color: isDisabled
           ? colors.neutral20
           : isSelected
-          ? colors.neutral0
-          : 'inherit',
+            ? colors.neutral0
+            : 'inherit',
         padding: `${spacing.baseUnit * 2}px ${spacing.baseUnit * 3}px`,
         // provide some affordance on touch devices
         ':active': {
@@ -83,7 +83,7 @@ export const optionCSS = <
 const Option = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: OptionProps<Option, IsMulti, Group>
 ) => {

@@ -1,9 +1,9 @@
 /** @jsx jsx */
 import {
+  type ReactElement,
+  type ReactNode,
+  type Ref,
   createContext,
-  ReactElement,
-  ReactNode,
-  Ref,
   useCallback,
   useContext,
   useMemo,
@@ -24,7 +24,7 @@ import {
   normalizedHeight,
   scrollTo,
 } from '../utils';
-import {
+import type {
   MenuPlacement,
   MenuPosition,
   CommonProps,

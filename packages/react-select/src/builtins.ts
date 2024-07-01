@@ -1,4 +1,4 @@
-import { GroupBase } from './types';
+import type { GroupBase } from './types';
 
 export const formatGroupLabel = <Option, Group extends GroupBase<Option>>(
   group: Group

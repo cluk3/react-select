@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
 

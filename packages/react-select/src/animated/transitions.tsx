@@ -1,8 +1,13 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { ComponentType, CSSProperties, ReactNode, useRef } from 'react';
-import { Transition } from 'react-transition-group';
 import {
+  type ComponentType,
+  type CSSProperties,
+  type ReactNode,
+  useRef,
+} from 'react';
+import { Transition } from 'react-transition-group';
+import type {
   ExitHandler,
   TransitionStatus,
 } from 'react-transition-group/Transition';

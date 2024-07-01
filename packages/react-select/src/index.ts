@@ -1,4 +1,4 @@
-import Select from './Select';
+import type Select from './Select';
 import type { GroupBase } from './types';
 import useStateManager from './useStateManager';
 
@@ -11,7 +11,7 @@ export { components } from './components';
 export type SelectInstance<
   Option = unknown,
   IsMulti extends boolean = false,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > = Select<Option, IsMulti, Group>;
 export type { StateManagerProps as Props } from './useStateManager';
 export { useStateManager };
@@ -40,8 +40,13 @@ export type {
 export type { OptionProps } from './components/Option';
 export type { PlaceholderProps } from './components/Placeholder';
 export type { SingleValueProps } from './components/SingleValue';
-export type { ThemeConfig } from './theme';
-export type { ClassNamesConfig, StylesConfig } from './styles';
+export type {
+  ThemeConfig,
+  ClassNamesConfig,
+  StylesConfig,
+  FormatOptionLabelContext,
+  FormatOptionLabelMeta,
+} from './types';
 export * from './types';
 export type {
   OptionContext,
@@ -56,4 +61,3 @@ export type {
   AriaOnFilter,
   AriaOnFocus,
 } from './accessibility';
-export type { FormatOptionLabelContext, FormatOptionLabelMeta } from './Select';

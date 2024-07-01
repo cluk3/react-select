@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/react';
-import { Fragment, ReactElement, RefCallback, MouseEvent } from 'react';
+import type { ReactElement, RefCallback, MouseEvent } from 'react';
+import { Fragment } from 'react';
 import useScrollCapture from './useScrollCapture';
 import useScrollLock from './useScrollLock';
 import * as React from 'react';

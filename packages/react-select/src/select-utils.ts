@@ -7,7 +7,7 @@ import type { FilterOptionOption } from './filters';
 export function toCategorizedOption<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: SelectProps<Option, IsMulti, Group>,
   option: Option,
@@ -31,17 +31,19 @@ export function toCategorizedOption<
 }
 
 export function buildCategorizedOptions<
+  // TODO: should be "Option extends OptionsOrGroups<Option, Group>"
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: SelectProps<Option, IsMulti, Group>,
   selectValue: Options<Option>
 ): CategorizedGroupOrOption<Option, Group>[] {
   return props.options
     .map((groupOrOption, groupOrOptionIndex) => {
+      // @ts-expect-error
       if ('options' in groupOrOption) {
-        const categorizedOptions = groupOrOption.options
+        const categorizedOptions = (groupOrOption as Group).options
           .map((option, optionIndex) =>
             toCategorizedOption(props, option, selectValue, optionIndex)
           )
@@ -70,7 +72,7 @@ export function buildCategorizedOptions<
 
 export function buildFocusableOptionsFromCategorizedOptions<
   Option,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(categorizedOptions: readonly CategorizedGroupOrOption<Option, Group>[]) {
   return categorizedOptions.reduce<Option[]>(
     (optionsAccumulator, categorizedOption) => {
@@ -89,7 +91,7 @@ export function buildFocusableOptionsFromCategorizedOptions<
 
 export function buildFocusableOptionsWithIds<
   Option,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   categorizedOptions: readonly CategorizedGroupOrOption<Option, Group>[],
   optionId: string
@@ -118,7 +120,7 @@ export function buildFocusableOptionsWithIds<
 export function buildFocusableOptions<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(props: SelectProps<Option, IsMulti, Group>, selectValue: Options<Option>) {
   return buildFocusableOptionsFromCategorizedOptions(
     buildCategorizedOptions(props, selectValue)
@@ -128,7 +130,7 @@ export function buildFocusableOptions<
 export function isFocusable<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: SelectProps<Option, IsMulti, Group>,
   categorizedOption: CategorizedOption<Option>
@@ -145,7 +147,7 @@ export function isFocusable<
 export function getNextFocusedValue<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(state: State<Option, IsMulti, Group>, nextSelectValue: Options<Option>) {
   const { focusedValue, selectValue: lastSelectValue } = state;
   const lastFocusedIndex = lastSelectValue.indexOf(focusedValue!);
@@ -166,7 +168,7 @@ export function getNextFocusedValue<
 export function getNextFocusedOption<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(state: State<Option, IsMulti, Group>, options: Options<Option>) {
   const { focusedOption: lastFocusedOption } = state;
   return lastFocusedOption && options.indexOf(lastFocusedOption) > -1
@@ -187,7 +189,7 @@ export const getFocusedOptionId = <Option>(
 export const getOptionLabel = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: SelectProps<Option, IsMulti, Group>,
   data: Option
@@ -198,7 +200,7 @@ export const getOptionLabel = <
 export const getOptionValue = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: SelectProps<Option, IsMulti, Group>,
   data: Option
@@ -209,7 +211,7 @@ export const getOptionValue = <
 export function isOptionDisabled<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: SelectProps<Option, IsMulti, Group>,
   option: Option,
@@ -223,7 +225,7 @@ export function isOptionDisabled<
 export function isOptionSelected<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: SelectProps<Option, IsMulti, Group>,
   option: Option,
@@ -240,7 +242,7 @@ export function isOptionSelected<
 export function filterOption<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: SelectProps<Option, IsMulti, Group>,
   option: FilterOptionOption<Option>,
@@ -252,7 +254,7 @@ export function filterOption<
 export const shouldHideSelectedOptions = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: SelectProps<Option, IsMulti, Group>
 ) => {

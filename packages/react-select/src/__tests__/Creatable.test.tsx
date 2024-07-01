@@ -3,7 +3,7 @@ import { render, fireEvent } from '@testing-library/react';
 import cases from 'jest-in-case';
 
 import Creatable from '../Creatable';
-import { Option, OPTIONS } from './constants';
+import { type Option, OPTIONS } from './constants';
 
 interface BasicProps {
   readonly className: string;

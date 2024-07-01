@@ -1,7 +1,7 @@
 import memoize from 'memoize-one';
 import {
   defaultComponents,
-  SelectComponentsGeneric,
+  type SelectComponentsGeneric,
 } from '../components/index';
 import { default as AnimatedInput } from './Input';
 import { default as AnimatedMultiValue } from './MultiValue';

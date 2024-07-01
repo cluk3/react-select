@@ -4,7 +4,7 @@ import { render, fireEvent, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import Async from '../Async';
-import { Option, OPTIONS } from './constants';
+import { type Option, OPTIONS } from './constants';
 
 test('defaults - snapshot', () => {
   const { container } = render(<Async />);

@@ -1,5 +1,5 @@
-import React, { KeyboardEvent } from 'react';
-import { render, fireEvent, EventType } from '@testing-library/react';
+import React, { type KeyboardEvent } from 'react';
+import { render, fireEvent, type EventType } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cases from 'jest-in-case';
 
@@ -10,18 +10,18 @@ import {
   OPTIONS_GROUPED,
   OPTIONS_BOOLEAN_VALUE,
   OPTIONS_DISABLED,
-  Option,
-  GroupedOption,
-  OptionNumberValue,
-  OptionBooleanValue,
+  type Option,
+  type GroupedOption,
+  type OptionNumberValue,
+  type OptionBooleanValue,
 } from './constants';
-import Select, { FormatOptionLabelMeta } from '../Select';
-import { FilterOptionOption } from '../filters';
+import Select from '../Select';
+import type { FilterOptionOption } from '../filters';
 
 import { matchers } from '@emotion/jest';
-import { AriaLiveMessages } from '../accessibility';
+import type { AriaLiveMessages } from '../accessibility';
 import { noop } from '../utils';
-import { GroupBase } from '../types';
+import type { GroupBase, FormatOptionLabelMeta } from '../types';
 
 expect.extend(matchers);
 

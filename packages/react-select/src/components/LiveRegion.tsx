@@ -1,10 +1,10 @@
 /** @jsx jsx */
-import { Fragment, ReactNode, useMemo } from 'react';
+import { Fragment, type ReactNode, useMemo } from 'react';
 import { jsx } from '@emotion/react';
 import A11yText from '../internal/A11yText';
-import { defaultAriaLiveMessages, AriaSelection } from '../accessibility';
+import { defaultAriaLiveMessages, type AriaSelection } from '../accessibility';
 
-import { CommonProps, GroupBase, OnChangeValue, Options } from '../types';
+import type { CommonProps, GroupBase, OnChangeValue, Options } from '../types';
 
 // ==============================
 // Root Container
@@ -13,7 +13,7 @@ import { CommonProps, GroupBase, OnChangeValue, Options } from '../types';
 export interface LiveRegionProps<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > extends CommonProps<Option, IsMulti, Group> {
   children: ReactNode;
   innerProps: { className?: string };
@@ -31,7 +31,7 @@ export interface LiveRegionProps<
 const LiveRegion = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: LiveRegionProps<Option, IsMulti, Group>
 ) => {

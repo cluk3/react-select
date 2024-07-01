@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { Ref } from 'react';
+import type { Ref } from 'react';
 import { jsx } from '@emotion/react';
 import { removeProps } from '../utils';
 

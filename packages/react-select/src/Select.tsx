@@ -1,6 +1,5 @@
 import * as React from 'react';
-import {
-  Component,
+import type{
   FocusEventHandler,
   FormEventHandler,
   KeyboardEventHandler,
@@ -12,7 +11,7 @@ import {
 import { MenuPlacer } from './components/Menu';
 import LiveRegion from './components/LiveRegion';
 
-import { createFilter, FilterOptionOption } from './filters';
+import { createFilter, type FilterOptionOption } from './filters';
 import { DummyInput, ScrollManager, RequiredInput } from './internal/index';
 import { isAppleDevice } from './accessibility/helpers';
 
@@ -54,7 +53,7 @@ import {
 
 import { defaultComponents } from './components/index';
 
-import { defaultStyles, StylesProps } from './styles';
+import { defaultStyles, type StylesProps } from './styles';
 import { defaultTheme } from './theme';
 
 import type {
@@ -121,7 +120,7 @@ export default class Select<
   Option = unknown,
   IsMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>
-> extends Component<
+> extends React.Component<
   Props<Option, IsMulti, Group>,
   State<Option, IsMulti, Group>
 > {

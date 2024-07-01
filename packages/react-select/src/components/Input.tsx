@@ -1,8 +1,8 @@
 /** @jsx jsx */
-import { InputHTMLAttributes } from 'react';
+import type { InputHTMLAttributes } from 'react';
 import { jsx } from '@emotion/react';
 
-import {
+import type {
   CommonPropsAndClassName,
   CSSObjectWithLabel,
   GroupBase,
@@ -12,7 +12,7 @@ import { cleanCommonProps, getStyleProps } from '../utils';
 export interface InputSpecificProps<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > extends InputHTMLAttributes<HTMLInputElement>,
     CommonPropsAndClassName<Option, IsMulti, Group> {
   /** Reference to the internal element */
@@ -30,13 +30,13 @@ export interface InputSpecificProps<
 export type InputProps<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > = InputSpecificProps<Option, IsMulti, Group>;
 
 export const inputCSS = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   {
     isDisabled,
@@ -96,7 +96,7 @@ const inputStyle = (isHidden: boolean) => ({
 const Input = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: InputProps<Option, IsMulti, Group>
 ) => {

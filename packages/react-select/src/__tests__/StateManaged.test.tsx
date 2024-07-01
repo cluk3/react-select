@@ -1,10 +1,10 @@
 import React from 'react';
-import { render, fireEvent, EventType } from '@testing-library/react';
+import { render, fireEvent, type EventType } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import cases from 'jest-in-case';
 
-import { Option, OPTIONS } from './constants';
+import { type Option, OPTIONS } from './constants';
 import Select from '../';
 
 function openMenu(container: HTMLElement) {

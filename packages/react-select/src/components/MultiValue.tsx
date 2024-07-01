@@ -1,19 +1,19 @@
 /** @jsx jsx */
-import { ComponentType, ReactNode } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import { jsx } from '@emotion/react';
 import { CrossIcon } from './indicators';
-import {
+import type {
   CommonPropsAndClassName,
   CSSObjectWithLabel,
   GroupBase,
+  SelectProps,
 } from '../types';
-import { Props } from '../Select';
 import { getStyleProps } from '../utils';
 
 interface MultiValueComponents<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > {
   Container: ComponentType<MultiValueGenericProps<Option, IsMulti, Group>>;
   Label: ComponentType<MultiValueGenericProps<Option, IsMulti, Group>>;
@@ -23,7 +23,7 @@ interface MultiValueComponents<
 export interface MultiValueProps<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > extends CommonPropsAndClassName<Option, IsMulti, Group> {
   children: ReactNode;
   components: MultiValueComponents<Option, IsMulti, Group>;
@@ -39,7 +39,7 @@ export interface MultiValueProps<
 export const multiValueCSS = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   {
     theme: { spacing, borderRadius, colors },
@@ -61,7 +61,7 @@ export const multiValueCSS = <
 export const multiValueLabelCSS = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   {
     theme: { borderRadius, colors },
@@ -87,7 +87,7 @@ export const multiValueLabelCSS = <
 export const multiValueRemoveCSS = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   {
     theme: { spacing, borderRadius, colors },
@@ -114,17 +114,17 @@ export const multiValueRemoveCSS = <
 export interface MultiValueGenericProps<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > {
   children: ReactNode;
   data: any;
   innerProps: { className?: string };
-  selectProps: Props<Option, IsMulti, Group>;
+  selectProps: SelectProps<Option, IsMulti, Group>;
 }
 export const MultiValueGeneric = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >({
   children,
   innerProps,
@@ -137,17 +137,17 @@ export const MultiValueLabel = MultiValueGeneric;
 export interface MultiValueRemoveProps<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > {
   children?: ReactNode;
   data: Option;
   innerProps: JSX.IntrinsicElements['div'];
-  selectProps: Props<Option, IsMulti, Group>;
+  selectProps: SelectProps<Option, IsMulti, Group>;
 }
 export function MultiValueRemove<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >({ children, innerProps }: MultiValueRemoveProps<Option, IsMulti, Group>) {
   return (
     <div role="button" {...innerProps}>
@@ -159,7 +159,7 @@ export function MultiValueRemove<
 const MultiValue = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: MultiValueProps<Option, IsMulti, Group>
 ) => {

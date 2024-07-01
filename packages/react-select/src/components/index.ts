@@ -1,57 +1,61 @@
-import { ComponentType } from 'react';
+import type { ComponentType } from 'react';
 import {
-  ContainerProps,
+  type ContainerProps,
+  type IndicatorsContainerProps,
+  type ValueContainerProps,
   IndicatorsContainer,
-  IndicatorsContainerProps,
   SelectContainer,
   ValueContainer,
-  ValueContainerProps,
 } from './containers';
 import {
   ClearIndicator,
-  ClearIndicatorProps,
+  type ClearIndicatorProps,
   CrossIcon,
-  CrossIconProps,
+  type CrossIconProps,
   DownChevron,
-  DownChevronProps,
+  type DownChevronProps,
   DropdownIndicator,
-  DropdownIndicatorProps,
+  type DropdownIndicatorProps,
   IndicatorSeparator,
-  IndicatorSeparatorProps,
+  type IndicatorSeparatorProps,
   LoadingIndicator,
-  LoadingIndicatorProps,
+  type LoadingIndicatorProps,
 } from './indicators';
 
-import Control, { ControlProps } from './Control';
-import Group, { GroupHeading, GroupHeadingProps, GroupProps } from './Group';
-import Input, { InputProps } from './Input';
+import Control, { type ControlProps } from './Control';
+import Group, {
+  GroupHeading,
+  type GroupHeadingProps,
+  type GroupProps,
+} from './Group';
+import Input, { type InputProps } from './Input';
 import Menu, {
   LoadingMessage,
   MenuList,
-  MenuListProps,
-  MenuPortal,
-  MenuPortalProps,
-  MenuProps,
   NoOptionsMessage,
-  NoticeProps,
+  MenuPortal,
+  type MenuListProps,
+  type MenuPortalProps,
+  type MenuProps,
+  type NoticeProps,
 } from './Menu';
 import MultiValue, {
   MultiValueContainer,
-  MultiValueGenericProps,
   MultiValueLabel,
-  MultiValueProps,
   MultiValueRemove,
-  MultiValueRemoveProps,
+  type MultiValueGenericProps,
+  type MultiValueProps,
+  type MultiValueRemoveProps,
 } from './MultiValue';
-import Option, { OptionProps } from './Option';
-import Placeholder, { PlaceholderProps } from './Placeholder';
-import SingleValue, { SingleValueProps } from './SingleValue';
-import { GroupBase } from '../types';
+import Option, { type OptionProps } from './Option';
+import Placeholder, { type PlaceholderProps } from './Placeholder';
+import SingleValue, { type SingleValueProps } from './SingleValue';
+import type { GroupBase } from '../types';
 
 export interface SelectComponents<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > {
   ClearIndicator: ComponentType<ClearIndicatorProps<Option, IsMulti, Group>>;
   Control: ComponentType<ControlProps<Option, IsMulti, Group>>;
@@ -97,7 +101,7 @@ export interface SelectComponents<
 export type SelectComponentsConfig<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > = Partial<SelectComponents<Option, IsMulti, Group>>;
 
 export const components = {
@@ -133,7 +137,7 @@ export type SelectComponentsGeneric = typeof components;
 interface Props<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > {
   components: SelectComponentsConfig<Option, IsMulti, Group>;
 }
@@ -141,11 +145,11 @@ interface Props<
 export const defaultComponents = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: Props<Option, IsMulti, Group>
 ): SelectComponentsGeneric =>
   ({
     ...components,
     ...props.components,
-  } as SelectComponentsGeneric);
+  }) as SelectComponentsGeneric;

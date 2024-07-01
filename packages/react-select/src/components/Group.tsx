@@ -1,9 +1,9 @@
 /** @jsx jsx */
-import { ComponentType, ReactNode } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import { jsx } from '@emotion/react';
 import { cleanCommonProps, getStyleProps } from '../utils';
 
-import {
+import type {
   CommonProps,
   CommonPropsAndClassName,
   CSSObjectWithLabel,
@@ -12,12 +12,12 @@ import {
   GroupBase,
   Options,
   Theme,
+  SelectProps,
 } from '../types';
-import { Props } from '../Select';
 
 export interface ForwardedHeadingProps<
   Option,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > {
   id: string;
   data: Group;
@@ -26,7 +26,7 @@ export interface ForwardedHeadingProps<
 export interface GroupProps<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > extends CommonPropsAndClassName<Option, IsMulti, Group> {
   /** The children to be rendered. */
   children: ReactNode;
@@ -46,7 +46,7 @@ export interface GroupProps<
 export const groupCSS = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   { theme: { spacing } }: GroupProps<Option, IsMulti, Group>,
   unstyled: boolean
@@ -61,7 +61,7 @@ export const groupCSS = <
 const Group = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: GroupProps<Option, IsMulti, Group>
 ) => {
@@ -97,10 +97,10 @@ const Group = <
 interface GroupHeadingPropsDefinedProps<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > extends ForwardedHeadingProps<Option, Group> {
   className?: string | undefined;
-  selectProps: Props<Option, IsMulti, Group>;
+  selectProps: SelectProps<Option, IsMulti, Group>;
   theme: Theme;
   getStyles: GetStyles<Option, IsMulti, Group>;
   getClassNames: CommonProps<Option, IsMulti, Group>['getClassNames'];
@@ -110,14 +110,14 @@ interface GroupHeadingPropsDefinedProps<
 export type GroupHeadingProps<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > = GroupHeadingPropsDefinedProps<Option, IsMulti, Group> &
   JSX.IntrinsicElements['div'];
 
 export const groupHeadingCSS = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   { theme: { colors, spacing } }: GroupHeadingProps<Option, IsMulti, Group>,
   unstyled: boolean
@@ -141,7 +141,7 @@ export const groupHeadingCSS = <
 export const GroupHeading = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: GroupHeadingProps<Option, IsMulti, Group>
 ) => {

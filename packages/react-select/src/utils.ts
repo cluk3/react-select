@@ -55,7 +55,7 @@ export function classNames(
     }
   }
 
-  return arr
+  return classNameList
     .filter((i) => i)
     .map((i) => String(i).trim())
     .join(' ');

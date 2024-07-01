@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { handleInputChange } from './utils';
-import { StateManagerProps } from './useStateManager';
-import { GroupBase, InputActionMeta, OptionsOrGroups } from './types';
+import type { StateManagerProps } from './useStateManager';
+import type { GroupBase, InputActionMeta, OptionsOrGroups } from './types';
 
 type AsyncManagedPropKeys =
   | 'options'

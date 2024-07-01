@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {
   forwardRef,
-  MutableRefObject,
-  ReactElement,
-  RefAttributes,
+  type MutableRefObject,
+  type ReactElement,
+  type RefAttributes,
 } from 'react';
 
-import { GroupBase } from './types';
+import type { GroupBase } from './types';
 import Select from './Select';
 import useStateManager from './useStateManager';
 import type { StateManagerProps } from './useStateManager';

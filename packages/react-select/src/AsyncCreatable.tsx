@@ -1,20 +1,16 @@
 import * as React from 'react';
-import {
-  forwardRef,
-  MutableRefObject,
-  ReactElement,
-  RefAttributes,
-} from 'react';
+import { forwardRef } from 'react';
+import type { MutableRefObject, ReactElement, RefAttributes } from 'react';
 import Select from './Select';
-import { GroupBase } from './types';
-import useAsync, { AsyncAdditionalProps } from './useAsync';
-import useStateManager, { StateManagerProps } from './useStateManager';
-import useCreatable, { CreatableAdditionalProps } from './useCreatable';
+import type { GroupBase } from './types';
+import useAsync, { type AsyncAdditionalProps } from './useAsync';
+import useStateManager, { type StateManagerProps } from './useStateManager';
+import useCreatable, { type CreatableAdditionalProps } from './useCreatable';
 
 export type AsyncCreatableProps<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > = StateManagerProps<Option, IsMulti, Group> &
   CreatableAdditionalProps<Option, Group> &
   AsyncAdditionalProps<Option, Group>;
@@ -22,7 +18,7 @@ export type AsyncCreatableProps<
 type AsyncCreatableSelect = <
   Option = unknown,
   IsMulti extends boolean = false,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 >(
   props: AsyncCreatableProps<Option, IsMulti, Group> &
     RefAttributes<Select<Option, IsMulti, Group>>

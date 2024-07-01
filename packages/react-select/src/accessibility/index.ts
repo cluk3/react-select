@@ -1,5 +1,5 @@
 import type { AriaAttributes } from 'react';
-import {
+import type {
   ActionMeta,
   GroupBase,
   InitialInputFocusedActionMeta,
@@ -82,13 +82,13 @@ export type AriaOnChange<Option, IsMulti extends boolean> = (
 export type AriaOnFilter = (props: AriaOnFilterProps) => string;
 export type AriaOnFocus<
   Option,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > = (props: AriaOnFocusProps<Option, Group>) => string;
 
 export interface AriaLiveMessages<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > {
   /** Guidance message used to convey component state and specific keyboard interactivity */
   guidance?: (props: AriaGuidanceProps) => string;
@@ -164,8 +164,10 @@ export const defaultAriaLiveMessages = {
       isAppleDevice,
     } = props;
 
-    const getArrayIndex = (arr: OptionsOrGroups<Option, Group>, item: Option) =>
-      arr && arr.length ? `${arr.indexOf(item) + 1} of ${arr.length}` : '';
+    const getArrayIndex = (
+      arr: OptionsOrGroups<Option, Group>,
+      item: Option
+    ) => (arr && arr.length ? `${arr.indexOf(item) + 1} of ${arr.length}` : '');
 
     if (context === 'value' && selectValue) {
       return `value ${label} focused, ${getArrayIndex(selectValue, focused)}.`;
