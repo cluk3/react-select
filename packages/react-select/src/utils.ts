@@ -55,7 +55,7 @@ export function classNames(
     }
   }
 
-  return classNameList
+  return arr
     .filter((i) => i)
     .map((i) => String(i).trim())
     .join(' ');
@@ -80,7 +80,7 @@ export const cleanCommonProps = <
   Option,
   IsMulti extends boolean,
   Group extends GroupBase<Option>,
-  AdditionalProps
+  AdditionalProps,
 >(
   props: Partial<CommonPropsAndClassName<Option, IsMulti, Group>> &
     AdditionalProps
@@ -117,7 +117,7 @@ export const getStyleProps = <
   Option,
   IsMulti extends boolean,
   Group extends GroupBase<Option>,
-  Key extends keyof StylesProps<Option, IsMulti, Group>
+  Key extends keyof StylesProps<Option, IsMulti, Group>,
 >(
   props: Pick<
     CommonPropsAndClassName<Option, IsMulti, Group>,
