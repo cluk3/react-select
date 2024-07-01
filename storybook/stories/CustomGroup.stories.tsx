@@ -1,4 +1,4 @@
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select, { components, GroupProps } from 'react-select';
 
@@ -14,7 +14,7 @@ export default {
   title: 'Select/CustomGroup',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function CustomGroup() {
   return (

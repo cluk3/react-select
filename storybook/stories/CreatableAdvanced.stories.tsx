@@ -1,4 +1,4 @@
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import CreatableSelect from 'react-select/creatable';
 
@@ -8,7 +8,7 @@ import { NumberOption, numbers } from '../data';
 export default {
   title: 'Select/CreatableAdvanced',
   component: CreatableSelect,
-} as ComponentMeta<typeof CreatableSelect>;
+} as Meta<typeof CreatableSelect>;
 
 export function CreatableAdvanced() {
   const [isLoading, setIsLoading] = React.useState(false);

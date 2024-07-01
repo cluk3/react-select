@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, ComponentStory } from '@storybook/react';
 import * as React from 'react';
 import Select from 'react-select';
 
@@ -17,7 +17,7 @@ export default {
    * @see https://storybook.js.org/docs/react/api/argtypes
    */
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 /**
  * More on component templates:

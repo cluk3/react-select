@@ -1,18 +1,18 @@
 import Button from '@atlaskit/button/standard-button';
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import React, { useRef } from 'react';
-import Select, { SelectInstance } from 'react-select';
+import Select, { type SelectInstance } from 'react-select';
 import AsyncSelect from 'react-select/async';
 import CreatableSelect from 'react-select/creatable';
 
 import { Field, Inline, Stack } from '../components';
-import { ColourOption, colourOptions } from '../data';
+import { type ColourOption, colourOptions } from '../data';
 
 export default {
   title: 'Select/AccessingInternalsViaRef',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function AccessingInternalsViaRef() {
   const selectRef = useRef<SelectInstance<ColourOption> | null>(null);

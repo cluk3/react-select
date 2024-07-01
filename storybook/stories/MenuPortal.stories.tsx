@@ -1,6 +1,6 @@
 import Button from '@atlaskit/button/standard-button';
 import Modal from '@atlaskit/modal-dialog';
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select, {
   defaultTheme,
@@ -15,7 +15,7 @@ export default {
   title: 'Select/MenuPortal',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function MenuPortal() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);

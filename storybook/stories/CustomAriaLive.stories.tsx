@@ -1,4 +1,4 @@
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select, { AriaOnFocus } from 'react-select';
 import { ColourOption, colourOptions } from '../data';
@@ -7,7 +7,7 @@ export default {
   title: 'Select/CustomAriaLive',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function CustomAriaLive() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);

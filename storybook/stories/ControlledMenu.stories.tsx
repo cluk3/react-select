@@ -1,4 +1,4 @@
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select, { SelectInstance, StylesConfig } from 'react-select';
 
@@ -8,7 +8,7 @@ import { ColourOption, colourOptions } from '../data';
 export default {
   title: 'Select/ControlledMenu',
   component: Select,
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function ControlledMenu() {
   const inputRef = React.useRef<SelectInstance<ColourOption>>(null);

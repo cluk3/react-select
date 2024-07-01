@@ -1,4 +1,4 @@
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import AsyncSelect from 'react-select/async';
 
@@ -8,7 +8,7 @@ import { ColourOption, colourOptions } from '../data';
 export default {
   title: 'Select/AsyncMulti',
   component: AsyncSelect,
-} as ComponentMeta<typeof AsyncSelect>;
+} as Meta<typeof AsyncSelect>;
 
 export function AsyncMulti() {
   return (

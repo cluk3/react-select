@@ -1,26 +1,26 @@
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select, {
   components,
-  MultiValueGenericProps,
-  MultiValueProps,
-  OnChangeValue,
-  Props,
+  type MultiValueGenericProps,
+  type MultiValueProps,
+  type OnChangeValue,
+  type Props,
 } from 'react-select';
 import {
   SortableContainer,
-  SortableContainerProps,
+  type SortableContainerProps,
   SortableElement,
   SortableHandle,
-  SortEndHandler,
+  type SortEndHandler,
 } from 'react-sortable-hoc';
-import { ColourOption, colourOptions } from '../data';
+import { type ColourOption, colourOptions } from '../data';
 
 export default {
   title: 'Select/MultiSelectSort',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function MultiSelectSort() {
   const [selected, setSelected] = React.useState<readonly ColourOption[]>([

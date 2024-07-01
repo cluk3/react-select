@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/react';
 import { CSSObject } from '@emotion/serialize';
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as chrono from 'chrono-node';
 import moment, { Moment } from 'moment';
 import { useState } from 'react';
@@ -16,7 +16,7 @@ export default {
   title: 'Select/ExperimentalDatePicker',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function ExperimentalDatePicker() {
   const [value, setValue] = useState<DateOption | null>(

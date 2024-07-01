@@ -1,4 +1,4 @@
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select, {
   components,
@@ -13,7 +13,7 @@ export default {
   title: 'Select/CustomSelectProps',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function CustomSelectProps(props: Props<ColourOption>) {
   const [clickCount, setClickCount] = React.useState(0);

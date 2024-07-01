@@ -1,4 +1,4 @@
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import AsyncCreatableSelect from 'react-select/async-creatable';
 
@@ -8,7 +8,7 @@ import { ColourOption, colourOptions } from '../data';
 export default {
   title: 'Select/AsyncCreatable',
   component: AsyncCreatableSelect,
-} as ComponentMeta<typeof AsyncCreatableSelect>;
+} as Meta<typeof AsyncCreatableSelect>;
 
 export function AsyncCreatable() {
   return (

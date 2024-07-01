@@ -1,4 +1,4 @@
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select from 'react-select';
 
@@ -9,7 +9,7 @@ export default {
   title: 'Select/CustomIsOptionDisabled',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function CustomIsOptionDisabled() {
   return (

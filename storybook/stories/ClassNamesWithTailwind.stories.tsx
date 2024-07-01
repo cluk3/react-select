@@ -2,7 +2,7 @@ import '../styles/tailwind.css';
 
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, ComponentStory } from '@storybook/react';
 import classNames from 'classnames';
 import * as React from 'react';
 import Select from 'react-select';
@@ -14,7 +14,7 @@ export default {
   title: 'Select/ClassNamesWithTailwind',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 // This ensures that Emotion's styles are inserted before Tailwind's styles so that Tailwind classes have precedence over Emotion
 const EmotionCacheProvider = ({ children }: { children: React.ReactNode }) => {

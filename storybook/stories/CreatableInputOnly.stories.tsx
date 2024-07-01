@@ -1,4 +1,4 @@
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import CreatableSelect from 'react-select/creatable';
 import { Field } from '../components';
@@ -6,7 +6,7 @@ import { Field } from '../components';
 export default {
   title: 'Select/CreatableInputOnly',
   component: CreatableSelect,
-} as ComponentMeta<typeof CreatableSelect>;
+} as Meta<typeof CreatableSelect>;
 
 export function CreatableInputOnly() {
   const [inputValue, setInputValue] = React.useState('');

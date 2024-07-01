@@ -1,4 +1,4 @@
-import { ComponentMeta } from '@storybook/react';
+import { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select, { ActionMeta, OnChangeValue, StylesConfig } from 'react-select';
 import { Field } from '../components';
@@ -9,7 +9,7 @@ export default {
   title: 'Select/FixedOptions',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function FixedOptions() {
   const [value, setValue] = React.useState<readonly ColourOption[]>(

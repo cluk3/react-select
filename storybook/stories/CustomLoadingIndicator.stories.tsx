@@ -1,6 +1,6 @@
 import Spinner from '@atlaskit/spinner';
 import Tooltip from '@atlaskit/tooltip';
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import { LoadingIndicatorProps } from 'react-select';
 import AsyncSelect from 'react-select/async';
@@ -11,7 +11,7 @@ export default {
   title: 'Select/CustomLoadingIndicator',
   component: AsyncSelect,
   argTypes: {},
-} as ComponentMeta<typeof AsyncSelect>;
+} as Meta<typeof AsyncSelect>;
 
 export function CustomLoadingIndicator() {
   return (

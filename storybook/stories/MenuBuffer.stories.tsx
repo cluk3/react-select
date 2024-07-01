@@ -1,4 +1,4 @@
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select, { StylesConfig } from 'react-select';
 import { Field } from '../components';
@@ -9,7 +9,7 @@ export default {
   title: 'Select/MenuBuffer',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function MenuBuffer() {
   return (

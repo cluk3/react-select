@@ -1,4 +1,4 @@
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select, { createFilter } from 'react-select';
 import { Field, Inline, Stack } from '../components';
@@ -8,7 +8,7 @@ export default {
   title: 'Select/CreateFilter',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function CreateFilter() {
   const [ignoreCase, setIgnoreCase] = React.useState(true);

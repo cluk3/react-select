@@ -1,4 +1,4 @@
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select from 'react-select';
 import { Field } from '../components';
@@ -9,7 +9,7 @@ export default {
   title: 'Select/CustomFormatOptionLabel',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function CustomFormatOptionLabel() {
   return (
@@ -27,7 +27,7 @@ export function CustomFormatOptionLabel() {
   );
 }
 
-function formatOptionLabel(option: typeof colourOptions[number]) {
+function formatOptionLabel(option: (typeof colourOptions)[number]) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
       <div

@@ -1,5 +1,5 @@
 import Tooltip from '@atlaskit/tooltip';
-import { ComponentMeta } from '@storybook/react';
+import { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select, { components, OptionProps, StylesConfig } from 'react-select';
 
@@ -10,7 +10,7 @@ export default {
   title: 'Select/CustomOption',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function CustomOption() {
   return (

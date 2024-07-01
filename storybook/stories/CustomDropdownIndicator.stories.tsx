@@ -1,5 +1,5 @@
 import EmojiIcon from '@atlaskit/icon/glyph/emoji';
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select, { components, DropdownIndicatorProps } from 'react-select';
 
@@ -10,7 +10,7 @@ export default {
   title: 'Select/CustomDropdownIndicator',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function CustomDropdownIndicator() {
   return (

@@ -1,4 +1,4 @@
-import { ComponentMeta } from '@storybook/react';
+import { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select, {
   components,
@@ -12,7 +12,7 @@ export default {
   title: 'Select/CustomSingleValue',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function CustomSingleValue() {
   return (

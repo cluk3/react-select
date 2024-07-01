@@ -1,6 +1,6 @@
 import '../styles/tailwind.css';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, ComponentStory } from '@storybook/react';
 import classNames from 'classnames';
 import * as React from 'react';
 import Select from 'react-select';
@@ -12,7 +12,7 @@ export default {
   title: 'Select/UnstyledWithTailwind',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 const Template: ComponentStory<typeof Select> = ({
   inputId = 'react-select',
@@ -38,8 +38,8 @@ const Template: ComponentStory<typeof Select> = ({
               isDisabled
                 ? 'border-neutral-100'
                 : isFocused
-                ? 'border-purple-800'
-                : 'border-neutral-200',
+                  ? 'border-purple-800'
+                  : 'border-neutral-200',
               'rounded',
               'border-solid',
               'border',
@@ -108,13 +108,13 @@ const Template: ComponentStory<typeof Select> = ({
               isSelected
                 ? 'bg-purple-800'
                 : isFocused
-                ? 'bg-purple-300'
-                : 'bg-transparent',
+                  ? 'bg-purple-300'
+                  : 'bg-transparent',
               isDisabled
                 ? 'text-neutral-200'
                 : isSelected
-                ? 'text-white'
-                : 'text-inherit',
+                  ? 'text-white'
+                  : 'text-inherit',
               'py-2',
               'px-3',
               !isDisabled &&

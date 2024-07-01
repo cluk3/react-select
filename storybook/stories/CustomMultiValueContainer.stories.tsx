@@ -1,4 +1,4 @@
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Tooltip from '@atlaskit/tooltip';
 import Select, {
@@ -14,7 +14,7 @@ export default {
   title: 'Select/CustomMultiValueContainer',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function CustomMultiValueContainer() {
   return (

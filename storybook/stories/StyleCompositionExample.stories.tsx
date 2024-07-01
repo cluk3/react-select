@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/react';
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import Select, { OptionProps, StylesConfig } from 'react-select';
 
 import { Field } from '../components';
@@ -10,7 +10,7 @@ export default {
   title: 'Select/StyleCompositionExample',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function StyleCompositionExample() {
   return (

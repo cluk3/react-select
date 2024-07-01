@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, ComponentStory } from '@storybook/react';
 import * as React from 'react';
 import type { SelectInstance } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
@@ -9,7 +9,7 @@ import { defaultArgs } from '../data';
 export default {
   title: 'Select/Creatable',
   component: CreatableSelect,
-} as ComponentMeta<typeof CreatableSelect>;
+} as Meta<typeof CreatableSelect>;
 
 type Option = {
   label: string;

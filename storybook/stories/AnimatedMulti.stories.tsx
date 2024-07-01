@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import type { Meta, ComponentStory } from '@storybook/react';
 import * as React from 'react';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -9,7 +9,7 @@ import { colourOptions, defaultArgs } from '../data';
 export default {
   title: 'Select/AnimatedMulti',
   component: Select,
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 const animatedComponents = makeAnimated();
 

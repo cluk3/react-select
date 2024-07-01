@@ -1,6 +1,6 @@
 import '../styles/tailwind.css';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, ComponentStory } from '@storybook/react';
 import classNames from 'classnames';
 import * as React from 'react';
 import type { GroupBase, OptionProps, ValueContainerProps } from 'react-select';
@@ -15,7 +15,7 @@ export default {
   title: 'Select/Tailwind',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 function StatusCircle({ online }: { online?: boolean }) {
   return (
@@ -48,7 +48,7 @@ function CheckIcon(props: React.SVGProps<SVGSVGElement>) {
 
 function ValueContainer<
   IsMulti extends boolean = false,
-  Group extends GroupBase<PersonOption> = GroupBase<PersonOption>
+  Group extends GroupBase<PersonOption> = GroupBase<PersonOption>,
 >({ children, ...props }: ValueContainerProps<PersonOption, IsMulti, Group>) {
   const { value, isMulti } = props.selectProps;
   // @ts-expect-error selectProps can't infer `online` here.
@@ -66,7 +66,7 @@ function ValueContainer<
 
 function Option<
   IsMulti extends boolean = false,
-  Group extends GroupBase<PersonOption> = GroupBase<PersonOption>
+  Group extends GroupBase<PersonOption> = GroupBase<PersonOption>,
 >({ children, ...props }: OptionProps<PersonOption, IsMulti, Group>) {
   return (
     <components.Option {...props}>

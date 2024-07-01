@@ -1,6 +1,6 @@
 import EmojiIcon from '@atlaskit/icon/glyph/emoji';
 import Tooltip from '@atlaskit/tooltip';
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select, {
   components,
@@ -14,7 +14,7 @@ export default {
   title: 'Select/CustomMultiValueRemove',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function CustomMultiValueRemove() {
   return (

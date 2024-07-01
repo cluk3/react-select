@@ -1,5 +1,5 @@
 import Tooltip from '@atlaskit/tooltip';
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import { NoticeProps, StylesConfig } from 'react-select';
 import AsyncSelect from 'react-select/async';
@@ -11,7 +11,7 @@ export default {
   title: 'Select/CustomLoadingMessage',
   component: AsyncSelect,
   argTypes: {},
-} as ComponentMeta<typeof AsyncSelect>;
+} as Meta<typeof AsyncSelect>;
 
 export function CustomLoadingMessage() {
   return (

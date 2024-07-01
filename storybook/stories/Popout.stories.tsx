@@ -1,5 +1,5 @@
 import Button from '@atlaskit/button/standard-button';
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select, { defaultTheme, StylesConfig } from 'react-select';
 
@@ -10,7 +10,7 @@ export default {
   title: 'Select/Popout',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function Popout() {
   const [isOpen, setIsOpen] = React.useState(false);

@@ -1,5 +1,5 @@
 import Tooltip from '@atlaskit/tooltip';
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select, { components, ContainerProps, StylesConfig } from 'react-select';
 import { Field } from '../components';
@@ -9,7 +9,7 @@ export default {
   title: 'Select/CustomSelectContainer',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function CustomSelectContainer() {
   return (

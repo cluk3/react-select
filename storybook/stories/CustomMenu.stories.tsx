@@ -1,4 +1,4 @@
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select, { components, MenuProps } from 'react-select';
 
@@ -15,7 +15,7 @@ export default {
   title: 'Select/CustomMenu',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 export function CustomMenu() {
   return (

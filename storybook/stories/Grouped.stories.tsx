@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, ComponentStory } from '@storybook/react';
 import * as React from 'react';
 import Select from 'react-select';
 
@@ -9,7 +9,7 @@ export default {
   title: 'Select/Grouped',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 const Template: ComponentStory<typeof Select> = ({
   inputId = 'react-select',

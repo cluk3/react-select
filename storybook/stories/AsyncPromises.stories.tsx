@@ -1,4 +1,4 @@
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import AsyncSelect from 'react-select/async';
 
@@ -9,7 +9,7 @@ export default {
   title: 'Select/AsyncPromises',
   component: AsyncSelect,
   argTypes: {},
-} as ComponentMeta<typeof AsyncSelect>;
+} as Meta<typeof AsyncSelect>;
 
 export function AsyncPromises() {
   return (

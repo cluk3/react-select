@@ -1,4 +1,4 @@
-import type { ComponentMeta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import chroma from 'chroma-js';
 import * as React from 'react';
 import Select, { StylesConfig } from 'react-select';
@@ -10,7 +10,7 @@ export default {
   title: 'Select/StyledSingle',
   component: Select,
   argTypes: {},
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
 function dot(color = 'transparent') {
   return {
@@ -38,17 +38,17 @@ const colourStyles: StylesConfig<ColourOption> = {
       backgroundColor: isDisabled
         ? undefined
         : isSelected
-        ? data.color
-        : isFocused
-        ? color.alpha(0.1).css()
-        : undefined,
+          ? data.color
+          : isFocused
+            ? color.alpha(0.1).css()
+            : undefined,
       color: isDisabled
         ? '#ccc'
         : isSelected
-        ? chroma.contrast(color, 'white') > 2
-          ? 'white'
-          : 'black'
-        : data.color,
+          ? chroma.contrast(color, 'white') > 2
+            ? 'white'
+            : 'black'
+          : data.color,
       cursor: isDisabled ? 'not-allowed' : 'default',
 
       ':active': {
