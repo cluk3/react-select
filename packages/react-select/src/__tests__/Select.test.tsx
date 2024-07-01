@@ -958,14 +958,15 @@ cases(
   }
 );
 
-test('clicking when focused does not open select when openMenuOnClick=false', () => {
+test('clicking when focused does not open select when openMenuOnClick=false', async () => {
   let spy = jest.fn();
+  const user = userEvent.setup();
   let { container } = render(
     <Select {...BASIC_PROPS} openMenuOnClick={false} onMenuOpen={spy} />
   );
 
   // this will get updated on input click, though click on input is not bubbling up to control component
-  userEvent.click(container.querySelector('input.react-select__input')!);
+  await user.click(container.querySelector('input.react-select__input')!);
   expect(spy).not.toHaveBeenCalled();
 });
 
@@ -1783,7 +1784,9 @@ test('multi select > to not show selected value in options', () => {
   expect(availableOptions.indexOf('0') > -1).toBeFalsy();
 });
 
-test('multi select > to not hide the selected options from the menu if hideSelectedOptions is false', () => {
+test('multi select > to not hide the selected options from the menu if hideSelectedOptions is false', async () => {
+  const user = userEvent.setup();
+
   let { container } = render(
     <Select
       className="react-select"
@@ -1805,7 +1808,7 @@ test('multi select > to not hide the selected options from the menu if hideSelec
   expect(firstOption.textContent).toBe('0');
   expect(secondoption.textContent).toBe('1');
 
-  userEvent.click(firstOption);
+  await user.click(firstOption);
 
   expect(firstOption.textContent).toBe('0');
   expect(secondoption.textContent).toBe('1');
@@ -1919,8 +1922,10 @@ test('should call onChange with an array on hitting backspace when backspaceRemo
   });
 });
 
-test('multi select > clicking on X next to option will call onChange with all options other that the clicked option', () => {
+test('multi select > clicking on X next to option will call onChange with all options other that the clicked option', async () => {
   let onChangeSpy = jest.fn();
+  const user = userEvent.setup();
+
   let { container } = render(
     <Select
       {...BASIC_PROPS}
@@ -1937,7 +1942,7 @@ test('multi select > clicking on X next to option will call onChange with all op
   const selectValueElement = [
     ...container.querySelectorAll('.react-select__multi-value'),
   ].find((multiValue) => multiValue.textContent === '4');
-  userEvent.click(
+  await user.click(
     selectValueElement!.querySelector('div.react-select__multi-value__remove')!
   );
 
@@ -2456,16 +2461,19 @@ test('accessibility > screenReaderStatus function prop > to pass custom text to 
 });
 
 test('accessibility > A11yTexts can be provided through ariaLiveMessages prop', () => {
-  const ariaLiveMessages: AriaLiveMessages<Option, boolean, GroupBase<Option>> =
-    {
-      onChange: (props) => {
-        const { action, isDisabled, label } = props;
-        if (action === 'select-option' && !isDisabled) {
-          return `CUSTOM: option ${label} is selected.`;
-        }
-        return '';
-      },
-    };
+  const ariaLiveMessages: AriaLiveMessages<
+    Option,
+    boolean,
+    GroupBase<Option>
+  > = {
+    onChange: (props) => {
+      const { action, isDisabled, label } = props;
+      if (action === 'select-option' && !isDisabled) {
+        return `CUSTOM: option ${label} is selected.`;
+      }
+      return '';
+    },
+  };
 
   let { container } = render(
     <Select
@@ -2531,8 +2539,10 @@ test('accessibility > announces cleared values', () => {
   );
 });
 
-test('closeMenuOnSelect prop > when passed as false it should not call onMenuClose on selecting option', () => {
+test('closeMenuOnSelect prop > when passed as false it should not call onMenuClose on selecting option', async () => {
   let onMenuCloseSpy = jest.fn();
+  const user = userEvent.setup();
+
   let { container } = render(
     <Select
       {...BASIC_PROPS}
@@ -2542,7 +2552,7 @@ test('closeMenuOnSelect prop > when passed as false it should not call onMenuClo
       blurInputOnSelect={false}
     />
   );
-  userEvent.click(container.querySelector('div.react-select__option')!);
+  await user.click(container.querySelector('div.react-select__option')!);
   expect(onMenuCloseSpy).not.toHaveBeenCalled();
 });
 
@@ -2767,14 +2777,16 @@ test('sets inputMode="none" when isSearchable is false', () => {
 
 cases(
   'clicking on disabled option',
-  ({ props = BASIC_PROPS, optionsSelected }) => {
+  async ({ props = BASIC_PROPS, optionsSelected }) => {
     let onChangeSpy = jest.fn();
     props = { ...props, onChange: onChangeSpy };
+    const user = userEvent.setup();
+
     let { container } = render(<Select {...props} menuIsOpen />);
     let selectOption = [
       ...container.querySelectorAll('div.react-select__option'),
     ].find((n) => n.textContent === optionsSelected);
-    userEvent.click(selectOption!);
+    user.click(selectOption!);
     expect(onChangeSpy).not.toHaveBeenCalled();
   },
   {
@@ -2969,13 +2981,15 @@ test('clearing select using clear button to not call onMenuOpen or onMenuClose',
   expect(onMenuCloseSpy).not.toHaveBeenCalled();
 });
 
-test('multi select >  calls onChange when option is selected and isSearchable is false', () => {
+test('multi select >  calls onChange when option is selected and isSearchable is false', async () => {
   let onChangeSpy = jest.fn();
   let props = { ...BASIC_PROPS, onChange: onChangeSpy };
+  const user = userEvent.setup();
+
   let { container } = render(
     <Select {...props} isMulti menuIsOpen delimiter="," isSearchable={false} />
   );
-  userEvent.click(container.querySelector('.react-select__option')!);
+  await user.click(container.querySelector('.react-select__option')!);
   const selectedOption = { label: '0', value: 'zero' };
   expect(onChangeSpy).toHaveBeenCalledWith([selectedOption], {
     action: 'select-option',

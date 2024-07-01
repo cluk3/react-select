@@ -71,6 +71,7 @@ test('load options prop with defaultOptions true and inputValue prop', () => {
 cases(
   'load options props with no default options',
   async ({ props, expectloadOptionsLength }) => {
+    const user = userEvent.setup();
     let { container } = render(
       <Async
         className="react-select"
@@ -79,12 +80,10 @@ cases(
       />
     );
     let input = container.querySelector('input.react-select__input');
-    userEvent.type(input!, 'a');
-    await waitFor(() => {
-      expect(container.querySelectorAll('.react-select__option').length).toBe(
-        expectloadOptionsLength
-      );
-    });
+    await user.type(input!, 'a');
+    expect(container.querySelectorAll('.react-select__option').length).toBe(
+      expectloadOptionsLength
+    );
   },
   {
     'with callback > should resolve the options': {
@@ -143,6 +142,7 @@ test('to not call loadOptions again for same value when cacheOptions is true', (
 
 test('to create new cache for each instance', async () => {
   let loadOptionsOne = jest.fn();
+  const user = userEvent.setup();
   let { container: containerOne } = render(
     <Async
       classNamePrefix="react-select"
@@ -151,7 +151,10 @@ test('to create new cache for each instance', async () => {
       loadOptions={loadOptionsOne}
     />
   );
-  userEvent.type(containerOne.querySelector('input.react-select__input')!, 'a');
+  await user.type(
+    containerOne.querySelector('input.react-select__input')!,
+    'a'
+  );
 
   let loadOptionsTwo = jest.fn();
   let { container: containerTwo } = render(
@@ -163,7 +166,10 @@ test('to create new cache for each instance', async () => {
     />
   );
 
-  userEvent.type(containerTwo.querySelector('input.react-select__input')!, 'a');
+  await user.type(
+    containerTwo.querySelector('input.react-select__input')!,
+    'a'
+  );
 
   expect(loadOptionsOne).toHaveBeenCalled();
   expect(loadOptionsTwo).toHaveBeenCalled();

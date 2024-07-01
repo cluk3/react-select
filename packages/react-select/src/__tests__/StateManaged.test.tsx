@@ -125,13 +125,15 @@ interface MenuToOpenByDefaultOpts {
 
 cases<MenuToOpenByDefaultOpts>(
   'Menu to open by default if menuIsOpen prop is true',
-  ({ props }) => {
+  async ({ props }) => {
     props = { ...BASIC_PROPS, ...props, menuIsOpen: true };
     const menuClass = `.${BASIC_PROPS.classNamePrefix}__menu`;
+    const user = userEvent.setup();
+
     const { container } = render(<Select {...props} />);
     expect(container.querySelector(menuClass)).toBeTruthy();
 
-    userEvent.click(
+    await user.click(
       container.querySelector('div.react-select__dropdown-indicator')!
     );
 
@@ -172,48 +174,56 @@ test('multi select > selecting multiple values', () => {
   );
 });
 
-test('defaultInputValue prop > should update the inputValue on change of input if defaultInputValue prop is provided', () => {
+test('defaultInputValue prop > should update the inputValue on change of input if defaultInputValue prop is provided', async () => {
   const props = { ...BASIC_PROPS, defaultInputValue: '0' };
+  const user = userEvent.setup();
   let { container } = render(<Select {...props} />);
   let input = container.querySelector<HTMLInputElement>(
     '.react-select__control input'
   );
 
   expect(input!.value).toBe('0');
-  userEvent.type(input!, 'A');
+  await user.type(input!, 'A');
   expect(input!.value).toBe('0A');
 });
 
-test('inputValue prop > should not update the inputValue when on change of input if inputValue prop is provided', () => {
+test('inputValue prop > should not update the inputValue when on change of input if inputValue prop is provided', async () => {
   const props = { ...BASIC_PROPS, inputValue: '0' };
+  const user = userEvent.setup();
+
   let { container } = render(<Select {...props} />);
   let input = container.querySelector<HTMLInputElement>(
     '.react-select__control input'
   );
+
   expect(input!.value).toBe('0');
-  userEvent.type(input!, 'A');
+  await user.type(input!, 'A');
   expect(input!.value).toBe('0');
 });
 
-test('defaultValue prop > should update the value on selecting option', () => {
+test('defaultValue prop > should update the value on selecting option', async () => {
   const props = { ...BASIC_PROPS, defaultValue: [OPTIONS[0]] };
+  const user = userEvent.setup();
+
   let { container } = render(<Select {...props} menuIsOpen />);
   expect(
     container.querySelector<HTMLInputElement>('input[type="hidden"]')!.value
   ).toBe('zero');
-  userEvent.click(container.querySelectorAll('div.react-select__option')[1]);
+  await user.click(container.querySelectorAll('div.react-select__option')[1]);
   expect(
     container.querySelector<HTMLInputElement>('input[type="hidden"]')!.value
   ).toBe('one');
 });
 
-test('value prop > should not update the value on selecting option', () => {
+test('value prop > should not update the value on selecting option', async () => {
   const props = { ...BASIC_PROPS, value: [OPTIONS[0]] };
+  const user = userEvent.setup();
+
   let { container } = render(<Select {...props} menuIsOpen />);
   expect(
     container.querySelector<HTMLInputElement>('input[type="hidden"]')!.value
   ).toBe('zero');
-  userEvent.click(container.querySelectorAll('div.react-select__option')[1]);
+  await user.click(container.querySelectorAll('div.react-select__option')[1]);
   expect(
     container.querySelector<HTMLInputElement>('input[type="hidden"]')!.value
   ).toBe('zero');
@@ -476,7 +486,9 @@ cases<KeyboardInteractionOpts>(
   }
 );
 
-test('`required` prop > should validate', () => {
+test('`required` prop > should validate', async () => {
+  const user = userEvent.setup();
+
   const { container } = render(
     <form id="formTest">
       <Select {...BASIC_PROPS} menuIsOpen required />
@@ -489,7 +501,7 @@ test('`required` prop > should validate', () => {
 
   let selectOption = container.querySelectorAll('div.react-select__option')[3];
 
-  userEvent.click(selectOption);
+  await user.click(selectOption);
 
   expect(
     container.querySelector<HTMLFormElement>('#formTest')?.checkValidity()

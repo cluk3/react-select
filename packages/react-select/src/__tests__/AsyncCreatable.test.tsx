@@ -1,4 +1,5 @@
 import React from 'react';
+import '@testing-library/jest-dom';
 
 import AsyncCreatable from '../AsyncCreatable';
 import { type Option, OPTIONS } from './constants';
@@ -24,7 +25,9 @@ test('render decorated select with props passed', () => {
   expect(container.querySelector('.foo')).toBeInTheDocument();
 });
 
-test('to show the create option in menu', () => {
+test('to show the create option in menu', async () => {
+  const user = userEvent.setup();
+
   let { container, rerender } = render(
     <AsyncCreatable className="react-select" classNamePrefix="react-select" />
   );
@@ -36,7 +39,7 @@ test('to show the create option in menu', () => {
       inputValue="a"
     />
   );
-  userEvent.type(input!, 'a');
+  await user.type(input!, 'a');
   expect(container.querySelector('.react-select__option')!.textContent).toBe(
     'Create "a"'
   );
@@ -48,6 +51,7 @@ test('to show loading and then create option in menu', async () => {
       setTimeout(() => callback(OPTIONS), 200);
     }
   );
+  const user = userEvent.setup();
   let { container } = render(
     <AsyncCreatable
       className="react-select"
@@ -56,7 +60,7 @@ test('to show loading and then create option in menu', async () => {
     />
   );
   let input = container.querySelector('input.react-select__input');
-  userEvent.type(input!, 'a');
+  await user.type(input!, 'a');
 
   // to show a loading message while loading options
   expect(container.querySelector('.react-select__menu')!.textContent).toBe(
