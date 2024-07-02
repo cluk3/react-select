@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { useEffect, useState, ReactElement, ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { TransitionGroup } from 'react-transition-group';
-import { ValueContainerProps } from '../components/containers';
-import { GroupBase } from '../types';
+import type { ValueContainerProps } from '../components/containers';
+import type { GroupBase } from '../types';
 
 export type ValueContainerComponent = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: ValueContainerProps<Option, IsMulti, Group>
 ) => ReactElement;

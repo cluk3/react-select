@@ -3,13 +3,8 @@ import * as React from 'react';
 import Select from 'react-select';
 
 import { Field } from '../components';
-import {
-  ColourOption,
-  colourOptions,
-  FlavourOption,
-  GroupedOption,
-  groupedOptions,
-} from '../data';
+import type { ColourOption, FlavourOption, GroupedOption } from '../data';
+import { colourOptions, groupedOptions } from '../data';
 
 export default {
   title: 'Select/BasicGrouped',

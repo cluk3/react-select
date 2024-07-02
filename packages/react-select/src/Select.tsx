@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type{
+import type {
   FocusEventHandler,
   FormEventHandler,
   KeyboardEventHandler,
@@ -119,7 +119,7 @@ let instanceId = 1;
 export default class Select<
   Option = unknown,
   IsMulti extends boolean = false,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > extends React.Component<
   Props<Option, IsMulti, Group>,
   State<Option, IsMulti, Group>
@@ -1738,5 +1738,5 @@ export default class Select<
 export type PublicBaseSelectProps<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > = JSX.LibraryManagedAttributes<typeof Select, Props<Option, IsMulti, Group>>;

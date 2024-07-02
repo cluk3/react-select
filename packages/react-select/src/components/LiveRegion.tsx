@@ -1,6 +1,5 @@
-/** @jsx jsx */
 import { Fragment, type ReactNode, useMemo } from 'react';
-import { jsx } from '@emotion/react';
+
 import A11yText from '../internal/A11yText';
 import { defaultAriaLiveMessages, type AriaSelection } from '../accessibility';
 

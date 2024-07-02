@@ -25,7 +25,10 @@ import type {
   LoadingIndicatorProps,
 } from './components/indicators';
 import { inputCSS, type InputProps } from './components/Input';
-import { placeholderCSS, type PlaceholderProps } from './components/Placeholder';
+import {
+  placeholderCSS,
+  type PlaceholderProps,
+} from './components/Placeholder';
 import { optionCSS, type OptionProps } from './components/Option';
 import {
   menuCSS,
@@ -48,14 +51,14 @@ import {
   multiValueCSS,
   multiValueLabelCSS,
   type MultiValueProps,
-   multiValueRemoveCSS,
+  multiValueRemoveCSS,
 } from './components/MultiValue';
 import type { CSSObjectWithLabel, GroupBase } from './types';
 
 export interface StylesProps<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > {
   clearIndicator: ClearIndicatorProps<Option, IsMulti, Group>;
   container: ContainerProps<Option, IsMulti, Group>;
@@ -110,4 +113,3 @@ export const defaultStyles: {
   singleValue: singleValueCSS,
   valueContainer: valueContainerCSS,
 };
-

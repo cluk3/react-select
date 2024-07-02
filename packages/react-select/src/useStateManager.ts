@@ -20,7 +20,7 @@ type StateManagedPropKeys =
 type SelectPropsWithOptionalStateManagedProps<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > = Omit<PublicBaseSelectProps<Option, IsMulti, Group>, StateManagedPropKeys> &
   Partial<PublicBaseSelectProps<Option, IsMulti, Group>>;
 
@@ -33,7 +33,7 @@ export interface StateManagerAdditionalProps<Option> {
 export type StateManagerProps<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > = SelectPropsWithOptionalStateManagedProps<Option, IsMulti, Group> &
   StateManagerAdditionalProps<Option>;
 
@@ -41,7 +41,7 @@ export default function useStateManager<
   Option,
   IsMulti extends boolean,
   Group extends GroupBase<Option>,
-  AdditionalProps
+  AdditionalProps,
 >({
   defaultInputValue = '',
   defaultMenuIsOpen = false,

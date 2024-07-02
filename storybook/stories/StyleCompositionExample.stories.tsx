@@ -1,10 +1,12 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/react';
 import type { Meta } from '@storybook/react';
-import Select, { OptionProps, StylesConfig } from 'react-select';
+import type { OptionProps, StylesConfig } from 'react-select';
+import Select from 'react-select';
 
 import { Field } from '../components';
-import { ColourOption, colourOptions } from '../data';
+import type { ColourOption } from '../data';
+import { colourOptions } from '../data';
 
 export default {
   title: 'Select/StyleCompositionExample',

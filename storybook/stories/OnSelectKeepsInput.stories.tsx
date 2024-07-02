@@ -1,6 +1,7 @@
 import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import Select, { InputActionMeta } from 'react-select';
+import type { InputActionMeta } from 'react-select';
+import Select from 'react-select';
 
 import { Field } from '../components';
 import { colourOptions } from '../data';

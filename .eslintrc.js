@@ -35,7 +35,6 @@ module.exports = {
     'react/no-did-mount-set-state': 1,
     'react/no-did-update-set-state': 1,
     'react/no-unknown-property': 1,
-    'react/react-in-jsx-scope': 1,
     'react/self-closing-comp': 1,
     'react/sort-prop-types': 1,
     // '@typescript-eslint/semi': 2,

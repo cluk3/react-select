@@ -15,7 +15,7 @@ export type { StateManagerProps };
 type StateManagedSelect = <
   Option = unknown,
   IsMulti extends boolean = false,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 >(
   props: StateManagerProps<Option, IsMulti, Group> &
     RefAttributes<Select<Option, IsMulti, Group>>

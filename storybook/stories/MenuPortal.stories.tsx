@@ -2,14 +2,12 @@ import Button from '@atlaskit/button/standard-button';
 import Modal from '@atlaskit/modal-dialog';
 import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import Select, {
-  defaultTheme,
-  MenuPlacement,
-  StylesConfig,
-} from 'react-select';
+import type { MenuPlacement, StylesConfig } from 'react-select';
+import Select, { defaultTheme } from 'react-select';
 
 import { ChevronDown, Field, Inline, Stack } from '../components';
-import { ColourOption, colourOptions } from '../data';
+import type { ColourOption } from '../data';
+import { colourOptions } from '../data';
 
 export default {
   title: 'Select/MenuPortal',

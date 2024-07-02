@@ -1,6 +1,4 @@
-/** @jsx jsx */
 import type { ReactNode } from 'react';
-import { jsx } from '@emotion/react';
 import type {
   CommonPropsAndClassName,
   CSSObjectWithLabel,

@@ -2,7 +2,7 @@ import '../styles/tailwind.css';
 
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
-import { Meta, ComponentStory } from '@storybook/react';
+import type { Meta, ComponentStory } from '@storybook/react';
 import classNames from 'classnames';
 import * as React from 'react';
 import Select from 'react-select';

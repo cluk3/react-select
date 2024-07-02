@@ -1,14 +1,13 @@
-/** @jsx jsx */
 import { jsx } from '@emotion/react';
-import { CSSObject } from '@emotion/serialize';
+import type { CSSObject } from '@emotion/serialize';
 import type { Meta } from '@storybook/react';
 import * as chrono from 'chrono-node';
-import moment, { Moment } from 'moment';
+import moment, { type Moment } from 'moment';
 import { useState } from 'react';
 import Select, {
   components as SelectComponents,
-  GroupProps,
-  OptionProps,
+  type GroupProps,
+  type OptionProps,
 } from 'react-select';
 import { Field } from '../components';
 

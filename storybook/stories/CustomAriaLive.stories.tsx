@@ -1,7 +1,9 @@
 import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import Select, { AriaOnFocus } from 'react-select';
-import { ColourOption, colourOptions } from '../data';
+import type { AriaOnFocus } from 'react-select';
+import Select from 'react-select';
+import type { ColourOption } from '../data';
+import { colourOptions } from '../data';
 
 export default {
   title: 'Select/CustomAriaLive',

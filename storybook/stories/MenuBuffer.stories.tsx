@@ -1,9 +1,11 @@
 import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import Select, { StylesConfig } from 'react-select';
+import type { StylesConfig } from 'react-select';
+import Select from 'react-select';
 import { Field } from '../components';
 
-import { colourOptions, StateOption } from '../data';
+import type { StateOption } from '../data';
+import { colourOptions } from '../data';
 
 export default {
   title: 'Select/MenuBuffer',

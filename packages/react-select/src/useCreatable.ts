@@ -23,7 +23,7 @@ export interface Accessors<Option> {
 
 export interface CreatableAdditionalProps<
   Option,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > {
   /**
    * Allow options to be created while the `isLoading` prop is true. Useful to
@@ -64,7 +64,7 @@ export interface CreatableAdditionalProps<
 type BaseCreatableProps<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 > = PublicBaseSelectProps<Option, IsMulti, Group> &
   CreatableAdditionalProps<Option, Group>;
 
@@ -106,7 +106,7 @@ const builtins = {
 export default function useCreatable<
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >({
   allowCreateWhileLoading = false,
   createOptionPosition = 'last',

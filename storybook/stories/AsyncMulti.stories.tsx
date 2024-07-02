@@ -3,7 +3,8 @@ import * as React from 'react';
 import AsyncSelect from 'react-select/async';
 
 import { Field } from '../components';
-import { ColourOption, colourOptions } from '../data';
+import type { ColourOption } from '../data';
+import { colourOptions } from '../data';
 
 export default {
   title: 'Select/AsyncMulti',

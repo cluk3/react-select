@@ -2,18 +2,11 @@ import EditorPanelIcon from '@atlaskit/icon/glyph/editor/panel';
 import Tooltip from '@atlaskit/tooltip';
 import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import Select, {
-  components,
-  GroupHeadingProps,
-  StylesConfig,
-} from 'react-select';
+import type { GroupHeadingProps, StylesConfig } from 'react-select';
+import Select, { components } from 'react-select';
 import { Field } from '../components';
-import {
-  ColourOption,
-  colourOptions,
-  FlavourOption,
-  groupedOptions,
-} from '../data';
+import type { ColourOption, FlavourOption } from '../data';
+import { colourOptions, groupedOptions } from '../data';
 
 export default {
   title: 'Select/CustomGroupHeading',

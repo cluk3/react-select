@@ -1,6 +1,4 @@
-/** @jsx jsx */
 import type { FocusEventHandler, FunctionComponent } from 'react';
-import { jsx } from '@emotion/react';
 
 const RequiredInput: FunctionComponent<{
   readonly name?: string;

@@ -1,11 +1,12 @@
 import Tooltip from '@atlaskit/tooltip';
 import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import { NoticeProps, StylesConfig } from 'react-select';
+import type { NoticeProps, StylesConfig } from 'react-select';
 import AsyncSelect from 'react-select/async';
 import { Field } from '../components';
 
-import { ColourOption, colourOptions } from '../data';
+import type { ColourOption } from '../data';
+import { colourOptions } from '../data';
 
 export default {
   title: 'Select/CustomLoadingMessage',

@@ -1,10 +1,12 @@
 import Tooltip from '@atlaskit/tooltip';
-import { Meta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import Select, { components, InputProps } from 'react-select';
+import type { InputProps } from 'react-select';
+import Select, { components } from 'react-select';
 
 import { Field } from '../components';
-import { ColourOption, colourOptions } from '../data';
+import type { ColourOption } from '../data';
+import { colourOptions } from '../data';
 
 export default {
   title: 'Select/CustomInput',

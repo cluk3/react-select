@@ -1,15 +1,11 @@
 import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import Select, { components, MenuProps } from 'react-select';
+import type { MenuProps } from 'react-select';
+import Select, { components } from 'react-select';
 
 import { Field } from '../components';
-import {
-  ColourOption,
-  colourOptions,
-  FlavourOption,
-  GroupedOption,
-  groupedOptions,
-} from '../data';
+import type { ColourOption, FlavourOption, GroupedOption } from '../data';
+import { colourOptions, groupedOptions } from '../data';
 
 export default {
   title: 'Select/CustomMenu',

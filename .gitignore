@@ -43,3 +43,7 @@ package-lock.json
 .NOTES.md
 
 magical-types
+
+# Storybook
+storybook/storybook-static
+storybook/*storybook.log

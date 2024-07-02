@@ -2,12 +2,10 @@ import EmojiIcon from '@atlaskit/icon/glyph/emoji';
 import Tooltip from '@atlaskit/tooltip';
 import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import Select, {
-  components,
-  MultiValueRemoveProps,
-  StylesConfig,
-} from 'react-select';
-import { ColourOption, colourOptions } from '../data';
+import type { MultiValueRemoveProps, StylesConfig } from 'react-select';
+import Select, { components } from 'react-select';
+import type { ColourOption } from '../data';
+import { colourOptions } from '../data';
 import { Field } from '../components';
 
 export default {

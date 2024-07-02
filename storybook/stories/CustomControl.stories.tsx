@@ -1,9 +1,11 @@
 import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import Select, { components, ControlProps } from 'react-select';
+import type { ControlProps } from 'react-select';
+import Select, { components } from 'react-select';
 
 import { Field } from '../components';
-import { ColourOption, colourOptions } from '../data';
+import type { ColourOption } from '../data';
+import { colourOptions } from '../data';
 
 export default {
   title: 'Select/CustomControl',

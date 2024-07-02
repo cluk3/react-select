@@ -1,9 +1,11 @@
-import { Meta } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import Select, { ActionMeta, OnChangeValue, StylesConfig } from 'react-select';
+import type { ActionMeta, OnChangeValue, StylesConfig } from 'react-select';
+import Select from 'react-select';
 import { Field } from '../components';
 
-import { ColourOption, colourOptions } from '../data';
+import type { ColourOption } from '../data';
+import { colourOptions } from '../data';
 
 export default {
   title: 'Select/FixedOptions',

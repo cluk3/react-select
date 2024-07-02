@@ -1,6 +1,4 @@
-/** @jsx jsx */
 import type { ComponentType, ReactNode } from 'react';
-import { jsx } from '@emotion/react';
 import { CrossIcon } from './indicators';
 import type {
   CommonPropsAndClassName,

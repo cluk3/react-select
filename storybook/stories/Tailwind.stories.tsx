@@ -1,6 +1,6 @@
 import '../styles/tailwind.css';
 
-import { Meta, ComponentStory } from '@storybook/react';
+import type { Meta, ComponentStory } from '@storybook/react';
 import classNames from 'classnames';
 import * as React from 'react';
 import type { GroupBase, OptionProps, ValueContainerProps } from 'react-select';

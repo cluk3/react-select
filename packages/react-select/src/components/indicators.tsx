@@ -1,6 +1,5 @@
-/** @jsx jsx */
 import type { ReactNode } from 'react';
-import { jsx, keyframes } from '@emotion/react';
+import { keyframes } from '@emotion/react';
 
 import type {
   CommonPropsAndClassName,
@@ -54,7 +53,7 @@ export const DownChevron = (props: DownChevronProps) => (
 export interface DropdownIndicatorProps<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > extends CommonPropsAndClassName<Option, IsMulti, Group> {
   /** The children to be rendered inside the indicator. */
   children?: ReactNode;
@@ -68,7 +67,7 @@ export interface DropdownIndicatorProps<
 const baseCSS = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   {
     isFocused,
@@ -99,7 +98,7 @@ export const dropdownIndicatorCSS = baseCSS;
 export const DropdownIndicator = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: DropdownIndicatorProps<Option, IsMulti, Group>
 ) => {
@@ -120,7 +119,7 @@ export const DropdownIndicator = <
 export interface ClearIndicatorProps<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > extends CommonPropsAndClassName<Option, IsMulti, Group> {
   /** The children to be rendered inside the indicator. */
   children?: ReactNode;
@@ -134,7 +133,7 @@ export const clearIndicatorCSS = baseCSS;
 export const ClearIndicator = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: ClearIndicatorProps<Option, IsMulti, Group>
 ) => {
@@ -159,7 +158,7 @@ export const ClearIndicator = <
 export interface IndicatorSeparatorProps<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > extends CommonPropsAndClassName<Option, IsMulti, Group> {
   isDisabled: boolean;
   isFocused: boolean;
@@ -169,7 +168,7 @@ export interface IndicatorSeparatorProps<
 export const indicatorSeparatorCSS = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   {
     isDisabled,
@@ -195,7 +194,7 @@ export const indicatorSeparatorCSS = <
 export const IndicatorSeparator = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: IndicatorSeparatorProps<Option, IsMulti, Group>
 ) => {
@@ -222,7 +221,7 @@ const loadingDotAnimations = keyframes`
 export const loadingIndicatorCSS = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   {
     isFocused,
@@ -273,7 +272,7 @@ const LoadingDot = ({ delay, offset }: LoadingDotProps) => (
 export interface LoadingIndicatorProps<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > extends CommonPropsAndClassName<Option, IsMulti, Group> {
   /** Props that will be passed on to the children. */
   innerProps: JSX.IntrinsicElements['div'];
@@ -286,7 +285,7 @@ export interface LoadingIndicatorProps<
 export const LoadingIndicator = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >({
   innerProps,
   isRtl,

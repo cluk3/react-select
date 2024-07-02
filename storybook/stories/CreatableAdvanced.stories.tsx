@@ -3,7 +3,8 @@ import * as React from 'react';
 import CreatableSelect from 'react-select/creatable';
 
 import { Field } from '../components';
-import { NumberOption, numbers } from '../data';
+import type { NumberOption } from '../data';
+import { numbers } from '../data';
 
 export default {
   title: 'Select/CreatableAdvanced',

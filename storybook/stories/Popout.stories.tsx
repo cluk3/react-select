@@ -1,10 +1,12 @@
 import Button from '@atlaskit/button/standard-button';
 import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import Select, { defaultTheme, StylesConfig } from 'react-select';
+import type { StylesConfig } from 'react-select';
+import Select, { defaultTheme } from 'react-select';
 
 import { ChevronDown, Svg } from '../components';
-import { StateOption, stateOptions } from '../data';
+import type { StateOption } from '../data';
+import { stateOptions } from '../data';
 
 export default {
   title: 'Select/Popout',

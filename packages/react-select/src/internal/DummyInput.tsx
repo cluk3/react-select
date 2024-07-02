@@ -1,6 +1,4 @@
-/** @jsx jsx */
 import type { Ref } from 'react';
-import { jsx } from '@emotion/react';
 import { removeProps } from '../utils';
 
 export default function DummyInput({

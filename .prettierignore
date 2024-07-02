@@ -6,3 +6,4 @@ lib/*
 node_modules/*
 **/node_modules/*
 **/magical-types/*
+pnpm-lock.yaml

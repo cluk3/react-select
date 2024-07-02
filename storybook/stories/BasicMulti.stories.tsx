@@ -1,4 +1,4 @@
-import { Meta, ComponentStory } from '@storybook/react';
+import type { Meta, ComponentStory } from '@storybook/react';
 import * as React from 'react';
 import Select from 'react-select';
 

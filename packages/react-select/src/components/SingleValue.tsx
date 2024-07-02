@@ -1,6 +1,5 @@
-/** @jsx jsx */
 import type { ReactNode } from 'react';
-import { jsx } from '@emotion/react';
+
 import type {
   CommonPropsAndClassName,
   CSSObjectWithLabel,
@@ -11,7 +10,7 @@ import { getStyleProps } from '../utils';
 export interface SingleValueProps<
   Option = unknown,
   IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > extends CommonPropsAndClassName<Option, IsMulti, Group> {
   /** The children to be rendered. */
   children: ReactNode;
@@ -26,7 +25,7 @@ export interface SingleValueProps<
 export const css = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   {
     isDisabled,
@@ -52,7 +51,7 @@ export const css = <
 const SingleValue = <
   Option,
   IsMulti extends boolean,
-  Group extends GroupBase<Option>
+  Group extends GroupBase<Option>,
 >(
   props: SingleValueProps<Option, IsMulti, Group>
 ) => {
