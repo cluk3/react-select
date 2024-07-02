@@ -1,0 +1,30 @@
+@import './components/indicators.css';
+
+.react-select {
+  --rs-primary: '#2684FF';
+  --rs-primary75: '#4C9AFF';
+  --rs-primary50: '#B2D4FF';
+  --rs-primary25: '#DEEBFF';
+
+  --rs-danger: '#DE350B';
+  --rs-dangerLight: '#FFBDAD';
+
+  --rs-neutral0: 'hsl(0, 0%, 100%)';
+  --rs-neutral5: 'hsl(0, 0%, 95%)';
+  --rs-neutral10: 'hsl(0, 0%, 90%)';
+  --rs-neutral20: 'hsl(0, 0%, 80%)';
+  --rs-neutral30: 'hsl(0, 0%, 70%)';
+  --rs-neutral40: 'hsl(0, 0%, 60%)';
+  --rs-neutral50: 'hsl(0, 0%, 50%)';
+  --rs-neutral60: 'hsl(0, 0%, 40%)';
+  --rs-neutral70: 'hsl(0, 0%, 30%)';
+  --rs-neutral80: 'hsl(0, 0%, 20%)';
+  --rs-neutral90: 'hsl(0, 0%, 10%)';
+  --rs-borderRadius: 4px;
+  /* Used to calculate consistent margin/padding on elements */
+  --rs-baseUnit: 4px;
+  /* The minimum height of the control */
+  --rs-controlHeight: 38px;
+  /*  The amount of space between the control and menu */
+  --rs-menuGutter: calc(var(--rs-baseUnit) * 2);
+}

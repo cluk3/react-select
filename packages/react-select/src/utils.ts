@@ -60,6 +60,10 @@ export function classNames(
     .map((i) => String(i).trim())
     .join(' ');
 }
+
+export function prependCn(className: string, otherClassNames?: string) {
+  return otherClassNames ? `${className} ${otherClassNames}` : className;
+}
 // ==============================
 // Clean Value
 // ==============================
