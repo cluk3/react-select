@@ -1,4 +1,3 @@
-import { jsx } from '@emotion/react';
 import type { CSSObject } from '@emotion/serialize';
 import type { Meta } from '@storybook/react';
 import * as chrono from 'chrono-node';

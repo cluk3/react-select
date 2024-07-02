@@ -1,4 +1,4 @@
-import { Fragment, type ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import A11yText from '../internal/A11yText';
 import { defaultAriaLiveMessages, type AriaSelection } from '../accessibility';
@@ -196,16 +196,16 @@ const LiveRegion = <
   ]);
 
   const ScreenReaderText = (
-    <Fragment>
+    <>
       <span id="aria-selection">{ariaSelected}</span>
       <span id="aria-focused">{ariaFocused}</span>
       <span id="aria-results">{ariaResults}</span>
       <span id="aria-guidance">{ariaGuidance}</span>
-    </Fragment>
+    </>
   );
 
   return (
-    <Fragment>
+    <>
       {/* We use 'aria-describedby' linked to this component for the initial focus */}
       {/* action, then for all other actions we use the live region below */}
       <A11yText id={id}>{isInitialFocus && ScreenReaderText}</A11yText>
@@ -217,7 +217,7 @@ const LiveRegion = <
       >
         {isFocused && !isInitialFocus && ScreenReaderText}
       </A11yText>
-    </Fragment>
+    </>
   );
 };
 

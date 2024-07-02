@@ -1,5 +1,4 @@
 import type { ReactElement, RefCallback, MouseEvent } from 'react';
-import { Fragment } from 'react';
 import useScrollCapture from './useScrollCapture';
 import useScrollLock from './useScrollLock';
 import * as React from 'react';
@@ -48,7 +47,7 @@ export default function ScrollManager({
   };
 
   return (
-    <Fragment>
+    <>
       {lockEnabled && (
         <div
           onClick={blurSelectInput}
@@ -56,6 +55,6 @@ export default function ScrollManager({
         />
       )}
       {children(targetRef)}
-    </Fragment>
+    </>
   );
 }

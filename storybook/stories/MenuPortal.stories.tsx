@@ -131,10 +131,10 @@ export function MenuPortal() {
   }, [isFixed, isModalOpen, menuPlacement]);
 
   return (
-    <React.Fragment>
+    <>
       <Button onClick={() => setIsModalOpen(true)}>Open Modal</Button>
       {component}
-    </React.Fragment>
+    </>
   );
 }
 

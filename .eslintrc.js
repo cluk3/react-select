@@ -6,9 +6,10 @@ module.exports = {
     es6: true,
     node: true,
   },
-  plugins: ['react', '@typescript-eslint'],
+  plugins: ['react', '@typescript-eslint', 'unused-imports'],
   rules: {
-    '@typescript-eslint/no-unused-vars': [
+    'unused-imports/no-unused-imports': 'error',
+    'unused-imports/no-unused-vars': [
       'error',
       {
         args: 'after-used',

@@ -1,5 +1,4 @@
 import type { Meta } from '@storybook/react';
-import * as React from 'react';
 import type { MenuProps } from 'react-select';
 import Select, { components } from 'react-select';
 
@@ -35,7 +34,7 @@ function Menu(
 ) {
   const optionsLength = getLength(props.options);
   return (
-    <React.Fragment>
+    <>
       <div
         style={{
           padding: '8px 12px',
@@ -48,7 +47,7 @@ function Menu(
       >
         {props.children}
       </components.Menu>
-    </React.Fragment>
+    </>
   );
 }
 
