@@ -1,0 +1,40 @@
+.react-select__control {
+  align-items: center;
+  cursor: default;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  min-height: var(--rs-control-height);
+  outline: 0 !important;
+  position: relative;
+  transition: all 100ms;
+}
+
+.react-select__control--styled {
+  border-radius: var(--rs-border-radius);
+  background-color: var(--rs-neutral0);
+  border-color: var(--rs-neutral20);
+  border-width: 1px;
+  border-style: solid;
+
+  &:hover {
+    border-color: var(--rs-neutral30);
+  }
+
+  &[data-is-focused='true'] {
+    &:hover {
+      border-color: var(--rs-primary);
+    }
+
+    &:not(&[data-is-disabled='true']) {
+      border-color: var(--rs-primary);
+    }
+
+    box-shadow: 0 0 0 1px var(--rs-primary);
+  }
+
+  &[data-is-disabled='true'] {
+    background-color: var(--rs-neutral5);
+    border-color: var(--rs-neutral10);
+  }
+}

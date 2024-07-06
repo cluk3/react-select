@@ -1,0 +1,35 @@
+.react-select__option {
+  cursor: default;
+  display: block;
+  font-size: inherit;
+  width: 100%;
+  user-select: none;
+  -webkit-tap-highlight-color: rgb(0 0 0 / 0%);
+}
+
+.react-select__option--styled {
+  background-color: transparent;
+  color: inherit;
+  padding: calc(var(--rs-base-unit) * 2) calc(var(--rs-base-unit) * 3);
+
+  &[data-is-focused='true'] {
+    background-color: var(--rs-primary25);
+  }
+
+  &[data-is-selected='true'] {
+    color: var(--rs-neutral0);
+    background-color: var(--rs-primary);
+  }
+
+  &[data-is-disabled='true'] {
+    color: var(--rs-neutral20);
+  }
+
+  &:active:not([data-is-disabled='true']) {
+    background-color: var(--rs-primary50);
+
+    &[data-is-selected='true'] {
+      background-color: var(--rs-primary);
+    }
+  }
+}

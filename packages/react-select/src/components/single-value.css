@@ -1,0 +1,17 @@
+.react-select__single-value {
+  grid-area: 1 / 1 / 2 / 3;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.react-select__single-value--styled {
+  color: var(--rs-neutral80);
+  margin-left: calc(var(--rs-base-unit) / 2);
+  margin-right: calc(var(--rs-base-unit) / 2);
+
+  &[data-is-disabled='true'] {
+    color: var(--rs-neutral40);
+  }
+}

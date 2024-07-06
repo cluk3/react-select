@@ -9,19 +9,27 @@
   "author": "Jed Watson",
   "license": "MIT",
   "repository": "https://github.com/JedWatson/react-select/tree/master/packages/react-select",
+  "type": "module",
   "scripts": {
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "prettier:check": "prettier --check .",
+    "format": "prettier --write ./src --ignore-unknown --cache",
+    "format:check": "prettier --check ./src --ignore-unknown --cache",
+    "lint": "concurrently \"pnpm lint:ts\" \"pnpm lint:css\"",
+    "lint:ts": "eslint --fix ./src --ext .js,.ts,.tsx --report-unused-disable-directives",
+    "lint:ts:check": "eslint ./src --ext .js,.ts,.tsx --report-unused-disable-directives",
+    "lint:css": "stylelint --fix \"**/src/**/*.css\"",
+    "lint:css:check": "stylelint \"**/src/**/*.css\"",
+    "lint:check": "concurrently \"pnpm lint:ts:check\" \"pnpm lint:css:check\"",
     "test": "npm run test:jest && npm run test:cypress",
     "test:jest": "jest --coverage",
     "test:cypress": "yarn test:cypress:chrome && yarn test:cypress:firefox",
     "test:cypress:chrome": "cypress run --browser chrome",
     "test:cypress:firefox": "cypress run --browser firefox",
-    "test:cypress:watch": "node ./node_modules/.bin/cypress open"
+    "test:cypress:watch": "node ./node_modules/.bin/cypress open",
+    "type-check": "pnpm type-check:src && pnpm type-check:test",
+    "type-check:src": "tsc -b ./tsconfig.json",
+    "type-check:test": "tsc --noEmit .src/__tests__/tsconfig.json"
   },
   "dependencies": {
-    "@emotion/cache": "^11.4.0",
-    "@emotion/react": "^11.8.1",
     "@floating-ui/dom": "^1.0.1",
     "@types/node": "^20.14.9",
     "@types/react": "^18.3.3",
@@ -33,7 +41,6 @@
     "user-agent-data-types": "^0.4.2"
   },
   "devDependencies": {
-    "@emotion/jest": "^11.1.0",
     "@testing-library/dom": "^10.2.0",
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
@@ -47,6 +54,10 @@
     "jest-in-case": "^1.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "stylelint": "^16.6.1",
+    "stylelint-config-standard": "^36.0.1",
+    "stylelint-selector-bem-pattern": "^4.0.0",
+    "stylelint-value-no-unknown-custom-properties": "^6.0.1",
     "typescript": "^5.5.2",
     "vite": "^5.3.2"
   },
@@ -87,6 +98,9 @@
       "module": "./dist/react-select.esm.js",
       "import": "./dist/react-select.cjs.mjs",
       "default": "./dist/react-select.cjs.js"
+    },
+    "./styles": {
+      "import": "./dist/styles/style.css"
     },
     "./base": {
       "module": "./base/dist/react-select-base.esm.js",

@@ -1,12 +1,7 @@
 import type { ReactNode } from 'react';
-import { keyframes } from '@emotion/react';
 
-import type {
-  CommonPropsAndClassName,
-  CSSObjectWithLabel,
-  GroupBase,
-} from '../types';
-import { getStyleProps } from '../utils';
+import { prependCn, useGetClassNames } from '../utils';
+import { useSelectContext } from '../SelectContext';
 
 // ==============================
 // Dropdown & Clear Icons
@@ -14,24 +9,24 @@ import { getStyleProps } from '../utils';
 
 const Svg = ({
   size,
+  className,
   ...props
-}: JSX.IntrinsicElements['svg'] & { size: number }) => (
-  <svg
-    height={size}
-    width={size}
-    viewBox="0 0 20 20"
-    aria-hidden="true"
-    focusable="false"
-    css={{
-      display: 'inline-block',
-      fill: 'currentColor',
-      lineHeight: 1,
-      stroke: 'currentColor',
-      strokeWidth: 0,
-    }}
-    {...props}
-  />
-);
+}: JSX.IntrinsicElements['svg'] & { size: number }) => {
+  const {
+    selectProps: { classNamePrefix },
+  } = useSelectContext();
+  return (
+    <svg
+      height={size}
+      width={size}
+      viewBox="0 0 20 20"
+      aria-hidden="true"
+      focusable="false"
+      className={prependCn(classNamePrefix, 'svg', className)}
+      {...props}
+    />
+  );
+};
 
 export type CrossIconProps = JSX.IntrinsicElements['svg'] & { size?: number };
 export const CrossIcon = (props: CrossIconProps) => (
@@ -50,102 +45,48 @@ export const DownChevron = (props: DownChevronProps) => (
 // Dropdown & Clear Buttons
 // ==============================
 
-export interface DropdownIndicatorProps<
-  Option = unknown,
-  IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>,
-> extends CommonPropsAndClassName<Option, IsMulti, Group> {
+export interface DropdownIndicatorProps {
   /** The children to be rendered inside the indicator. */
   children?: ReactNode;
   /** Props that will be passed on to the children. */
   innerProps: JSX.IntrinsicElements['div'];
-  /** The focused state of the select. */
-  isFocused: boolean;
-  isDisabled: boolean;
 }
 
-const baseCSS = <
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->(
-  {
-    isFocused,
-    theme: {
-      spacing: { baseUnit },
-      colors,
-    },
-  }:
-    | DropdownIndicatorProps<Option, IsMulti, Group>
-    | ClearIndicatorProps<Option, IsMulti, Group>,
-  unstyled: boolean
-): CSSObjectWithLabel => ({
-  label: 'indicatorContainer',
-  display: 'flex',
-  transition: 'color 150ms',
-  ...(unstyled
-    ? {}
-    : {
-        color: isFocused ? colors.neutral60 : colors.neutral20,
-        padding: baseUnit * 2,
-        ':hover': {
-          color: isFocused ? colors.neutral80 : colors.neutral40,
-        },
-      }),
-});
-
-export const dropdownIndicatorCSS = baseCSS;
-export const DropdownIndicator = <
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->(
-  props: DropdownIndicatorProps<Option, IsMulti, Group>
-) => {
+export const DropdownIndicator = (props: DropdownIndicatorProps) => {
   const { children, innerProps } = props;
+  const {
+    state: { isFocused },
+  } = useSelectContext();
+  const className = useGetClassNames(
+    'dropdownIndicator',
+    props,
+    innerProps?.className
+  );
   return (
-    <div
-      {...getStyleProps(props, 'dropdownIndicator', {
-        indicator: true,
-        'dropdown-indicator': true,
-      })}
-      {...innerProps}
-    >
+    <div data-is-focused={isFocused} {...innerProps} className={className}>
       {children || <DownChevron />}
     </div>
   );
 };
 
-export interface ClearIndicatorProps<
-  Option = unknown,
-  IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>,
-> extends CommonPropsAndClassName<Option, IsMulti, Group> {
-  /** The children to be rendered inside the indicator. */
+export interface ClearIndicatorProps {
   children?: ReactNode;
   /** Props that will be passed on to the children. */
   innerProps: JSX.IntrinsicElements['div'];
-  /** The focused state of the select. */
-  isFocused: boolean;
 }
 
-export const clearIndicatorCSS = baseCSS;
-export const ClearIndicator = <
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->(
-  props: ClearIndicatorProps<Option, IsMulti, Group>
-) => {
+export const ClearIndicator = (props: ClearIndicatorProps) => {
   const { children, innerProps } = props;
+  const {
+    state: { isFocused },
+  } = useSelectContext();
+  const className = useGetClassNames(
+    'clearIndicator',
+    props,
+    innerProps?.className
+  );
   return (
-    <div
-      {...getStyleProps(props, 'clearIndicator', {
-        indicator: true,
-        'clear-indicator': true,
-      })}
-      {...innerProps}
-    >
+    <div data-is-focused={isFocused} {...innerProps} className={className}>
       {children || <CrossIcon />}
     </div>
   );
@@ -155,57 +96,22 @@ export const ClearIndicator = <
 // Separator
 // ==============================
 
-export interface IndicatorSeparatorProps<
-  Option = unknown,
-  IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>,
-> extends CommonPropsAndClassName<Option, IsMulti, Group> {
-  isDisabled: boolean;
-  isFocused: boolean;
+export interface IndicatorSeparatorProps {
   innerProps?: JSX.IntrinsicElements['span'];
 }
 
-export const indicatorSeparatorCSS = <
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->(
-  {
-    isDisabled,
-    theme: {
-      spacing: { baseUnit },
-      colors,
-    },
-  }: IndicatorSeparatorProps<Option, IsMulti, Group>,
-  unstyled: boolean
-): CSSObjectWithLabel => ({
-  label: 'indicatorSeparator',
-  alignSelf: 'stretch',
-  width: 1,
-  ...(unstyled
-    ? {}
-    : {
-        backgroundColor: isDisabled ? colors.neutral10 : colors.neutral20,
-        marginBottom: baseUnit * 2,
-        marginTop: baseUnit * 2,
-      }),
-});
-
-export const IndicatorSeparator = <
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->(
-  props: IndicatorSeparatorProps<Option, IsMulti, Group>
-) => {
+export const IndicatorSeparator = (props: IndicatorSeparatorProps) => {
   const { innerProps } = props;
+  const {
+    selectProps: { isDisabled },
+  } = useSelectContext();
+  const className = useGetClassNames(
+    'indicatorSeparator',
+    props,
+    innerProps?.className
+  );
   return (
-    <span
-      {...innerProps}
-      {...getStyleProps(props, 'indicatorSeparator', {
-        'indicator-separator': true,
-      })}
-    />
+    <span data-is-disabled={isDisabled} {...innerProps} className={className} />
   );
 };
 
@@ -213,96 +119,49 @@ export const IndicatorSeparator = <
 // Loading
 // ==============================
 
-const loadingDotAnimations = keyframes`
-  0%, 80%, 100% { opacity: 0; }
-  40% { opacity: 1; }
-`;
-
-export const loadingIndicatorCSS = <
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->(
-  {
-    isFocused,
-    size,
-    theme: {
-      colors,
-      spacing: { baseUnit },
-    },
-  }: LoadingIndicatorProps<Option, IsMulti, Group>,
-  unstyled: boolean
-): CSSObjectWithLabel => ({
-  label: 'loadingIndicator',
-  display: 'flex',
-  transition: 'color 150ms',
-  alignSelf: 'center',
-  fontSize: size,
-  lineHeight: 1,
-  marginRight: size,
-  textAlign: 'center',
-  verticalAlign: 'middle',
-  ...(unstyled
-    ? {}
-    : {
-        color: isFocused ? colors.neutral60 : colors.neutral20,
-        padding: baseUnit * 2,
-      }),
-});
-
 interface LoadingDotProps {
   delay: number;
   offset: boolean;
 }
 const LoadingDot = ({ delay, offset }: LoadingDotProps) => (
   <span
-    css={{
-      animation: `${loadingDotAnimations} 1s ease-in-out ${delay}ms infinite;`,
-      backgroundColor: 'currentColor',
-      borderRadius: '1em',
-      display: 'inline-block',
-      marginLeft: offset ? '1em' : undefined,
-      height: '1em',
-      verticalAlign: 'top',
-      width: '1em',
-    }}
+    style={
+      {
+        '--rs-loading-dot-delay': `${delay}ms`,
+      } as React.CSSProperties
+    }
+    data-offset={offset}
+    className="react-select__loading-dot"
   />
 );
 
-export interface LoadingIndicatorProps<
-  Option = unknown,
-  IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>,
-> extends CommonPropsAndClassName<Option, IsMulti, Group> {
+export interface LoadingIndicatorProps {
   /** Props that will be passed on to the children. */
   innerProps: JSX.IntrinsicElements['div'];
-  /** The focused state of the select. */
-  isFocused: boolean;
-  isDisabled: boolean;
   /** Set size of the container. */
-  size: number;
+  size?: number;
 }
-export const LoadingIndicator = <
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->({
-  innerProps,
-  isRtl,
-  size = 4,
-  ...restProps
-}: LoadingIndicatorProps<Option, IsMulti, Group>) => {
+export const LoadingIndicator = (props: LoadingIndicatorProps) => {
+  const { innerProps, size = 4 } = props;
+  const {
+    state: { isFocused },
+    selectProps: { isRtl },
+  } = useSelectContext();
+  const className = useGetClassNames(
+    'loadingIndicator',
+    props,
+    innerProps?.className
+  );
   return (
     <div
-      {...getStyleProps(
-        { ...restProps, innerProps, isRtl, size },
-        'loadingIndicator',
+      data-is-focused={isFocused}
+      style={
         {
-          indicator: true,
-          'loading-indicator': true,
-        }
-      )}
+          '--rs-loading-indicator-size': `${size}px`,
+        } as React.CSSProperties
+      }
       {...innerProps}
+      className={className}
     >
       <LoadingDot delay={0} offset={isRtl} />
       <LoadingDot delay={160} offset />

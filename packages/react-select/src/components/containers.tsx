@@ -1,56 +1,33 @@
 import type { ReactNode } from 'react';
-import type {
-  CommonPropsAndClassName,
-  CSSObjectWithLabel,
-  GroupBase,
-} from '../types';
-import { getStyleProps } from '../utils';
+import { useGetClassNames } from '../utils';
+import { useSelectContext } from '../SelectContext';
 
 // ==============================
 // Root Container
 // ==============================
 
-export interface ContainerProps<
-  Option = unknown,
-  IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>,
-> extends CommonPropsAndClassName<Option, IsMulti, Group> {
-  /** Whether the select is disabled. */
-  isDisabled: boolean;
-  isFocused: boolean;
-  /** The children to be rendered. */
+export interface ContainerProps {
   children: ReactNode;
   /** Inner props to be passed down to the container. */
   innerProps: JSX.IntrinsicElements['div'];
 }
-export const containerCSS = <
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->({
-  isDisabled,
-  isRtl,
-}: ContainerProps<Option, IsMulti, Group>): CSSObjectWithLabel => ({
-  label: 'container',
-  direction: isRtl ? 'rtl' : undefined,
-  pointerEvents: isDisabled ? 'none' : undefined, // cancel mouse events when disabled
-  position: 'relative',
-});
-export const SelectContainer = <
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->(
-  props: ContainerProps<Option, IsMulti, Group>
-) => {
-  const { children, innerProps, isDisabled, isRtl } = props;
+
+export const SelectContainer = (props: ContainerProps) => {
+  const {
+    selectProps: { isDisabled, isRtl },
+  } = useSelectContext();
+  const { children, innerProps } = props;
+  const className = useGetClassNames(
+    'selectContainer',
+    props,
+    innerProps?.className
+  );
   return (
     <div
-      {...getStyleProps(props, 'container', {
-        '--is-disabled': isDisabled,
-        '--is-rtl': isRtl,
-      })}
+      data-is-disabled={isDisabled}
+      data-is-rtl={isRtl}
       {...innerProps}
+      className={className}
     >
       {children}
     </div>
@@ -61,60 +38,35 @@ export const SelectContainer = <
 // Value Container
 // ==============================
 
-export interface ValueContainerProps<
-  Option = unknown,
-  IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>,
-> extends CommonPropsAndClassName<Option, IsMulti, Group> {
+export interface ValueContainerProps {
   /** Props to be passed to the value container element. */
   innerProps?: JSX.IntrinsicElements['div'];
   /** The children to be rendered. */
   children: ReactNode;
-  isDisabled: boolean;
 }
-export const valueContainerCSS = <
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->(
-  {
-    theme: { spacing },
-    isMulti,
+
+export const ValueContainer = (props: ValueContainerProps) => {
+  const {
     hasValue,
-    selectProps: { controlShouldRenderValue },
-  }: ValueContainerProps<Option, IsMulti, Group>,
-  unstyled: boolean
-): CSSObjectWithLabel => ({
-  alignItems: 'center',
-  display: isMulti && hasValue && controlShouldRenderValue ? 'flex' : 'grid',
-  flex: 1,
-  flexWrap: 'wrap',
-  WebkitOverflowScrolling: 'touch',
-  position: 'relative',
-  overflow: 'hidden',
-  ...(unstyled
-    ? {}
-    : {
-        padding: `${spacing.baseUnit / 2}px ${spacing.baseUnit * 2}px`,
-      }),
-});
-export const ValueContainer = <
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->(
-  props: ValueContainerProps<Option, IsMulti, Group>
-) => {
-  const { children, innerProps, isMulti, hasValue } = props;
+    selectProps: { controlShouldRenderValue, isMulti },
+  } = useSelectContext();
+  const { children, innerProps } = props;
+  const className = useGetClassNames(
+    'valueContainer',
+    props,
+    innerProps?.className
+  );
 
   return (
     <div
-      {...getStyleProps(props, 'valueContainer', {
-        'value-container': true,
-        'value-container--is-multi': isMulti,
-        'value-container--has-value': hasValue,
-      })}
       {...innerProps}
+      style={
+        {
+          '--rs-container-display':
+            isMulti && hasValue && controlShouldRenderValue ? 'flex' : 'grid',
+        } as React.CSSProperties
+      }
+      className={className}
     >
       {children}
     </div>
@@ -125,40 +77,22 @@ export const ValueContainer = <
 // Indicator Container
 // ==============================
 
-export interface IndicatorsContainerProps<
-  Option = unknown,
-  IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>,
-> extends CommonPropsAndClassName<Option, IsMulti, Group> {
-  isDisabled: boolean;
-  /** The children to be rendered. */
+export interface IndicatorsContainerProps {
   children: ReactNode;
   /** Props to be passed to the indicators container element. */
-  innerProps?: {};
+  innerProps?: JSX.IntrinsicElements['div'];
 }
 
-export const indicatorsContainerCSS = (): CSSObjectWithLabel => ({
-  alignItems: 'center',
-  alignSelf: 'stretch',
-  display: 'flex',
-  flexShrink: 0,
-});
-export const IndicatorsContainer = <
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->(
-  props: IndicatorsContainerProps<Option, IsMulti, Group>
-) => {
+export const IndicatorsContainer = (props: IndicatorsContainerProps) => {
   const { children, innerProps } = props;
+  const className = useGetClassNames(
+    'indicatorsContainer',
+    props,
+    innerProps?.className
+  );
 
   return (
-    <div
-      {...getStyleProps(props, 'indicatorsContainer', {
-        indicators: true,
-      })}
-      {...innerProps}
-    >
+    <div {...innerProps} className={className}>
       {children}
     </div>
   );

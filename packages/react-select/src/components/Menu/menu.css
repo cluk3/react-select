@@ -1,0 +1,43 @@
+.react-select__menu {
+  position: absolute;
+  width: 100%;
+  z-index: 9999;
+}
+
+.react-select__menu--styled {
+  background-color: var(--rs-neutral0);
+  border-radius: var(--rs-border-radius);
+  box-shadow:
+    0 0 0 1px hsl(0deg 0% 0% / 10%),
+    0 4px 11px hsl(0deg 0% 0% / 10%);
+  margin-top: var(--rs-menu-gutter);
+  margin-bottom: var(--rs-menu-gutter);
+}
+
+.react-select__menu-list {
+  overflow-y: auto;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+  /* stylelint-disable-next-line csstools/value-no-unknown-custom-properties */
+  max-height: var(--rs-menu-list-max-height);
+}
+
+.react-select__menu-list--styled {
+  padding-bottom: var(--rs-base-unit);
+  padding-top: var(--rs-base-unit);
+}
+
+.react-select__no-options-message,
+.react-select__loading-message {
+  text-align: center;
+}
+
+.react-select__no-options-message--styled,
+.react-select__loading-message--styled {
+  color: var(--rs-neutral40);
+  padding: calc(var(--rs-base-unit) * 2) calc(var(--rs-base-unit) * 3);
+}
+
+.react-select__menu-portal {
+  z-index: var(--rs-menu-z-index);
+}

@@ -1,4 +1,3 @@
-import type { ComponentType } from 'react';
 import {
   type ContainerProps,
   type IndicatorsContainerProps,
@@ -46,63 +45,69 @@ import MultiValue, {
   type MultiValueGenericProps,
   type MultiValueProps,
   type MultiValueRemoveProps,
+  type MultiValueLabelProps,
 } from './MultiValue';
 import Option, { type OptionProps } from './Option';
 import Placeholder, { type PlaceholderProps } from './Placeholder';
 import SingleValue, { type SingleValueProps } from './SingleValue';
-import type { GroupBase } from '../types';
 
-export interface SelectComponents<
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
-> {
-  ClearIndicator: ComponentType<ClearIndicatorProps<Option, IsMulti, Group>>;
-  Control: ComponentType<ControlProps<Option, IsMulti, Group>>;
-  DropdownIndicator: ComponentType<
-    DropdownIndicatorProps<Option, IsMulti, Group>
-  > | null;
-  DownChevron: ComponentType<DownChevronProps>;
-  CrossIcon: ComponentType<CrossIconProps>;
-  Group: ComponentType<GroupProps<Option, IsMulti, Group>>;
-  GroupHeading: ComponentType<GroupHeadingProps<Option, IsMulti, Group>>;
-  IndicatorsContainer: ComponentType<
-    IndicatorsContainerProps<Option, IsMulti, Group>
-  >;
-  IndicatorSeparator: ComponentType<
-    IndicatorSeparatorProps<Option, IsMulti, Group>
-  > | null;
-  Input: ComponentType<InputProps<Option, IsMulti, Group>>;
-  LoadingIndicator: ComponentType<
-    LoadingIndicatorProps<Option, IsMulti, Group>
-  >;
-  Menu: ComponentType<MenuProps<Option, IsMulti, Group>>;
-  MenuList: ComponentType<MenuListProps<Option, IsMulti, Group>>;
-  MenuPortal: ComponentType<MenuPortalProps<Option, IsMulti, Group>>;
-  LoadingMessage: ComponentType<NoticeProps<Option, IsMulti, Group>>;
-  NoOptionsMessage: ComponentType<NoticeProps<Option, IsMulti, Group>>;
-  MultiValue: ComponentType<MultiValueProps<Option, IsMulti, Group>>;
-  MultiValueContainer: ComponentType<
-    MultiValueGenericProps<Option, IsMulti, Group>
-  >;
-  MultiValueLabel: ComponentType<
-    MultiValueGenericProps<Option, IsMulti, Group>
-  >;
-  MultiValueRemove: ComponentType<
-    MultiValueRemoveProps<Option, IsMulti, Group>
-  >;
-  Option: ComponentType<OptionProps<Option, IsMulti, Group>>;
-  Placeholder: ComponentType<PlaceholderProps<Option, IsMulti, Group>>;
-  SelectContainer: ComponentType<ContainerProps<Option, IsMulti, Group>>;
-  SingleValue: ComponentType<SingleValueProps<Option, IsMulti, Group>>;
-  ValueContainer: ComponentType<ValueContainerProps<Option, IsMulti, Group>>;
+export interface SelectComponents<Option> {
+  ClearIndicator: typeof ClearIndicator;
+  Control: typeof Control;
+  DropdownIndicator: typeof DropdownIndicator | null;
+  DownChevron: typeof DownChevron;
+  CrossIcon: typeof CrossIcon;
+  Group: typeof Group;
+  GroupHeading: typeof GroupHeading;
+  IndicatorsContainer: typeof IndicatorsContainer;
+  IndicatorSeparator: typeof IndicatorSeparator | null;
+  Input: typeof Input;
+  LoadingIndicator: typeof LoadingIndicator;
+  Menu: typeof Menu;
+  MenuList: typeof MenuList;
+  MenuPortal: typeof MenuPortal;
+  LoadingMessage: typeof LoadingMessage;
+  NoOptionsMessage: typeof NoOptionsMessage;
+  MultiValue: typeof MultiValue;
+  MultiValueContainer: typeof MultiValueContainer<Option>;
+  MultiValueLabel: typeof MultiValueLabel<Option>;
+  MultiValueRemove: typeof MultiValueRemove<Option>;
+  Option: typeof Option;
+  Placeholder: typeof Placeholder;
+  SelectContainer: typeof SelectContainer;
+  SingleValue: typeof SingleValue;
+  ValueContainer: typeof ValueContainer;
 }
 
-export type SelectComponentsConfig<
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
-> = Partial<SelectComponents<Option, IsMulti, Group>>;
+export interface SelectComponentsProps<Option> {
+  ClearIndicator: ClearIndicatorProps;
+  Control: ControlProps;
+  DropdownIndicator: DropdownIndicatorProps;
+  DownChevron: DownChevronProps;
+  CrossIcon: CrossIconProps;
+  Group: GroupProps;
+  GroupHeading: GroupHeadingProps;
+  IndicatorsContainer: IndicatorsContainerProps;
+  IndicatorSeparator: IndicatorSeparatorProps;
+  Input: InputProps;
+  LoadingIndicator: LoadingIndicatorProps;
+  Menu: MenuProps;
+  MenuList: MenuListProps;
+  MenuPortal: MenuPortalProps;
+  LoadingMessage: NoticeProps;
+  NoOptionsMessage: NoticeProps;
+  MultiValue: MultiValueProps;
+  MultiValueContainer: MultiValueGenericProps<Option>;
+  MultiValueLabel: MultiValueLabelProps<Option>;
+  MultiValueRemove: MultiValueRemoveProps<Option>;
+  Option: OptionProps;
+  Placeholder: PlaceholderProps;
+  SelectContainer: ContainerProps;
+  SingleValue: SingleValueProps;
+  ValueContainer: ValueContainerProps;
+}
+
+export type SelectComponentsConfig<Option> = Partial<SelectComponents<Option>>;
 
 export const components = {
   ClearIndicator: ClearIndicator,
@@ -134,20 +139,12 @@ export const components = {
 
 export type SelectComponentsGeneric = typeof components;
 
-interface Props<
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
-> {
-  components: SelectComponentsConfig<Option, IsMulti, Group>;
+interface Props<Option> {
+  components: SelectComponentsConfig<Option>;
 }
 
-export const defaultComponents = <
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->(
-  props: Props<Option, IsMulti, Group>
+export const defaultComponents = <Option>(
+  props: Props<Option>
 ): SelectComponentsGeneric =>
   ({
     ...components,

@@ -167,7 +167,7 @@ export const defaultAriaLiveMessages = {
     const getArrayIndex = (
       arr: OptionsOrGroups<Option, Group>,
       item: Option
-    ) => (arr && arr.length ? `${arr.indexOf(item) + 1} of ${arr.length}` : '');
+    ) => (arr?.length ? `${arr.indexOf(item) + 1} of ${arr.length}` : '');
 
     if (context === 'value' && selectValue) {
       return `value ${label} focused, ${getArrayIndex(selectValue, focused)}.`;

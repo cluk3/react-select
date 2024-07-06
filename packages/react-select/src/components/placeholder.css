@@ -1,0 +1,9 @@
+.react-select__placeholder {
+  grid-area: 1 / 1 / 2 / 3;
+}
+
+.react-select__placeholder--styled {
+  color: var(--rs-neutral50);
+  margin-left: calc(var(--rs-base-unit) / 2);
+  margin-right: calc(var(--rs-base-unit) / 2);
+}

@@ -1,16 +1,18 @@
-import type { CSSObject } from '@emotion/react';
 import type {
   ReactNode,
   KeyboardEventHandler,
   FocusEventHandler,
   AriaAttributes,
 } from 'react';
-import type * as React from 'react';
 
 import type { FilterOptionOption } from './filters';
-import type { StylesProps } from './styles';
 import type { AriaLiveMessages, AriaSelection } from './accessibility/index';
-import type { SelectComponentsConfig } from './components/index';
+import type {
+  SelectComponentsConfig,
+  SelectComponents,
+  SelectComponentsProps,
+} from './components/index';
+import type { SelectContextValue } from './SelectContext';
 
 export interface GroupBase<Option> {
   readonly options: readonly Option[];
@@ -34,39 +36,17 @@ export type OnChangeValue<
   IsMulti extends boolean,
 > = IsMulti extends true ? MultiValue<Option> : SingleValue<Option>;
 
-export interface Colors {
-  primary: string;
-  primary75: string;
-  primary50: string;
-  primary25: string;
+export type ComponentNames = Uncapitalize<
+  Extract<keyof SelectComponents<unknown>, string>
+>;
 
-  danger: string;
-  dangerLight: string;
+export type CamelToKebab<S extends string> = S extends `${infer T}${infer U}`
+  ? U extends Uncapitalize<U>
+    ? `${Uncapitalize<T>}${CamelToKebab<U>}`
+    : `${Uncapitalize<T>}-${CamelToKebab<U>}`
+  : '';
 
-  neutral0: string;
-  neutral5: string;
-  neutral10: string;
-  neutral20: string;
-  neutral30: string;
-  neutral40: string;
-  neutral50: string;
-  neutral60: string;
-  neutral70: string;
-  neutral80: string;
-  neutral90: string;
-}
-
-export interface ThemeSpacing {
-  baseUnit: number;
-  controlHeight: number;
-  menuGutter: number;
-}
-
-export interface Theme {
-  borderRadius: number;
-  colors: Colors;
-  spacing: ThemeSpacing;
-}
+export type ComponentClassNames = CamelToKebab<ComponentNames>;
 
 export type ClassNamesState = { [key: string]: boolean };
 
@@ -74,54 +54,6 @@ export type CX = (
   state: ClassNamesState,
   ...classNames: (string | undefined)[]
 ) => string;
-export type GetStyles<
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
-> = <Key extends keyof StylesProps<Option, IsMulti, Group>>(
-  propertyName: Key,
-  props: StylesProps<Option, IsMulti, Group>[Key]
-) => CSSObjectWithLabel;
-
-export interface CommonProps<
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
-> {
-  clearValue: () => void;
-  cx: CX;
-  /**
-    Get the styles of a particular part of the select. Pass in the name of the
-    property as the first argument, and the current props as the second argument.
-    See the `styles` object for the properties available.
-  */
-  getStyles: GetStyles<Option, IsMulti, Group>;
-  getClassNames: <Key extends keyof StylesProps<Option, IsMulti, Group>>(
-    propertyName: Key,
-    props: StylesProps<Option, IsMulti, Group>[Key]
-  ) => string | undefined;
-  getValue: () => Options<Option>;
-  hasValue: boolean;
-  isMulti: boolean;
-  isRtl: boolean;
-  options: OptionsOrGroups<Option, Group>;
-  selectOption: (newValue: Option) => void;
-  selectProps: SelectProps<Option, IsMulti, Group>;
-  setValue: (
-    newValue: OnChangeValue<Option, IsMulti>,
-    action: SetValueAction,
-    option?: Option
-  ) => void;
-  theme: Theme;
-}
-
-export interface CommonPropsAndClassName<
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
-> extends CommonProps<Option, IsMulti, Group> {
-  className?: string | undefined;
-}
 
 export interface ActionMetaBase<Option> {
   option?: Option | undefined;
@@ -211,8 +143,6 @@ export type FocusDirection =
 export type GetOptionLabel<Option> = (option: Option) => string;
 export type GetOptionValue<Option> = (option: Option) => string;
 
-export type CSSObjectWithLabel = CSSObject & { label?: string };
-
 export interface State<
   Option,
   IsMulti extends boolean,
@@ -298,7 +228,7 @@ export interface SelectProps<
    *
    * This is useful when styling via CSS classes instead of the Styles API approach.
    */
-  classNamePrefix?: string | null;
+  classNamePrefix?: string;
   /**
    * Provide classNames based on state for each inner component
    */
@@ -327,7 +257,7 @@ export interface SelectProps<
    * instead. For a list of the components that can be passed in, and the shape
    * that will be passed to them, see [the components docs](/components)
    */
-  components: SelectComponentsConfig<Option, IsMulti, Group>;
+  components: SelectComponentsConfig<Option>;
   /** Whether the value of the select, e.g. SingleValue, should be displayed in the control. */
   controlShouldRenderValue: boolean;
   /** Delimiter used to join multiple values into a single HTML Input value */
@@ -435,9 +365,9 @@ export interface SelectProps<
   /** Handle the menu closing */
   onMenuClose: () => void;
   /** Fired when the user scrolls to the top of the menu */
-  onMenuScrollToTop?: (event: React.WheelEvent | React.TouchEvent) => void;
+  onMenuScrollToTop?: (event: WheelEvent | TouchEvent) => void;
   /** Fired when the user scrolls to the bottom of the menu */
-  onMenuScrollToBottom?: (event: React.WheelEvent | React.TouchEvent) => void;
+  onMenuScrollToBottom?: (event: WheelEvent | TouchEvent) => void;
   /** Allows control of whether the menu is opened when the Select is focused */
   openMenuOnFocus: boolean;
   /** Allows control of whether the menu is opened when the Select is clicked */
@@ -450,14 +380,6 @@ export interface SelectProps<
   placeholder: ReactNode;
   /** Status to relay to screen readers */
   screenReaderStatus: (obj: { count: number }) => string;
-  /**
-   * Style modifier methods
-   *
-   * A basic example can be found at the bottom of the [Replacing builtins](/advanced#replacing-builtins) documentation.
-   */
-  styles: StylesConfig<Option, IsMulti, Group>;
-  /** Theme modifier method */
-  theme?: ThemeConfig;
   /** Sets the tabIndex attribute on the input */
   tabIndex: number;
   /** Select the currently focused option when the user presses tab */
@@ -472,25 +394,24 @@ export interface SelectProps<
   required?: boolean;
 }
 
-export type ThemeConfig = Theme | ((theme: Theme) => Theme);
-
-export type StylesConfig<
-  Option = unknown,
-  IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>,
-> = {
-  [K in keyof StylesProps<Option, IsMulti, Group>]?: (
-    base: CSSObjectWithLabel,
-    props: StylesProps<Option, IsMulti, Group>[K]
-  ) => CSSObjectWithLabel;
-};
+export type ClassNamesConfigComponentProps<
+  Option,
+  Key extends ComponentNames,
+> = Omit<
+  SelectComponentsProps<Option>[Capitalize<Key>],
+  'children' | 'innerRef' | 'innerProps' | 'className'
+>;
 
 export type ClassNamesConfig<
   Option = unknown,
   IsMulti extends boolean = boolean,
   Group extends GroupBase<Option> = GroupBase<Option>,
 > = {
-  [K in keyof StylesProps<Option, IsMulti, Group>]?: (
-    props: StylesProps<Option, IsMulti, Group>[K]
-  ) => string;
+  [K in ComponentNames]?:
+    | string
+    | ((
+        context: SelectContextValue<Option, IsMulti, Group> & {
+          componentProps: ClassNamesConfigComponentProps<Option, K>;
+        }
+      ) => string);
 };

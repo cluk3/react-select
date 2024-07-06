@@ -1,0 +1,19 @@
+.react-select__group-heading {
+  cursor: default;
+  display: block;
+}
+
+.react-select__group-heading--styled {
+  color: var(--rs-neutral40);
+  font-size: 75%;
+  font-weight: 500;
+  margin-bottom: 0.25em;
+  padding-left: calc(var(--rs-base-unit) * 3);
+  padding-right: calc(var(--rs-base-unit) * 3);
+  text-transform: uppercase;
+}
+
+.react-select__group--styled {
+  padding-bottom: calc(var(--rs-base-unit) * 2);
+  padding-top: calc(var(--rs-base-unit) * 2);
+}

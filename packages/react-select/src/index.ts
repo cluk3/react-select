@@ -3,8 +3,6 @@ import type { GroupBase } from './types';
 import useStateManager from './useStateManager';
 
 export { default } from './stateManager';
-export { default as NonceProvider } from './NonceProvider';
-export { defaultTheme } from './theme';
 export { createFilter } from './filters';
 export { components } from './components';
 export type SelectInstance<
@@ -40,9 +38,7 @@ export type { OptionProps } from './components/Option';
 export type { PlaceholderProps } from './components/Placeholder';
 export type { SingleValueProps } from './components/SingleValue';
 export type {
-  ThemeConfig,
   ClassNamesConfig,
-  StylesConfig,
   FormatOptionLabelContext,
   FormatOptionLabelMeta,
 } from './types';

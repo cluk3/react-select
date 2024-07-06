@@ -1,14 +1,54 @@
-:where(.react-select__svg) {
+.react-select__svg {
   display: inline-block;
-  fill: currentColor;
+  fill: currentcolor;
   line-height: 1;
-  stroke: currentColor;
+  stroke: currentcolor;
   stroke-width: 0;
 }
 
-:where(.react-select__loading-dot) {
-  animation: loadingDot 1s ease-in-out var(--rs-loading-dot-delay, 0ms) infinite;
-  background-color: currentColor;
+.react-select__clear-indicator,
+.react-select__dropdown-indicator {
+  display: flex;
+  transition: color 150ms;
+}
+
+.react-select__clear-indicator--styled,
+.react-select__dropdown-indicator--styled {
+  padding: calc(var(--rs-base-unit) * 2);
+  color: var(--rs-neutral20);
+
+  &:hover {
+    color: var(--rs-neutral40);
+  }
+
+  &[data-is-focused='true'] {
+    color: var(--rs-neutral60);
+
+    &:hover {
+      color: var(--rs-neutral80);
+    }
+  }
+}
+
+.react-select__indicator-separator {
+  align-self: stretch;
+  width: 1px;
+}
+
+.react-select__indicator-separator--styled {
+  margin-bottom: calc(var(--rs-base-unit) * 2);
+  margin-top: calc(var(--rs-base-unit) * 2);
+  background-color: var(--rs-neutral20);
+
+  &[data-is-disabled='true'] {
+    color: var(--rs-neutral10);
+  }
+}
+
+.react-select__loading-dot {
+  animation: loading-dot 1s ease-in-out var(--rs-loading-dot-delay, 0ms)
+    infinite;
+  background-color: currentcolor;
   border-radius: 1em;
   display: inline-block;
   height: 1em;
@@ -20,99 +60,34 @@
   }
 }
 
-@keyframes loadingDot {
+@keyframes loading-dot {
   0%,
   80%,
   100% {
     opacity: 0;
   }
+
   40% {
     opacity: 1;
   }
 }
 
-:where(.react-select__indicator) {
+.react-select__loading-indicator {
   display: flex;
   transition: color 150ms;
+  align-self: center;
+  font-size: var(--rs-loading-indicator-size);
+  line-height: 1;
+  margin-right: var(--rs-loading-indicator-size);
+  text-align: center;
+  vertical-align: middle;
 }
-:where(.react-select__indicator--styled) {
-  padding: calc(var(--rs-baseUnit) * 2);
+
+.react-select__loading-indicator--styled {
+  padding: calc(var(--rs-base-unit) * 2);
   color: var(--rs-neutral20);
-  &:hover {
-    color: var(--rs-neutral40);
-  }
-  &[data-is-focused] {
+
+  &[data-is-focused='true'] {
     color: var(--rs-neutral60);
-    &:hover {
-      color: var(--rs-neutral80);
-    }
   }
-}
-
-:where(.react-select__indicator-separator) {
-  align-self: stretch;
-  width: 1px;
-}
-:where(.react-select__indicator-separator--styled) {
-  margin-bottom: calc(var(--rs-baseUnit) * 2);
-  margin-top: calc(var(--rs-baseUnit) * 2);
-  background-color: var(--rs-neutral20);
-  &[data-is-disabled] {
-    color: var(--rs-neutral10);
-  }
-}
-
-:where(.react-select__loading-indicator) {
-  display: flex;
-  transition: color 150ms;
-  align-self: center;
-  font-size: 4px;
-  line-height: 1;
-  margin-right: 4px;
-  text-align: center;
-  vertical-align: middle;
-  &[data-styled] {
-    padding: calc(var(--rs-baseUnit) * 2);
-    color: var(--rs-neutral20);
-    &[data-is-focused] {
-      color: var(--rs-neutral60);
-    }
-  }
-}
-:where(.react-select__loading-indicator) {
-  display: flex;
-  transition: color 150ms;
-  align-self: center;
-  font-size: 4px;
-  line-height: 1;
-  margin-right: 4px;
-  text-align: center;
-  vertical-align: middle;
-  &[data-styled] {
-    padding: calc(var(--rs-baseUnit) * 2);
-    color: var(--rs-neutral20);
-    &[data-is-focused] {
-      color: var(--rs-neutral60);
-    }
-  }
-}
-
-:where(.react-select__loading-message) {
-  display: inline-block;
-  font-size: 1em;
-  line-height: 1.5;
-  margin-left: 2px;
-  padding-bottom: 2px;
-  padding-top: 2px;
-  color: var(--rs-neutral40);
-}
-
-:where(.react-select__no-options-message) {
-  display: inline-block;
-  font-size: 1em;
-  line-height: 1.5;
-  margin-left: 2px;
-  padding-bottom: 2px;
-  padding-top: 2px;
-  color: var(--rs-neutral40);
 }

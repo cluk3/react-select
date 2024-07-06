@@ -23,6 +23,7 @@ const makeAnimated = (
   } = components;
   return {
     Input: AnimatedInput(Input),
+    // @ts-expect-error
     MultiValue: AnimatedMultiValue(MultiValue),
     Placeholder: AnimatedPlaceholder(Placeholder),
     SingleValue: AnimatedSingleValue(SingleValue),

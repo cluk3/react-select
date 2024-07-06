@@ -1,0 +1,33 @@
+.react-select__select-container {
+  position: relative;
+
+  &[data-is-disabled='true'] {
+    pointer-events: none;
+  }
+
+  &[data-is-rtl='true'] {
+    direction: rtl;
+  }
+}
+
+.react-select__value-container {
+  /* stylelint-disable-next-line csstools/value-no-unknown-custom-properties */
+  display: var(--rs-container-display);
+  flex: 1;
+  flex-wrap: wrap;
+  -webkit-overflow-scrolling: touch;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.react-select__value-container--styled {
+  padding: calc(var(--rs-base-unit) / 2) calc(var(--rs-base-unit) * 2);
+}
+
+.react-select__indicators-container {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  align-self: stretch;
+}

@@ -1,18 +1,17 @@
 import type { ReactElement, RefCallback, MouseEvent } from 'react';
 import useScrollCapture from './useScrollCapture';
 import useScrollLock from './useScrollLock';
-import * as React from 'react';
+import { useSelectContext } from '../SelectContext';
+import { prependCn } from '../utils';
 
 interface Props {
   readonly children: (ref: RefCallback<HTMLElement>) => ReactElement;
   readonly lockEnabled: boolean;
   readonly captureEnabled: boolean;
-  readonly onBottomArrive?: (
-    event: React.WheelEvent | React.TouchEvent
-  ) => void;
-  readonly onBottomLeave?: (event: React.WheelEvent | React.TouchEvent) => void;
-  readonly onTopArrive?: (event: React.WheelEvent | React.TouchEvent) => void;
-  readonly onTopLeave?: (event: React.WheelEvent | React.TouchEvent) => void;
+  readonly onBottomArrive?: (event: WheelEvent | TouchEvent) => void;
+  readonly onBottomLeave?: (event: WheelEvent | TouchEvent) => void;
+  readonly onTopArrive?: (event: WheelEvent | TouchEvent) => void;
+  readonly onTopLeave?: (event: WheelEvent | TouchEvent) => void;
 }
 
 const blurSelectInput = (event: MouseEvent<HTMLDivElement>) => {
@@ -40,6 +39,9 @@ export default function ScrollManager({
     onTopLeave,
   });
   const setScrollLockTarget = useScrollLock({ isEnabled: lockEnabled });
+  const {
+    selectProps: { classNamePrefix },
+  } = useSelectContext();
 
   const targetRef: RefCallback<HTMLElement> = (element) => {
     setScrollCaptureTarget(element);
@@ -51,7 +53,7 @@ export default function ScrollManager({
       {lockEnabled && (
         <div
           onClick={blurSelectInput}
-          css={{ position: 'fixed', left: 0, bottom: 0, right: 0, top: 0 }}
+          className={prependCn(classNamePrefix, 'scroll-manager')}
         />
       )}
       {children(targetRef)}

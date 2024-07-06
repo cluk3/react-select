@@ -16,8 +16,8 @@ export function toCategorizedOption<
 ): CategorizedOption<Option> {
   const isDisabled = isOptionDisabled(props, option, selectValue);
   const isSelected = isOptionSelected(props, option, selectValue);
-  const label = getOptionLabel(props, option);
-  const value = getOptionValue(props, option);
+  const label = props.getOptionLabel(option);
+  const value = props.getOptionValue(option);
 
   return {
     type: 'option',
@@ -73,7 +73,9 @@ export function buildCategorizedOptions<
 export function buildFocusableOptionsFromCategorizedOptions<
   Option,
   Group extends GroupBase<Option>,
->(categorizedOptions: readonly CategorizedGroupOrOption<Option, Group>[]) {
+>(
+  categorizedOptions: readonly CategorizedGroupOrOption<Option, Group>[]
+): Option[] {
   return categorizedOptions.reduce<Option[]>(
     (optionsAccumulator, categorizedOption) => {
       if (categorizedOption.type === 'group') {
@@ -197,17 +199,6 @@ export const getOptionLabel = <
   return props.getOptionLabel(data);
 };
 
-export const getOptionValue = <
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->(
-  props: SelectProps<Option, IsMulti, Group>,
-  data: Option
-): string => {
-  return props.getOptionValue(data);
-};
-
 export function isOptionDisabled<
   Option,
   IsMulti extends boolean,
@@ -235,8 +226,8 @@ export function isOptionSelected<
   if (typeof props.isOptionSelected === 'function') {
     return props.isOptionSelected(option, selectValue);
   }
-  const candidate = getOptionValue(props, option);
-  return selectValue.some((i) => getOptionValue(props, i) === candidate);
+  const candidate = props.getOptionValue(option);
+  return selectValue.some((i) => props.getOptionValue(i) === candidate);
 }
 
 export function filterOption<

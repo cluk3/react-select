@@ -1,7 +1,5 @@
-import type { StylesProps } from './styles';
 import type {
   ClassNamesState,
-  CommonPropsAndClassName,
   GroupBase,
   InputActionMeta,
   MultiValue,
@@ -9,11 +7,10 @@ import type {
   Options,
   PropsValue,
   SingleValue,
+  ComponentNames,
 } from './types';
-
-// ==============================
-// NO OP
-// ==============================
+import { useSelectContext } from './SelectContext';
+import type { SelectComponentsProps } from './components';
 
 export const noop = () => {};
 export const emptyString = () => '';
@@ -22,15 +19,6 @@ export const emptyString = () => '';
 // Class Name Prefixer
 // ==============================
 
-/**
- String representation of component state for styling with class names.
-
- Expects an array of strings OR a string/object pair:
- - className(['comp', 'comp-arg', 'comp-arg-2'])
-   @returns 'react-select__comp react-select__comp-arg react-select__comp-arg-2'
- - className('comp', { some: true, state: false })
-   @returns 'react-select__comp react-select__comp--some'
-*/
 function applyPrefixToName(prefix: string, name: string) {
   if (!name) {
     return prefix;
@@ -41,29 +29,35 @@ function applyPrefixToName(prefix: string, name: string) {
   }
 }
 
+export function prependCn(
+  prefix: string,
+  className: string,
+  otherClassNames?: string
+) {
+  const prefixedClassName = applyPrefixToName(prefix, className);
+  return otherClassNames
+    ? `${prefixedClassName} ${otherClassNames}`
+    : prefixedClassName;
+}
+
 export function classNames(
   prefix?: string | null,
   state?: ClassNamesState,
-  ...classNameList: string[]
+  ...classNameList: Array<string | undefined>
 ) {
-  const arr = [...classNameList];
+  const arr = classNameList.filter((i) => i).map((i) => String(i).trim());
+
   if (state && prefix) {
     for (let key in state) {
       if (state.hasOwnProperty(key) && state[key]) {
-        arr.push(`${applyPrefixToName(prefix, key)}`);
+        arr.push(applyPrefixToName(prefix, key));
       }
     }
   }
 
-  return arr
-    .filter((i) => i)
-    .map((i) => String(i).trim())
-    .join(' ');
+  return arr.map((i) => String(i).trim()).join(' ');
 }
 
-export function prependCn(className: string, otherClassNames?: string) {
-  return otherClassNames ? `${className} ${otherClassNames}` : className;
-}
 // ==============================
 // Clean Value
 // ==============================
@@ -76,66 +70,47 @@ export const cleanValue = <Option>(
   return [];
 };
 
-// ==============================
-// Clean Common Props
-// ==============================
+function cleanComponentProps<Option, Key extends ComponentNames>(
+  props: SelectComponentsProps<Option>[Capitalize<Key>]
+) {
+  // @ts-expect-error
+  const { className, innerProps, children, innerRef, ...rest } = props;
+  return rest;
+}
 
-export const cleanCommonProps = <
+const kebabize = (str: string) =>
+  str.replace(
+    /[A-Z]+(?![a-z])|[A-Z]/g,
+    ($, ofs) => (ofs ? '-' : '') + $.toLowerCase()
+  );
+
+export const useGetClassNames = <
   Option,
   IsMulti extends boolean,
   Group extends GroupBase<Option>,
-  AdditionalProps,
 >(
-  props: Partial<CommonPropsAndClassName<Option, IsMulti, Group>> &
-    AdditionalProps
-): Omit<
-  AdditionalProps,
-  keyof CommonPropsAndClassName<Option, IsMulti, Group>
-> => {
-  //className
-  const {
-    className, // not listed in commonProps documentation, needs to be removed to allow Emotion to generate classNames
-    clearValue,
-    cx,
-    getStyles,
-    getClassNames,
-    getValue,
-    hasValue,
-    isMulti,
-    isRtl,
-    options, // not listed in commonProps documentation
-    selectOption,
-    selectProps,
-    setValue,
-    theme, // not listed in commonProps documentation
-    ...innerProps
-  } = props;
-  return { ...innerProps };
-};
-
-// ==============================
-// Get Style Props
-// ==============================
-
-export const getStyleProps = <
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
-  Key extends keyof StylesProps<Option, IsMulti, Group>,
->(
-  props: Pick<
-    CommonPropsAndClassName<Option, IsMulti, Group>,
-    'cx' | 'getStyles' | 'getClassNames' | 'className'
-  > &
-    StylesProps<Option, IsMulti, Group>[Key],
-  name: Key,
-  classNamesState?: ClassNamesState
+  name: ComponentNames,
+  props: SelectComponentsProps<Option>[Capitalize<ComponentNames>],
+  className?: string
 ) => {
-  const { cx, getStyles, getClassNames, className } = props;
-  return {
-    css: getStyles(name, props),
-    className: cx(classNamesState ?? {}, getClassNames(name, props), className),
-  };
+  const context = useSelectContext<Option, IsMulti, Group>();
+  const kebabName = kebabize(name);
+  const {
+    getClassNames,
+    selectProps: { unstyled, classNamePrefix },
+  } = context;
+  return classNames(
+    classNamePrefix,
+    {
+      [kebabName]: true,
+      [`${kebabName}--styled`]: !unstyled,
+    },
+    getClassNames(name, {
+      ...context,
+      componentProps: cleanComponentProps<Option, ComponentNames>(props),
+    }),
+    className
+  );
 };
 
 // ==============================
@@ -157,35 +132,10 @@ export function handleInputChange(
   return inputValue;
 }
 
-// ==============================
-// Scroll Helpers
-// ==============================
-
 export function isDocumentElement(
   el: HTMLElement | typeof window
 ): el is typeof window {
   return [document.documentElement, document.body, window].indexOf(el) > -1;
-}
-
-// Normalized Scroll Top
-// ------------------------------
-
-export function normalizedHeight(el: HTMLElement | typeof window): number {
-  if (isDocumentElement(el)) {
-    return window.innerHeight;
-  }
-
-  return el.clientHeight;
-}
-
-// Normalized scrollTo & scrollTop
-// ------------------------------
-
-export function getScrollTop(el: HTMLElement | typeof window): number {
-  if (isDocumentElement(el)) {
-    return window.pageYOffset;
-  }
-  return el.scrollTop;
 }
 
 export function scrollTo(el: HTMLElement | typeof window, top: number): void {
@@ -197,73 +147,6 @@ export function scrollTo(el: HTMLElement | typeof window, top: number): void {
 
   el.scrollTop = top;
 }
-
-// Get Scroll Parent
-// ------------------------------
-
-export function getScrollParent(element: HTMLElement) {
-  let style = getComputedStyle(element);
-  const excludeStaticParent = style.position === 'absolute';
-  const overflowRx = /(auto|scroll)/;
-
-  if (style.position === 'fixed') return document.documentElement;
-
-  for (
-    let parent: HTMLElement | null = element;
-    (parent = parent.parentElement);
-
-  ) {
-    style = getComputedStyle(parent);
-    if (excludeStaticParent && style.position === 'static') {
-      continue;
-    }
-    if (overflowRx.test(style.overflow + style.overflowY + style.overflowX)) {
-      return parent;
-    }
-  }
-
-  return document.documentElement;
-}
-
-// Animated Scroll To
-// ------------------------------
-
-/**
-  @param t: time (elapsed)
-  @param b: initial value
-  @param c: amount of change
-  @param d: duration
-*/
-function easeOutCubic(t: number, b: number, c: number, d: number): number {
-  return c * ((t = t / d - 1) * t * t + 1) + b;
-}
-
-export function animatedScrollTo(
-  element: HTMLElement | typeof window,
-  to: number,
-  duration = 200,
-  callback: (element: HTMLElement | typeof window) => void = noop
-) {
-  const start = getScrollTop(element);
-  const change = to - start;
-  const increment = 10;
-  let currentTime = 0;
-
-  function animateScroll() {
-    currentTime += increment;
-    const val = easeOutCubic(currentTime, start, change, duration);
-    scrollTo(element, val);
-    if (currentTime < duration) {
-      window.requestAnimationFrame(animateScroll);
-    } else {
-      callback(element);
-    }
-  }
-  animateScroll();
-}
-
-// Scroll Into View
-// ------------------------------
 
 export function scrollIntoView(
   menuEl: HTMLElement,

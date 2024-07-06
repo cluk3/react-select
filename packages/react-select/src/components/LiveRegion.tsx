@@ -1,30 +1,17 @@
-import { type ReactNode, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import A11yText from '../internal/A11yText';
-import { defaultAriaLiveMessages, type AriaSelection } from '../accessibility';
+import { defaultAriaLiveMessages } from '../accessibility';
 
-import type { CommonProps, GroupBase, OnChangeValue, Options } from '../types';
+import type { GroupBase, OnChangeValue } from '../types';
+import { useSelectContext } from '../SelectContext';
 
 // ==============================
 // Root Container
 // ==============================
 
-export interface LiveRegionProps<
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
-> extends CommonProps<Option, IsMulti, Group> {
-  children: ReactNode;
-  innerProps: { className?: string };
-  // Select state variables
-  ariaSelection: AriaSelection<Option, IsMulti>;
-  focusedOption: Option | null;
-  focusedValue: Option | null;
-  selectValue: Options<Option>;
-  focusableOptions: Options<Option>;
-  isFocused: boolean;
+export interface LiveRegionProps {
   id: string;
-  isAppleDevice: boolean;
 }
 
 const LiveRegion = <
@@ -32,35 +19,34 @@ const LiveRegion = <
   IsMulti extends boolean,
   Group extends GroupBase<Option>,
 >(
-  props: LiveRegionProps<Option, IsMulti, Group>
+  props: LiveRegionProps
 ) => {
   const {
-    ariaSelection,
-    focusedOption,
-    focusedValue,
-    focusableOptions,
+    state: { ariaSelection, focusedOption, focusedValue, selectValue },
     isFocused,
-    selectValue,
-    selectProps,
-    id,
     isAppleDevice,
-  } = props;
+    getFocusableOptions,
+  } = useSelectContext<Option, IsMulti, Group>();
+
+  const focusableOptions = getFocusableOptions();
 
   const {
-    ariaLiveMessages,
-    getOptionLabel,
-    inputValue,
-    isMulti,
-    isOptionDisabled,
-    isSearchable,
-    menuIsOpen,
-    options,
-    screenReaderStatus,
-    tabSelectsValue,
-    isLoading,
-  } = selectProps;
-  const ariaLabel = selectProps['aria-label'];
-  const ariaLive = selectProps['aria-live'];
+    selectProps: {
+      ariaLiveMessages,
+      getOptionLabel,
+      inputValue,
+      isMulti,
+      isOptionDisabled,
+      isSearchable,
+      menuIsOpen,
+      options,
+      screenReaderStatus,
+      tabSelectsValue,
+      isLoading,
+      'aria-label': ariaLabel,
+      'aria-live': ariaLive,
+    },
+  } = useSelectContext();
 
   // Update aria live message configuration when prop changes
   const messages = useMemo(
@@ -208,7 +194,7 @@ const LiveRegion = <
     <>
       {/* We use 'aria-describedby' linked to this component for the initial focus */}
       {/* action, then for all other actions we use the live region below */}
-      <A11yText id={id}>{isInitialFocus && ScreenReaderText}</A11yText>
+      <A11yText id={props.id}>{isInitialFocus && ScreenReaderText}</A11yText>
       <A11yText
         aria-live={ariaLive}
         aria-atomic="false"

@@ -1,0 +1,44 @@
+.react-select__multi-value {
+  display: flex;
+  min-width: 0; /*  resolves flex/text-overflow bug */
+}
+
+.react-select__multi-value--styled {
+  background-color: var(--rs-neutral10);
+  border-radius: calc(var(--rs-border-radius) / 2);
+  margin: calc(var(--rs-base-unit) / 2);
+}
+
+.react-select__multi-value-label {
+  overflow: hidden;
+  text-overflow: var(--rs-text-overflow);
+  white-space: nowrap;
+}
+
+.react-select__multi-value-label--styled {
+  border-radius: calc(var(--rs-border-radius) / 2);
+  color: var(--rs-neutral80);
+  font-size: 85%;
+  padding: 3px;
+  padding-left: 6px;
+}
+
+.react-select__multi-value-remove {
+  align-items: center;
+  display: flex;
+}
+
+.react-select__multi-value-remove--styled {
+  border-radius: calc(var(--rs-border-radius) / 2);
+  padding-left: var(--rs-base-unit);
+  padding-right: var(--rs-base-unit);
+
+  &:hover {
+    background-color: var(--rs-danger-light);
+    color: var(--rs-danger);
+  }
+
+  &[data-is-focused='true'] {
+    background-color: var(--rs-danger-light);
+  }
+}

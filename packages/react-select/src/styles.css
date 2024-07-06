@@ -1,30 +1,102 @@
-@import './components/indicators.css';
+@import url('./components/Menu/menu.css');
+@import url('./components/containers.css');
+@import url('./components/control.css');
+@import url('./components/group.css');
+@import url('./components/indicators.css');
+@import url('./components/input.css');
+@import url('./components/multi-value.css');
+@import url('./components/option.css');
+@import url('./components/placeholder.css');
+@import url('./components/single-value.css');
 
 .react-select {
-  --rs-primary: '#2684FF';
-  --rs-primary75: '#4C9AFF';
-  --rs-primary50: '#B2D4FF';
-  --rs-primary25: '#DEEBFF';
+  --rs-primary: #2684ff;
+  --rs-primary75: #4c9aff;
+  --rs-primary50: #b2d4ff;
+  --rs-primary25: #deebff;
+  --rs-danger: #de350b;
+  --rs-danger-light: #ffbdad;
+  --rs-neutral0: hsl(0deg 0% 100%);
+  --rs-neutral5: hsl(0deg 0% 95%);
+  --rs-neutral10: hsl(0deg 0% 90%);
+  --rs-neutral20: hsl(0deg 0% 80%);
+  --rs-neutral30: hsl(0deg 0% 70%);
+  --rs-neutral40: hsl(0deg 0% 60%);
+  --rs-neutral50: hsl(0deg 0% 50%);
+  --rs-neutral60: hsl(0deg 0% 40%);
+  --rs-neutral70: hsl(0deg 0% 30%);
+  --rs-neutral80: hsl(0deg 0% 20%);
+  --rs-neutral90: hsl(0deg 0% 10%);
+  --rs-border-radius: 4px;
 
-  --rs-danger: '#DE350B';
-  --rs-dangerLight: '#FFBDAD';
-
-  --rs-neutral0: 'hsl(0, 0%, 100%)';
-  --rs-neutral5: 'hsl(0, 0%, 95%)';
-  --rs-neutral10: 'hsl(0, 0%, 90%)';
-  --rs-neutral20: 'hsl(0, 0%, 80%)';
-  --rs-neutral30: 'hsl(0, 0%, 70%)';
-  --rs-neutral40: 'hsl(0, 0%, 60%)';
-  --rs-neutral50: 'hsl(0, 0%, 50%)';
-  --rs-neutral60: 'hsl(0, 0%, 40%)';
-  --rs-neutral70: 'hsl(0, 0%, 30%)';
-  --rs-neutral80: 'hsl(0, 0%, 20%)';
-  --rs-neutral90: 'hsl(0, 0%, 10%)';
-  --rs-borderRadius: 4px;
   /* Used to calculate consistent margin/padding on elements */
-  --rs-baseUnit: 4px;
+  --rs-base-unit: 4px;
+
   /* The minimum height of the control */
-  --rs-controlHeight: 38px;
+  --rs-control-height: 38px;
+
   /*  The amount of space between the control and menu */
-  --rs-menuGutter: calc(var(--rs-baseUnit) * 2);
+  --rs-menu-gutter: calc(var(--rs-base-unit) * 2);
+
+  /* these variables are gonna be overridden in style
+      attribute of the component consuming the styles */
+  --rs-loading-indicator-size: 4px;
+  --rs-text-overflow: ellipsis;
+  --rs-menu-z-index: 9999;
+
+  & * {
+    box-sizing: border-box;
+  }
+}
+
+.react-select__a11y-text {
+  z-index: calc(var(--rs-menu-z-index) + 1);
+  border: 0;
+  clip: rect(1px, 1px, 1px, 1px);
+  height: 1px;
+  width: 1px;
+  position: absolute;
+  overflow: hidden;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.react.select__dummy-input {
+  /* Get rid of any default styles */
+  background: 0;
+  border: 0;
+
+  /* important! this hides the flashing cursor */
+  caret-color: transparent;
+  font-size: inherit;
+  grid-area: 1 / 1 / 2 / 3;
+  outline: 0;
+  padding: 0;
+
+  /* important! without `width` browsers won't allow focus */
+  width: 1;
+
+  /* remove cursor on desktop */
+  color: transparent;
+
+  /* remove cursor on mobile whilst maintaining "scroll into view" behaviour */
+  left: -100;
+  opacity: 0;
+  position: relative;
+  transform: scale(0.01);
+}
+
+.react-select__required-input {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+}
+
+.react-select__scroll-manager {
+  position: fixed;
+  inset: 0;
 }

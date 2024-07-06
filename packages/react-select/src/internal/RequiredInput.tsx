@@ -1,29 +1,37 @@
 import type { FocusEventHandler, FunctionComponent } from 'react';
+import { useCallback } from 'react';
+import { useSelectContext } from '../SelectContext';
+import { prependCn } from '../utils';
 
 const RequiredInput: FunctionComponent<{
   readonly name?: string;
-  readonly onFocus: FocusEventHandler<HTMLInputElement>;
-}> = ({ name, onFocus }) => (
-  <input
-    required
-    name={name}
-    tabIndex={-1}
-    aria-hidden="true"
-    onFocus={onFocus}
-    css={{
-      label: 'requiredInput',
-      opacity: 0,
-      pointerEvents: 'none',
-      position: 'absolute',
-      bottom: 0,
-      left: 0,
-      right: 0,
-      width: '100%',
-    }}
-    // Prevent `Switching from uncontrolled to controlled` error
-    value=""
-    onChange={() => {}}
-  />
-);
+}> = ({ name }) => {
+  const { focusInput } = useSelectContext();
+  const onFocus: FocusEventHandler = useCallback(
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      focusInput();
+    },
+    [focusInput]
+  );
+  const {
+    selectProps: { classNamePrefix },
+  } = useSelectContext();
+
+  return (
+    <input
+      required
+      name={name}
+      tabIndex={-1}
+      aria-hidden="true"
+      onFocus={onFocus}
+      className={prependCn(classNamePrefix, 'required-input')}
+      value=""
+      onChange={() => {}}
+    />
+  );
+};
 
 export default RequiredInput;

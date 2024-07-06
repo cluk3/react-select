@@ -1,20 +1,17 @@
 import { useCallback, useEffect, useRef } from 'react';
-import type * as React from 'react';
 import { supportsPassiveEvents } from '../utils';
 
-const cancelScroll = (event: React.WheelEvent | React.TouchEvent) => {
+const cancelScroll = (event: WheelEvent | TouchEvent) => {
   if (event.cancelable) event.preventDefault();
   event.stopPropagation();
 };
 
 interface Options {
   readonly isEnabled: boolean;
-  readonly onBottomArrive?: (
-    event: React.WheelEvent | React.TouchEvent
-  ) => void;
-  readonly onBottomLeave?: (event: React.WheelEvent | React.TouchEvent) => void;
-  readonly onTopArrive?: (event: React.WheelEvent | React.TouchEvent) => void;
-  readonly onTopLeave?: (event: React.WheelEvent | React.TouchEvent) => void;
+  readonly onBottomArrive?: (event: WheelEvent | TouchEvent) => void;
+  readonly onBottomLeave?: (event: WheelEvent | TouchEvent) => void;
+  readonly onTopArrive?: (event: WheelEvent | TouchEvent) => void;
+  readonly onTopLeave?: (event: WheelEvent | TouchEvent) => void;
 }
 
 export default function useScrollCapture({
@@ -30,7 +27,7 @@ export default function useScrollCapture({
   const scrollTarget = useRef<HTMLElement | null>(null);
 
   const handleEventDelta = useCallback(
-    (event: React.WheelEvent | React.TouchEvent, delta: number) => {
+    (event: WheelEvent | TouchEvent, delta: number) => {
       if (scrollTarget.current === null) return;
 
       const { scrollTop, scrollHeight, clientHeight } = scrollTarget.current;
@@ -77,17 +74,17 @@ export default function useScrollCapture({
   );
 
   const onWheel = useCallback(
-    (event: React.WheelEvent) => {
+    (event: WheelEvent) => {
       handleEventDelta(event, event.deltaY);
     },
     [handleEventDelta]
   );
-  const onTouchStart = useCallback((event: React.TouchEvent) => {
+  const onTouchStart = useCallback((event: TouchEvent) => {
     // set touch start so we can calculate touchmove delta
     touchStart.current = event.changedTouches[0].clientY;
   }, []);
   const onTouchMove = useCallback(
-    (event: React.TouchEvent) => {
+    (event: TouchEvent) => {
       const deltaY = touchStart.current - event.changedTouches[0].clientY;
       handleEventDelta(event, deltaY);
     },
@@ -95,7 +92,7 @@ export default function useScrollCapture({
   );
 
   const startListening = useCallback(
-    (el) => {
+    (el: HTMLElement | null) => {
       // bail early if no element is available to attach to
       if (!el) return;
 
@@ -108,7 +105,7 @@ export default function useScrollCapture({
   );
 
   const stopListening = useCallback(
-    (el) => {
+    (el: HTMLElement | null) => {
       // bail early if no element is available to detach from
       if (!el) return;
 

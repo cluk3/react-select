@@ -1,0 +1,44 @@
+.react-select__input {
+  flex: 1 1 auto;
+  display: inline-grid;
+  grid-area: 1 / 1 / 2 / 3;
+  grid-template-columns: 0 min-content;
+  visibility: visible;
+
+  &::after {
+    content: attr(data-value) ' ';
+    visibility: hidden;
+    white-space: pre;
+    grid-area: 1 / 2;
+    font: inherit;
+    min-width: 2px;
+    border: 0;
+    margin: 0;
+    outline: 0;
+    padding: 0;
+  }
+
+  &[data-is-disabled='true'] {
+    visibility: hidden;
+  }
+}
+
+.react-select__input--styled {
+  margin: calc(var(--rs-base-unit) / 2);
+  padding-bottom: calc(var(--rs-base-unit) / 2);
+  padding-top: calc(var(--rs-base-unit) / 2);
+  color: var(--rs-neutral80);
+}
+
+.react-select__hidden-input {
+  color: inherit;
+  background: 0;
+  width: 100%;
+  grid-area: 1 / 2;
+  font: inherit;
+  min-width: 2px;
+  border: 0;
+  margin: 0;
+  outline: 0;
+  padding: 0;
+}

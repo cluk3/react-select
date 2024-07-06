@@ -5,7 +5,11 @@
   "license": "MIT",
   "scripts": {
     "build": "storybook build",
-    "dev": "storybook dev -p 6006"
+    "dev": "storybook dev -p 6006",
+    "format": "prettier --write . --ignore-unknown --cache",
+    "format:check": "prettier --check . --ignore-unknown --cache",
+    "lint": "eslint --fix . --ext .js,.jsx,.ts,.tsx --report-unused-disable-directives",
+    "lint:check": "eslint . --ext .js,.jsx,.ts,.tsx --report-unused-disable-directives"
   },
   "dependencies": {
     "@atlaskit/button": "^18.1.0",

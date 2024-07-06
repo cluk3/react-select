@@ -3,14 +3,10 @@ import type { ReactElement, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { TransitionGroup } from 'react-transition-group';
 import type { ValueContainerProps } from '../components/containers';
-import type { GroupBase } from '../types';
+import { useSelectContext } from '../SelectContext';
 
-export type ValueContainerComponent = <
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->(
-  props: ValueContainerProps<Option, IsMulti, Group>
+export type ValueContainerComponent = (
+  props: ValueContainerProps
 ) => ReactElement;
 
 interface IsMultiValueContainerProps extends ValueContainerProps {
@@ -20,14 +16,17 @@ interface IsMultiValueContainerProps extends ValueContainerProps {
 // make ValueContainer a transition group
 const AnimatedValueContainer =
   (WrappedComponent: ValueContainerComponent) =>
-  <Option, IsMulti extends boolean, Group extends GroupBase<Option>>(
-    props: ValueContainerProps<Option, IsMulti, Group>
-  ) =>
-    props.isMulti ? (
+  (props: ValueContainerProps) => {
+    const {
+      selectProps: { isMulti },
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+    } = useSelectContext();
+    return isMulti ? (
       <IsMultiValueContainer component={WrappedComponent} {...(props as any)} />
     ) : (
       <TransitionGroup component={WrappedComponent} {...(props as any)} />
     );
+  };
 
 const IsMultiValueContainer = ({
   component,
@@ -42,12 +41,11 @@ const useIsMultiValueContainer = ({
   children,
   ...props
 }: ValueContainerProps) => {
+  const { innerProps } = props;
   const {
-    isMulti,
     hasValue,
-    innerProps,
-    selectProps: { components, controlShouldRenderValue },
-  } = props;
+    selectProps: { isMulti, components, controlShouldRenderValue },
+  } = useSelectContext();
 
   const [cssDisplayFlex, setCssDisplayFlex] = useState(
     isMulti && controlShouldRenderValue && hasValue
@@ -73,6 +71,7 @@ const useIsMultiValueContainer = ({
     if (isMulti && React.isValidElement(child)) {
       // Add onExited callback to MultiValues
       if (child.type === components.MultiValue) {
+        // @ts-expect-error
         return React.cloneElement(child, { onExited });
       }
       // While container flexed, Input cursor is shown after Placeholder text,
