@@ -22,8 +22,13 @@ const LiveRegion = <
   props: LiveRegionProps
 ) => {
   const {
-    state: { ariaSelection, focusedOption, focusedValue, selectValue },
-    isFocused,
+    state: {
+      ariaSelection,
+      focusedOption,
+      focusedValue,
+      selectValue,
+      isFocused,
+    },
     isAppleDevice,
     getFocusableOptions,
   } = useSelectContext<Option, IsMulti, Group>();

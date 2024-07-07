@@ -70,7 +70,7 @@ export const MenuPortal = (props: MenuPortalProps) => {
     if (!controlElement) return;
 
     const rect = getBoundingClientObj(controlElement);
-    const scrollDistance = menuPosition === 'fixed' ? 0 : window.pageYOffset;
+    const scrollDistance = menuPosition === 'fixed' ? 0 : window.scrollY;
     const offset = rect[placement] + scrollDistance;
     if (
       offset !== computedPosition?.offset ||

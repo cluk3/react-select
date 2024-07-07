@@ -162,10 +162,10 @@ function OptionsList() {
     components: { Group, GroupHeading },
     selectProps: { formatGroupLabel },
   } = useSelectContext();
-  return getCategorizedOptions().map((item) => {
+  return getCategorizedOptions().map((item, i) => {
     if (item.type === 'group') {
       const { data, options, index: groupIndex } = item;
-      const groupId = `${getElementId('group')}-${groupIndex}`;
+      const groupId = `${getElementId('group')}-${groupIndex}-${i}`;
       const headingId = `${groupId}-heading`;
 
       return (
@@ -189,7 +189,9 @@ function OptionsList() {
         </Group>
       );
     } else if (item.type === 'option') {
-      return <InternalOption option={item} id={`${item.index}`} />;
+      return (
+        <InternalOption option={item} id={`${item.index}`} key={item.index} />
+      );
     }
   });
 }

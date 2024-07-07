@@ -13,10 +13,7 @@ import type {
   ComponentNames,
   ClassNamesConfigComponentProps,
 } from './types';
-import type {
-  SelectComponentsGeneric,
-  SelectComponentsProps,
-} from './components/index';
+import type { SelectComponentsGeneric } from './components/index';
 
 export interface SelectContextValue<
   Option,
@@ -34,7 +31,7 @@ export interface SelectContextValue<
     context: SelectContextValue<Option, IsMulti, Group> & {
       componentProps: ClassNamesConfigComponentProps<Option, Key>;
     }
-  ) => string | undefined;
+  ) => string;
   setValue: (
     newValue: OnChangeValue<Option, IsMulti>,
     action: SetValueAction,

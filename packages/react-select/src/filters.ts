@@ -45,6 +45,6 @@ export const createFilter =
       candidate = stripDiacritics(candidate);
     }
     return matchFrom === 'start'
-      ? candidate.substr(0, input.length) === input
+      ? candidate.startsWith(input)
       : candidate.indexOf(input) > -1;
   };

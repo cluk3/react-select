@@ -623,30 +623,6 @@ export default class Select<
 
   cx = (...args: any) => classNames(this.props.classNamePrefix, ...args);
 
-  getCommonProps() {
-    const {
-      clearValue,
-      cx,
-      getClassNames,
-      getValue,
-      selectOption,
-      setValue,
-      props,
-    } = this;
-    const hasValue = this.hasValue();
-
-    return {
-      clearValue,
-      cx,
-      getClassNames,
-      getValue,
-      hasValue,
-      selectOption,
-      selectProps: props,
-      setValue,
-    };
-  }
-
   getOptionLabel = (data: Option): string => {
     return getOptionLabel(this.props, data);
   };
@@ -1368,28 +1344,42 @@ export default class Select<
       this.getComponents();
 
     const { className, id, classNamePrefix } = this.props;
-    const { isFocused } = this.state;
-    const commonProps = this.getCommonProps();
+    const {
+      clearValue,
+      cx,
+      getClassNames,
+      getValue,
+      selectOption,
+      setValue,
+      props,
+    } = this;
+    const hasValue = this.hasValue();
 
     return (
       <SelectContextProvider
-        // @ts-expect-error classNamePrefix is not expected to be undefined
-        // but it is actually not because of defaultProps
-        // it will be fixed when refactoring to functional component
         value={{
-          ...commonProps,
-          isFocused,
+          // @ts-expect-error classNamePrefix is not expected to be undefined
+          // but it is actually not because of defaultProps
+          // it will be fixed when refactoring to functional component
+          selectProps: props,
+          components: this.getComponents(),
+          state: this.state,
+          // @ts-expect-error
+          getClassNames,
+          clearValue,
+          cx,
+          getValue,
+          hasValue,
+          selectOption,
+          setValue,
           isOptionHoverBlocked: this.isOptionHoverBlocked,
           isAppleDevice: this.isAppleDevice,
           focusInput: this.focusInput.bind(this),
           blurInput: this.blurInput.bind(this),
-          components: this.getComponents(),
-          state: this.state,
           getFocusableOptions: this.getFocusableOptions.bind(this),
           getCategorizedOptions: this.getCategorizedOptions.bind(this),
           getElementId: this.getElementId.bind(this),
           onOptionHover: this.onOptionHover.bind(this),
-          selectOption: this.selectOption.bind(this),
           formatOptionLabel: this.formatOptionLabel.bind(this),
           setFocusedOptionRef: this.setFocusedOptionRef.bind(this),
           controlRef: this.controlRef,
