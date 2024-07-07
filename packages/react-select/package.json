@@ -19,15 +19,15 @@
     "lint:css": "stylelint --fix \"**/src/**/*.css\"",
     "lint:css:check": "stylelint \"**/src/**/*.css\"",
     "lint:check": "concurrently \"pnpm lint:ts:check\" \"pnpm lint:css:check\"",
-    "test": "npm run test:jest && npm run test:cypress",
-    "test:jest": "jest --coverage",
+    "test": "npm run test:jest --coverage && npm run test:cypress",
+    "test:jest": "jest",
     "test:cypress": "yarn test:cypress:chrome && yarn test:cypress:firefox",
     "test:cypress:chrome": "cypress run --browser chrome",
     "test:cypress:firefox": "cypress run --browser firefox",
     "test:cypress:watch": "node ./node_modules/.bin/cypress open",
     "type-check": "pnpm type-check:src && pnpm type-check:test",
     "type-check:src": "tsc -b ./tsconfig.json",
-    "type-check:test": "tsc --noEmit .src/__tests__/tsconfig.json"
+    "type-check:test": "tsc -b .src/__tests__/tsconfig.json"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.0.1",
@@ -45,6 +45,7 @@
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
+    "@types/jest": "^29.5.12",
     "@types/jest-in-case": "^1.0.6",
     "@vitejs/plugin-react": "^4.3.1",
     "babel-jest": "^29.7.0",
@@ -58,6 +59,7 @@
     "stylelint-config-standard": "^36.0.1",
     "stylelint-selector-bem-pattern": "^4.0.0",
     "stylelint-value-no-unknown-custom-properties": "^6.0.1",
+    "ts-jest": "^29.1.5",
     "typescript": "^5.5.2",
     "vite": "^5.3.2"
   },
@@ -130,15 +132,13 @@
     "./package.json": "./package.json"
   },
   "jest": {
+    "preset": "ts-jest",
     "modulePathIgnorePatterns": [
       "./node_modules"
     ],
     "testRegex": "src/*(/(__tests?__/)([^_].*/)*?[^_][^/]*?\\.(test|spec)?\\.(ts|js)x?)$",
     "setupFilesAfterEnv": [
       "./test-setup.ts"
-    ],
-    "snapshotSerializers": [
-      "@emotion/jest/serializer"
     ],
     "testEnvironment": "jsdom"
   }

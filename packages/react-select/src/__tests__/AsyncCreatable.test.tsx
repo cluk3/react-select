@@ -31,7 +31,7 @@ test('to show the create option in menu', async () => {
   let { container, rerender } = render(
     <AsyncCreatable className="react-select" classNamePrefix="react-select" />
   );
-  let input = container.querySelector('input.react-select__input');
+  let input = container.querySelector('input.react-select__hidden-input');
   rerender(
     <AsyncCreatable
       className="react-select"
@@ -59,7 +59,7 @@ test('to show loading and then create option in menu', async () => {
       loadOptions={loadOptionsSpy}
     />
   );
-  let input = container.querySelector('input.react-select__input');
+  let input = container.querySelector('input.react-select__hidden-input');
   await user.type(input!, 'a');
 
   // to show a loading message while loading options

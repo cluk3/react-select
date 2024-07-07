@@ -79,7 +79,7 @@ cases(
         {...props}
       />
     );
-    let input = container.querySelector('input.react-select__input');
+    let input = container.querySelector('input.react-select__hidden-input');
     await user.type(input!, 'a');
     expect(container.querySelectorAll('.react-select__option').length).toBe(
       expectloadOptionsLength
@@ -114,7 +114,7 @@ test('to not call loadOptions again for same value when cacheOptions is true', (
       cacheOptions
     />
   );
-  let input = container.querySelector('input.react-select__input');
+  let input = container.querySelector('input.react-select__hidden-input');
 
   fireEvent.input(input!, {
     target: {
@@ -152,7 +152,7 @@ test('to create new cache for each instance', async () => {
     />
   );
   await user.type(
-    containerOne.querySelector('input.react-select__input')!,
+    containerOne.querySelector('input.react-select__hidden-input')!,
     'a'
   );
 
@@ -167,7 +167,7 @@ test('to create new cache for each instance', async () => {
   );
 
   await user.type(
-    containerTwo.querySelector('input.react-select__input')!,
+    containerTwo.querySelector('input.react-select__hidden-input')!,
     'a'
   );
 
@@ -191,7 +191,7 @@ test('in case of callbacks display the most recently-requested loaded options (i
     />
   );
 
-  let input = container.querySelector('input.react-select__input');
+  let input = container.querySelector('input.react-select__hidden-input');
   fireEvent.input(input!, {
     target: {
       value: 'foo',
@@ -235,7 +235,7 @@ test.skip('in case of callbacks should handle an error by setting options to an 
       options={OPTIONS}
     />
   );
-  let input = container.querySelector('input.react-select__input');
+  let input = container.querySelector('input.react-select__hidden-input');
   fireEvent.input(input!, {
     target: {
       value: 'foo',

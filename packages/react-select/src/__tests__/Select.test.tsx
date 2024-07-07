@@ -18,12 +18,10 @@ import {
 import Select from '../Select';
 import type { FilterOptionOption } from '../filters';
 
-import { matchers } from '@emotion/jest';
 import type { AriaLiveMessages } from '../accessibility';
 import { noop } from '../utils';
 import type { GroupBase, FormatOptionLabelMeta } from '../types';
-
-expect.extend(matchers);
+import { useSelectContext } from '../SelectContext';
 
 interface BasicProps {
   readonly className: string;
@@ -51,18 +49,36 @@ const BASIC_PROPS: BasicProps = {
   value: null,
 };
 
-test('snapshot - defaults', () => {
-  const { container } = render(
-    <Select
-      onChange={noop}
-      onInputChange={noop}
-      onMenuOpen={noop}
-      onMenuClose={noop}
-      inputValue=""
-      value={null}
-    />
-  );
-  expect(container).toMatchSnapshot();
+describe('snapshot', () => {
+  test('defaults', () => {
+    const { container } = render(
+      <Select
+        onChange={noop}
+        onInputChange={noop}
+        onMenuOpen={noop}
+        onMenuClose={noop}
+        inputValue=""
+        value={null}
+      />
+    );
+    expect(container).toMatchSnapshot();
+  });
+
+  test('with menu open', () => {
+    const { container } = render(
+      <Select
+        onChange={noop}
+        onInputChange={noop}
+        onMenuOpen={noop}
+        onMenuClose={noop}
+        inputValue=""
+        value={null}
+        options={OPTIONS}
+        menuIsOpen
+      />
+    );
+    expect(container).toMatchSnapshot();
+  });
 });
 
 test('instanceId prop > to have instanceId as id prefix for the select components', () => {
@@ -119,7 +135,7 @@ test('isRtl boolean prop sets direction: rtl on container', () => {
   let { container } = render(
     <Select {...BASIC_PROPS} value={[OPTIONS[0]]} isRtl isClearable />
   );
-  expect(container.firstChild).toHaveStyleRule('direction', 'rtl');
+  expect(container.firstChild).toHaveAttribute('data-is-rtl', 'true');
 });
 
 test('isOptionSelected() prop > single select > mark value as isSelected if isOptionSelected returns true for the option', () => {
@@ -131,11 +147,9 @@ test('isOptionSelected() prop > single select > mark value as isSelected if isOp
   let options = container.querySelectorAll('.react-select__option');
 
   // Option label 0 to be selected
-  expect(options[0].classList).toContain('react-select__option--is-selected');
+  expect(options[0]).toHaveAttribute('data-is-selected', 'true');
   // Option label 1 to be not selected
-  expect(options[1].classList).not.toContain(
-    'react-select__option--is-selected'
-  );
+  expect(options[1]).toHaveAttribute('data-is-selected', 'false');
 });
 
 test('isOptionSelected() prop > multi select > to not show the selected options in Menu for multiSelect', () => {
@@ -352,7 +366,7 @@ cases(
     let { getByText, rerender } = render(<Select {...props} />);
     rerender(<Select {...props} inputValue={searchString} />);
     expect(getByText('No options').className).toContain(
-      'menu-notice--no-options'
+      'react-select__no-options-message'
     );
   },
   {
@@ -383,7 +397,7 @@ cases(
     let { getByText, rerender } = render(<Select {...props} />);
     rerender(<Select {...props} inputValue={searchString} />);
     expect(getByText(expectNoOptionsMessage).className).toContain(
-      'menu-notice--no-options'
+      'react-select__no-options-message'
     );
   },
   {
@@ -426,7 +440,9 @@ cases(
       <Select<Option | OptionNumberValue, boolean>
         {...props}
         components={{
-          Control: ({ getValue }) => {
+          // @ts-expect-error
+          Control: () => {
+            const { getValue } = useSelectContext();
             value = getValue();
             return null;
           },
@@ -871,7 +887,8 @@ function focusOption(
     });
   }
   expect(
-    container.querySelector('.react-select__option--is-focused')!.textContent
+    container.querySelector('.react-select__option[data-is-focused="true"]')!
+      .textContent
   ).toEqual(option.label);
 }
 
@@ -941,7 +958,8 @@ cases(
       { button: 0 }
     );
     expect(
-      container.querySelector('.react-select__option--is-focused')!.textContent
+      container.querySelector('.react-select__option[data-is-focused="true"]')
+        ?.textContent
     ).toEqual(expectedToFocus.label);
   },
   {
@@ -966,7 +984,9 @@ test('clicking when focused does not open select when openMenuOnClick=false', as
   );
 
   // this will get updated on input click, though click on input is not bubbling up to control component
-  await user.click(container.querySelector('input.react-select__input')!);
+  await user.click(
+    container.querySelector('input.react-select__hidden-input')!
+  );
   expect(spy).not.toHaveBeenCalled();
 });
 
@@ -985,7 +1005,8 @@ cases(
     }
 
     expect(
-      container.querySelector('.react-select__option--is-focused')!.textContent
+      container.querySelector('.react-select__option[data-is-focused="true"]')!
+        .textContent
     ).toEqual(selectedOption.label);
 
     for (let event of keyEvent) {
@@ -993,7 +1014,8 @@ cases(
     }
 
     expect(
-      container.querySelector('.react-select__option--is-focused')!.textContent
+      container.querySelector('.react-select__option[data-is-focused="true"]')!
+        .textContent
     ).toEqual(nextFocusOption.label);
   },
   {
@@ -1431,55 +1453,6 @@ cases<ClickingEnterOpts>(
   }
 );
 
-// QUESTION: Is this test right? I tried right clicking on the dropdown indicator in a browser and the select opened but this test says it shouldn't?
-cases(
-  'clicking on select using secondary button on mouse',
-  ({ props = BASIC_PROPS }) => {
-    let onMenuOpenSpy = jest.fn();
-    let onMenuCloseSpy = jest.fn();
-    let { container, rerender } = render(
-      <Select
-        {...props}
-        onMenuClose={onMenuCloseSpy}
-        onMenuOpen={onMenuOpenSpy}
-      />
-    );
-    let downButton = container.querySelector(
-      'div.react-select__dropdown-indicator'
-    );
-
-    // does not open menu if menu is closed
-    fireEvent.mouseDown(downButton!, { button: 1 });
-    expect(onMenuOpenSpy).not.toHaveBeenCalled();
-
-    // does not close menu if menu is opened
-    rerender(
-      <Select
-        {...props}
-        menuIsOpen
-        onMenuClose={onMenuCloseSpy}
-        onMenuOpen={onMenuOpenSpy}
-      />
-    );
-    fireEvent.mouseDown(downButton!, { button: 1 });
-    expect(onMenuCloseSpy).not.toHaveBeenCalled();
-  },
-  {
-    'single select > secondary click is ignored > should not call onMenuOpen and onMenuClose prop':
-      {
-        skip: true,
-      },
-    'multi select > secondary click is ignored > should not call onMenuOpen and onMenuClose prop':
-      {
-        props: {
-          ...BASIC_PROPS,
-          isMulti: true,
-        },
-        skip: true,
-      },
-  }
-);
-
 interface RequiredOnInputOpts {
   readonly props?: BasicProps;
   readonly isMulti?: boolean;
@@ -1490,7 +1463,7 @@ cases<RequiredOnInputOpts>(
   ({ props = BASIC_PROPS }) => {
     let { container } = render(<Select {...props} onInputChange={jest.fn()} />);
     let input = container.querySelector<HTMLInputElement>(
-      'input.react-select__input'
+      'input.react-select__hidden-input'
     );
     expect(input!.required).toBe(false);
   },
@@ -1610,7 +1583,7 @@ cases(
     const enabledOptionsValues = [
       ...container.querySelectorAll('.react-select__option'),
     ]
-      .filter((n) => !n.classList.contains('react-select__option--is-disabled'))
+      .filter((n) => n.getAttribute('data-is-disabled') !== 'true')
       .map((option) => option.textContent);
 
     enabledOptionsValues.forEach((option) => {
@@ -1620,7 +1593,7 @@ cases(
     const disabledOptionsValues = [
       ...container.querySelectorAll('.react-select__option'),
     ]
-      .filter((n) => n.classList.contains('react-select__option--is-disabled'))
+      .filter((n) => n.getAttribute('data-is-disabled') === 'true')
       .map((option) => option.textContent);
 
     disabledOptionsValues.forEach((option) => {
@@ -1660,9 +1633,7 @@ cases(
     let { container } = render(<Select {...props} />);
 
     let control = container.querySelector('.react-select__control');
-    expect(
-      control!.classList.contains('react-select__control--is-disabled')
-    ).toBeTruthy();
+    expect(control).toHaveAttribute('data-is-disabled', 'true');
 
     let input = container.querySelector<HTMLInputElement>(
       '.react-select__control input'
@@ -1943,7 +1914,7 @@ test('multi select > clicking on X next to option will call onChange with all op
     ...container.querySelectorAll('.react-select__multi-value'),
   ].find((multiValue) => multiValue.textContent === '4');
   await user.click(
-    selectValueElement!.querySelector('div.react-select__multi-value__remove')!
+    selectValueElement!.querySelector('div.react-select__multi-value-remove')!
   );
 
   expect(onChangeSpy).toHaveBeenCalledWith(
@@ -1975,7 +1946,7 @@ cases(
     // aria-activedescendant should be set if menu is open initially and selected options are not hidden
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
     ).toBe('react-select-1000-option-2');
 
@@ -1987,7 +1958,7 @@ cases(
 
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
     ).toBe('react-select-1000-option-3');
 
@@ -1998,7 +1969,7 @@ cases(
 
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
     ).toBe('react-select-1000-option-2');
 
@@ -2009,7 +1980,7 @@ cases(
 
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
     ).toBe('react-select-1000-option-0');
 
@@ -2020,7 +1991,7 @@ cases(
 
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
     ).toBe('react-select-1000-option-16');
 
@@ -2028,7 +1999,7 @@ cases(
 
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
     ).toBe('');
 
@@ -2043,7 +2014,7 @@ cases(
 
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
     ).toBe('react-select-1000-option-4');
 
@@ -2051,7 +2022,7 @@ cases(
 
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
     ).toBe('react-select-1000-option-14');
 
@@ -2059,7 +2030,7 @@ cases(
 
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
     ).toBe('');
   },
@@ -2097,7 +2068,7 @@ cases(
     // aria-activedescendant should be set if menu is open initially and selected options are not hidden
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
     ).toBe('react-select-1000-option-0-2');
 
@@ -2109,7 +2080,7 @@ cases(
 
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
     ).toBe('react-select-1000-option-0-3');
 
@@ -2120,7 +2091,7 @@ cases(
 
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
     ).toBe('react-select-1000-option-0-2');
 
@@ -2131,7 +2102,7 @@ cases(
 
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
     ).toBe('react-select-1000-option-0-0');
 
@@ -2142,7 +2113,7 @@ cases(
 
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
     ).toBe('react-select-1000-option-1-1');
 
@@ -2150,7 +2121,7 @@ cases(
 
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
     ).toBe('');
 
@@ -2165,7 +2136,7 @@ cases(
 
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
     ).toBe('react-select-1000-option-0-1');
 
@@ -2173,7 +2144,7 @@ cases(
 
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
     ).toBe('react-select-1000-option-0-10');
 
@@ -2181,7 +2152,7 @@ cases(
 
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
     ).toBe('');
   },
@@ -2211,7 +2182,7 @@ test('accessibility > aria-activedescendant should not exist if hideSelectedOpti
 
   expect(
     container
-      .querySelector('input.react-select__input')!
+      .querySelector('input.react-select__hidden-input')!
       .getAttribute('aria-activedescendant')
   ).toBe('');
 });
@@ -2222,7 +2193,7 @@ cases(
     let { container } = render(<Select {...props} />);
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-labelledby')
     ).toBe('testing');
   },
@@ -2244,7 +2215,7 @@ cases(
     let { container } = render(<Select {...props} />);
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-errormessage')
     ).toBe('error-message');
   },
@@ -2266,7 +2237,7 @@ cases(
     let { container } = render(<Select {...props} />);
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-invalid')
     ).toBe('true');
   },
@@ -2288,7 +2259,7 @@ cases(
     let { container } = render(<Select {...props} />);
     expect(
       container
-        .querySelector('input.react-select__input')!
+        .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-label')
     ).toBe('testing');
   },
@@ -2314,7 +2285,7 @@ test('accessibility > to show the number of options available in A11yText when t
   };
 
   const liveRegionResultsId = '#aria-results';
-  fireEvent.focus(container.querySelector('input.react-select__input')!);
+  fireEvent.focus(container.querySelector('input.react-select__hidden-input')!);
 
   expect(container.querySelector(liveRegionResultsId)!.textContent).toMatch(
     /17 results available/
@@ -2346,7 +2317,7 @@ test('accessibility > interacting with disabled options shows correct A11yText',
     />
   );
   const liveRegionEventId = '#aria-selection';
-  fireEvent.focus(container.querySelector('input.react-select__input')!);
+  fireEvent.focus(container.querySelector('input.react-select__hidden-input')!);
 
   // navigate to disabled option
   let menu = container.querySelector('.react-select__menu');
@@ -2383,7 +2354,7 @@ test('accessibility > interacting with multi values options shows correct A11yTe
   const liveRegionFocusedId = '#aria-focused';
   let input = container.querySelector('.react-select__value-container input')!;
 
-  fireEvent.focus(container.querySelector('input.react-select__input')!);
+  fireEvent.focus(container.querySelector('input.react-select__hidden-input')!);
 
   expect(container.querySelector(liveRegionGuidanceId)!.textContent).toMatch(
     'Select is focused ,type to refine list, press Down to open the menu,  press left to focus selected values'
@@ -2438,7 +2409,7 @@ test('accessibility > screenReaderStatus function prop > to pass custom text to 
     );
   };
 
-  fireEvent.focus(container.querySelector('input.react-select__input')!);
+  fireEvent.focus(container.querySelector('input.react-select__hidden-input')!);
 
   expect(container.querySelector(liveRegionResultsId)!.textContent).toMatch(
     'There are 17 options available'
@@ -2488,7 +2459,7 @@ test('accessibility > A11yTexts can be provided through ariaLiveMessages prop', 
 
   expect(container.querySelector(liveRegionEventId)!).toBeNull();
 
-  fireEvent.focus(container.querySelector('input.react-select__input')!);
+  fireEvent.focus(container.querySelector('input.react-select__hidden-input')!);
 
   let menu = container.querySelector('.react-select__menu')!;
   fireEvent.keyDown(menu, { keyCode: 40, key: 'ArrowDown' });
@@ -2512,7 +2483,7 @@ test('accessibility > announces already selected values when focused', () => {
   // the live region should not be mounted yet
   expect(container.querySelector(liveRegionSelectionId)!).toBeNull();
 
-  fireEvent.focus(container.querySelector('input.react-select__input')!);
+  fireEvent.focus(container.querySelector('input.react-select__hidden-input')!);
 
   expect(container.querySelector(liveRegionContextId)!.textContent).toMatch(
     'Select is focused ,type to refine list, press Down to open the menu, '
@@ -2530,7 +2501,7 @@ test('accessibility > announces cleared values', () => {
   /**
    * announce deselected value
    */
-  fireEvent.focus(container.querySelector('input.react-select__input')!);
+  fireEvent.focus(container.querySelector('input.react-select__hidden-input')!);
   fireEvent.mouseDown(
     container.querySelector('.react-select__clear-indicator')!
   );
@@ -2560,7 +2531,7 @@ cases(
   'autoFocus',
   ({ props = { ...BASIC_PROPS, autoFocus: true } }) => {
     let { container } = render(<Select {...props} />);
-    expect(container.querySelector('input.react-select__input')).toBe(
+    expect(container.querySelector('input.react-select__hidden-input')).toBe(
       document.activeElement
     );
   },
@@ -2581,7 +2552,7 @@ cases(
   ({ props = { ...BASIC_PROPS, autoFocus: true } }) => {
     let onFocusSpy = jest.fn();
     let { container } = render(<Select {...props} onFocus={onFocusSpy} />);
-    expect(container.querySelector('input.react-select__input')).toBe(
+    expect(container.querySelector('input.react-select__hidden-input')).toBe(
       document.activeElement
     );
     expect(onFocusSpy).toHaveBeenCalledTimes(1);
@@ -2610,7 +2581,9 @@ cases(
   ({ props = { ...BASIC_PROPS } }) => {
     let onFocusSpy = jest.fn();
     let { container } = render(<Select {...props} onFocus={onFocusSpy} />);
-    fireEvent.focus(container.querySelector('input.react-select__input')!);
+    fireEvent.focus(
+      container.querySelector('input.react-select__hidden-input')!
+    );
     expect(onFocusSpy).toHaveBeenCalledTimes(1);
   },
   {
@@ -2636,7 +2609,9 @@ cases(
         onMenuClose={jest.fn()}
       />
     );
-    fireEvent.blur(container.querySelector('input.react-select__input')!);
+    fireEvent.blur(
+      container.querySelector('input.react-select__hidden-input')!
+    );
     expect(onBlurSpy).toHaveBeenCalledTimes(1);
   },
   {
@@ -2660,7 +2635,7 @@ test('onInputChange() function prop to be called on blur', () => {
       onMenuClose={jest.fn()}
     />
   );
-  fireEvent.blur(container.querySelector('input.react-select__input')!);
+  fireEvent.blur(container.querySelector('input.react-select__hidden-input')!);
   // Once by blur and other time by menu-close
   expect(onInputChangeSpy).toHaveBeenCalledTimes(2);
 });
@@ -2675,7 +2650,7 @@ test('onMenuClose() function prop to be called on blur', () => {
       onMenuClose={onMenuCloseSpy}
     />
   );
-  fireEvent.blur(container.querySelector('input.react-select__input')!);
+  fireEvent.blur(container.querySelector('input.react-select__hidden-input')!);
   expect(onMenuCloseSpy).toHaveBeenCalledTimes(1);
 });
 
@@ -2770,9 +2745,6 @@ test('sets inputMode="none" when isSearchable is false', () => {
     '.react-select__value-container input'
   );
   expect(input!.inputMode).toBe('none');
-  expect(
-    window.getComputedStyle(input!).getPropertyValue('caret-color')
-  ).toEqual('transparent');
 });
 
 cases(
@@ -2880,7 +2852,7 @@ test('render custom Input Component', () => {
   );
 
   expect(
-    container.querySelector('input.react-select__input')
+    container.querySelector('input.react-select__hidden-input')
   ).not.toBeInTheDocument();
   expect(container.querySelector('.my-input-component')).toBeInTheDocument();
 });
@@ -3220,7 +3192,8 @@ test('hitting ArrowUp key on closed select should focus last element', () => {
   });
 
   expect(
-    container.querySelector('.react-select__option--is-focused')!.textContent
+    container.querySelector('.react-select__option[data-is-focused="true"]')!
+      .textContent
   ).toEqual('16');
 });
 
@@ -3322,33 +3295,6 @@ test('hitting spacebar should not select option if isSearchable is true (default
   // Open Menu
   fireEvent.keyDown(container, { keyCode: 32, key: ' ' });
   expect(onChangeSpy).not.toHaveBeenCalled();
-});
-
-test('renders with custom theme', () => {
-  const primary = 'rgb(255, 164, 83)';
-  const { container } = render(
-    <Select
-      {...BASIC_PROPS}
-      value={OPTIONS[0]}
-      menuIsOpen
-      theme={(theme) => ({
-        ...theme,
-        borderRadius: 180,
-        colors: {
-          ...theme.colors,
-          primary,
-        },
-      })}
-    />
-  );
-  const menu = container.querySelector('.react-select__menu');
-  expect(
-    window.getComputedStyle(menu!).getPropertyValue('border-radius')
-  ).toEqual('180px');
-  const firstOption = container.querySelector('.react-select__option');
-  expect(
-    window.getComputedStyle(firstOption!).getPropertyValue('background-color')
-  ).toEqual(primary);
 });
 
 cases(

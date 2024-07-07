@@ -46,6 +46,7 @@ cases<Opts>(
     props = { ...BASIC_PROPS, ...props };
     const { container, rerender } = render(<Creatable menuIsOpen {...props} />);
     rerender(<Creatable inputValue="one" menuIsOpen {...props} />);
+
     expect(
       container.querySelector('.react-select__menu')!.textContent
     ).not.toEqual(expect.stringContaining('create'));
@@ -80,8 +81,7 @@ cases<Opts>(
     );
 
     expect(
-      container.querySelector('.react-select__menu-notice--no-options')!
-        .textContent
+      container.querySelector('.react-select__no-options-message')!.textContent
     ).toEqual(expect.stringContaining('No options'));
   },
   {
@@ -144,7 +144,7 @@ cases<Opts>(
     );
 
     expect(
-      container.querySelector('.react-select__menu-notice--no-options')
+      container.querySelector('.react-select__no-options-message')
     ).toBeFalsy();
 
     rerender(
@@ -160,7 +160,7 @@ cases<Opts>(
     ).not.toEqual('Create "invalid new Option"');
 
     expect(
-      container.querySelector('.react-select__menu-notice--no-options')
+      container.querySelector('.react-select__no-options-message')
     ).toBeTruthy();
   },
   {
