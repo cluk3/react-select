@@ -1,9 +1,11 @@
-import type { SelectProps } from './types';
+import type { DefaultSelectProps as SelectProps } from './types';
 import type { Options, GroupBase } from './types';
 import type { CategorizedOption, CategorizedGroupOrOption } from './types';
 import type { FocusableOptionWithId, State } from './types';
-import { notNullish } from './utils';
+import { notNullish, useOnMountEffect, isDocumentElement } from './utils';
 import type { FilterOptionOption } from './filters';
+import { useCallback, useRef } from 'react';
+
 export function toCategorizedOption<
   Option,
   IsMulti extends boolean,
@@ -14,7 +16,7 @@ export function toCategorizedOption<
   selectValue: Options<Option>,
   index: number
 ): CategorizedOption<Option> {
-  const isDisabled = isOptionDisabled(props, option, selectValue);
+  const isDisabled = props.isOptionDisabled(option, selectValue);
   const isSelected = isOptionSelected(props, option, selectValue);
   const label = props.getOptionLabel(option);
   const value = props.getOptionValue(option);
@@ -129,6 +131,22 @@ export function buildFocusableOptions<
   );
 }
 
+export const shouldHideSelectedOptions = <
+  Option,
+  IsMulti extends boolean,
+  Group extends GroupBase<Option>,
+>(
+  hideSelectedOptions: SelectProps<
+    Option,
+    IsMulti,
+    Group
+  >['hideSelectedOptions'],
+  isMulti: SelectProps<Option, IsMulti, Group>['isMulti']
+) => {
+  if (hideSelectedOptions === undefined) return isMulti;
+  return hideSelectedOptions;
+};
+
 export function isFocusable<
   Option,
   IsMulti extends boolean,
@@ -137,21 +155,20 @@ export function isFocusable<
   props: SelectProps<Option, IsMulti, Group>,
   categorizedOption: CategorizedOption<Option>
 ) {
-  const { inputValue = '' } = props;
+  const { inputValue = '', hideSelectedOptions, isMulti } = props;
   const { data, isSelected, label, value } = categorizedOption;
 
   return (
-    (!shouldHideSelectedOptions(props) || !isSelected) &&
+    (!shouldHideSelectedOptions(hideSelectedOptions, isMulti) || !isSelected) &&
     filterOption(props, { label, value, data }, inputValue)
   );
 }
 
-export function getNextFocusedValue<
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->(state: State<Option, IsMulti, Group>, nextSelectValue: Options<Option>) {
-  const { focusedValue, selectValue: lastSelectValue } = state;
+export function getNextFocusedValue<Option, IsMulti extends boolean>(
+  focusedValue: State<Option, IsMulti>['focusedValue'],
+  lastSelectValue: Options<Option>,
+  nextSelectValue: Options<Option>
+) {
   const lastFocusedIndex = lastSelectValue.indexOf(focusedValue!);
   if (lastFocusedIndex > -1) {
     const nextFocusedIndex = nextSelectValue.indexOf(focusedValue!);
@@ -167,12 +184,10 @@ export function getNextFocusedValue<
   return null;
 }
 
-export function getNextFocusedOption<
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->(state: State<Option, IsMulti, Group>, options: Options<Option>) {
-  const { focusedOption: lastFocusedOption } = state;
+export function getNextFocusedOption<Option, IsMulti extends boolean>(
+  lastFocusedOption: State<Option, IsMulti>['focusedOption'],
+  options: Options<Option>
+) {
   return lastFocusedOption && options.indexOf(lastFocusedOption) > -1
     ? lastFocusedOption
     : options[0];
@@ -198,20 +213,6 @@ export const getOptionLabel = <
 ): string => {
   return props.getOptionLabel(data);
 };
-
-export function isOptionDisabled<
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->(
-  props: SelectProps<Option, IsMulti, Group>,
-  option: Option,
-  selectValue: Options<Option>
-): boolean {
-  return typeof props.isOptionDisabled === 'function'
-    ? props.isOptionDisabled(option, selectValue)
-    : false;
-}
 
 export function isOptionSelected<
   Option,
@@ -242,14 +243,141 @@ export function filterOption<
   return props.filterOption ? props.filterOption(option, inputValue) : true;
 }
 
-export const shouldHideSelectedOptions = <
-  Option,
+export function useEventListeners<
+  Option extends unknown,
   IsMulti extends boolean,
   Group extends GroupBase<Option>,
 >(
-  props: SelectProps<Option, IsMulti, Group>
-) => {
-  const { hideSelectedOptions, isMulti } = props;
-  if (hideSelectedOptions === undefined) return isMulti;
-  return hideSelectedOptions;
-};
+  props: SelectProps<Option, IsMulti, Group>,
+  blurInput: () => void,
+  onMenuClose: () => void,
+  controlRef: React.MutableRefObject<HTMLDivElement | null>,
+  menuListRef: React.MutableRefObject<HTMLDivElement | null>
+) {
+  const isComposing = useRef(false);
+  const initialTouchX = useRef(0);
+  const initialTouchY = useRef(0);
+  const userIsDragging = useRef<boolean | undefined>(undefined);
+
+  const onCompositionStart = useCallback(() => {
+    isComposing.current = true;
+  }, []);
+
+  const onCompositionEnd = useCallback(() => {
+    isComposing.current = false;
+  }, []);
+
+  const onTouchStart = useCallback(({ touches }: TouchEvent) => {
+    const touch = touches && touches.item(0);
+    if (!touch) {
+      return;
+    }
+
+    initialTouchX.current = touch.clientX;
+    initialTouchY.current = touch.clientY;
+    userIsDragging.current = false;
+  }, []);
+
+  const onTouchMove = useCallback(({ touches }: TouchEvent) => {
+    const touch = touches && touches.item(0);
+    if (!touch) {
+      return;
+    }
+
+    const deltaX = Math.abs(touch.clientX - initialTouchX.current);
+    const deltaY = Math.abs(touch.clientY - initialTouchY.current);
+    const moveThreshold = 5;
+
+    userIsDragging.current = deltaX > moveThreshold || deltaY > moveThreshold;
+  }, []);
+
+  const onTouchEnd = useCallback(
+    (event: TouchEvent) => {
+      if (userIsDragging.current) return;
+
+      if (
+        controlRef.current &&
+        !controlRef.current.contains(event.target as Node) &&
+        menuListRef.current &&
+        !menuListRef.current.contains(event.target as Node)
+      ) {
+        blurInput();
+      }
+
+      initialTouchX.current = 0;
+      initialTouchY.current = 0;
+    },
+    [blurInput, controlRef, menuListRef]
+  );
+
+  const onScroll = useCallback(
+    (event: Event) => {
+      if (typeof props.closeMenuOnScroll === 'boolean') {
+        if (
+          event.target instanceof HTMLElement &&
+          isDocumentElement(event.target)
+        ) {
+          onMenuClose();
+        }
+      } else if (typeof props.closeMenuOnScroll === 'function') {
+        if (props.closeMenuOnScroll(event)) {
+          onMenuClose();
+        }
+      }
+    },
+    [onMenuClose, props]
+  );
+
+  useOnMountEffect(() => {
+    const startListeningComposition = () => {
+      if (document && document.addEventListener) {
+        document.addEventListener(
+          'compositionstart',
+          onCompositionStart,
+          false
+        );
+        document.addEventListener('compositionend', onCompositionEnd, false);
+      }
+    };
+
+    const stopListeningComposition = () => {
+      if (document && document.removeEventListener) {
+        document.removeEventListener('compositionstart', onCompositionStart);
+        document.removeEventListener('compositionend', onCompositionEnd);
+      }
+    };
+
+    const startListeningToTouch = () => {
+      if (document && document.addEventListener) {
+        document.addEventListener('touchstart', onTouchStart, false);
+        document.addEventListener('touchmove', onTouchMove, false);
+        document.addEventListener('touchend', onTouchEnd, false);
+      }
+    };
+
+    const stopListeningToTouch = () => {
+      if (document && document.removeEventListener) {
+        document.removeEventListener('touchstart', onTouchStart);
+        document.removeEventListener('touchmove', onTouchMove);
+        document.removeEventListener('touchend', onTouchEnd);
+      }
+    };
+    startListeningComposition();
+    startListeningToTouch();
+
+    if (props.closeMenuOnScroll && document && document.addEventListener) {
+      document.addEventListener('scroll', onScroll, true);
+    }
+
+    return () => {
+      stopListeningComposition();
+      stopListeningToTouch();
+      document.removeEventListener('scroll', onScroll, true);
+    };
+  });
+
+  return {
+    isComposing,
+    userIsDragging,
+  };
+}

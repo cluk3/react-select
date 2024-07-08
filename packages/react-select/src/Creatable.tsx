@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
-import type { MutableRefObject, ReactElement, RefAttributes } from 'react';
-import Select from './Select';
+import type { ReactElement } from 'react';
+import Select, { type SelectRef } from './Select';
 import type { GroupBase } from './types';
 import useStateManager, { type StateManagerProps } from './useStateManager';
 import useCreatable, { type CreatableAdditionalProps } from './useCreatable';
@@ -18,17 +18,13 @@ type CreatableSelect = <
   IsMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>,
 >(
-  props: CreatableProps<Option, IsMulti, Group> &
-    RefAttributes<Select<Option, IsMulti, Group>>
+  props: CreatableProps<Option, IsMulti, Group> & { ref?: SelectRef }
 ) => ReactElement;
 
 const CreatableSelect = forwardRef(
   <Option, IsMulti extends boolean, Group extends GroupBase<Option>>(
     props: CreatableProps<Option, IsMulti, Group>,
-    ref:
-      | ((instance: Select<Option, IsMulti, Group> | null) => void)
-      | MutableRefObject<Select<Option, IsMulti, Group> | null>
-      | null
+    ref: SelectRef
   ) => {
     const creatableProps = useStateManager(props);
     const selectProps = useCreatable(creatableProps);

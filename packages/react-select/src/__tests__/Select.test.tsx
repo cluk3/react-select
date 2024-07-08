@@ -3124,7 +3124,9 @@ test('multi select > with multi character delimiter', () => {
 test('hitting spacebar should select option if isSearchable is false', () => {
   let onChangeSpy = jest.fn();
   let props = { ...BASIC_PROPS, onChange: onChangeSpy };
-  let { container } = render(<Select {...props} isSearchable menuIsOpen />);
+  let { container } = render(
+    <Select {...props} isSearchable={false} menuIsOpen />
+  );
   // focus the first option
   fireEvent.keyDown(container.querySelector('.react-select__menu')!, {
     keyCode: 40,

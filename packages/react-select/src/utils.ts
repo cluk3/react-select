@@ -11,6 +11,7 @@ import type {
 } from './types';
 import { useSelectContext } from './SelectContext';
 import type { SelectComponentsProps } from './components';
+import { type EffectCallback, useEffect } from 'react';
 
 export const noop = () => {};
 export const emptyString = () => '';
@@ -282,16 +283,7 @@ export function multiValueAsValue<Option, IsMulti extends boolean>(
   return multiValue as OnChangeValue<Option, IsMulti>;
 }
 
-export const removeProps = <Props extends object, K extends string[]>(
-  propsObj: Props,
-  ...properties: K
-): Omit<Props, K[number]> => {
-  let propsMap = Object.entries(propsObj).filter(
-    ([key]) => !properties.includes(key)
-  );
-
-  return propsMap.reduce((newProps: { [key: string]: any }, [key, val]) => {
-    newProps[key] = val;
-    return newProps;
-  }, {}) as Omit<Props, K[number]>;
-};
+export function useOnMountEffect(effect: EffectCallback) {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(effect, []);
+}

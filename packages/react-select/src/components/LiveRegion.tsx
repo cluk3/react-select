@@ -22,20 +22,6 @@ const LiveRegion = <
   props: LiveRegionProps
 ) => {
   const {
-    state: {
-      ariaSelection,
-      focusedOption,
-      focusedValue,
-      selectValue,
-      isFocused,
-    },
-    isAppleDevice,
-    getFocusableOptions,
-  } = useSelectContext<Option, IsMulti, Group>();
-
-  const focusableOptions = getFocusableOptions();
-
-  const {
     selectProps: {
       ariaLiveMessages,
       getOptionLabel,
@@ -51,7 +37,18 @@ const LiveRegion = <
       'aria-label': ariaLabel,
       'aria-live': ariaLive,
     },
-  } = useSelectContext();
+    state: {
+      ariaSelection,
+      focusedOption,
+      focusedValue,
+      selectValue,
+      isFocused,
+    },
+    isAppleDevice,
+    getFocusableOptions,
+  } = useSelectContext<Option, IsMulti, Group>();
+
+  const focusableOptions = getFocusableOptions();
 
   // Update aria live message configuration when prop changes
   const messages = useMemo(

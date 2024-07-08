@@ -43,16 +43,19 @@ export interface CreatableAdditionalProps<
    * the current input value, select value and options array.
    */
   isValidNewOption?: (
-    inputValue: string,
+    inputValue: string | undefined,
     value: Options<Option>,
     options: OptionsOrGroups<Option, Group>,
     accessors: Accessors<Option>
-  ) => boolean;
+  ) => inputValue is string;
   /**
    * Returns the data for the new option when it is created. Used to display the
    * value, and is passed to `onChange`.
    */
-  getNewOptionData?: (inputValue: string, optionLabel: ReactNode) => Option;
+  getNewOptionData?: (
+    inputValue: string | undefined,
+    optionLabel: ReactNode
+  ) => Option;
   /**
    * If provided, this will be called with the input value when a new option is
    * created, and `onChange` will **not** be called. Use this when you need more
@@ -82,21 +85,22 @@ const compareOption = <Option>(
 const builtins = {
   formatCreateLabel: (inputValue: string) => `Create "${inputValue}"`,
   isValidNewOption: <Option, Group extends GroupBase<Option>>(
-    inputValue: string,
+    inputValue: string | undefined,
     selectValue: Options<Option>,
     selectOptions: OptionsOrGroups<Option, Group>,
     accessors: Accessors<Option>
-  ) =>
-    !(
-      !inputValue ||
-      selectValue.some((option) =>
-        compareOption(inputValue, option, accessors)
-      ) ||
-      selectOptions.some((option) =>
-        compareOption(inputValue, option as Option, accessors)
-      )
+  ): inputValue is string =>
+    !!inputValue &&
+    !selectValue.some((option) =>
+      compareOption(inputValue, option, accessors)
+    ) &&
+    !selectOptions.some((option) =>
+      compareOption(inputValue, option as Option, accessors)
     ),
-  getNewOptionData: (inputValue: string, optionLabel: ReactNode) => ({
+  getNewOptionData: (
+    inputValue: string | undefined,
+    optionLabel: ReactNode
+  ) => ({
     label: optionLabel,
     value: inputValue,
     __isNew__: true,
@@ -180,7 +184,7 @@ export default function useCreatable<
       const valueArray = Array.isArray(newValue) ? newValue : [newValue];
 
       if (valueArray[valueArray.length - 1] === newOption) {
-        if (onCreateOption) onCreateOption(inputValue);
+        if (onCreateOption) onCreateOption(inputValue!);
         else {
           const newOptionData = getNewOptionData(inputValue, inputValue);
           const newActionMeta: ActionMeta<Option> = {

@@ -1,29 +1,42 @@
-import * as React from 'react';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+  useId,
+  useImperativeHandle,
+  forwardRef,
+} from 'react';
 import type {
   FocusEventHandler,
   FormEventHandler,
   KeyboardEventHandler,
   MouseEventHandler,
   ReactNode,
-  RefCallback,
   TouchEventHandler,
+  ReactElement,
 } from 'react';
 import LiveRegion from './components/LiveRegion';
 
-import { createFilter, type FilterOptionOption } from './filters';
-import { DummyInput } from './internal/index';
-import { isAppleDevice } from './accessibility/helpers';
+import { createFilter } from './filters';
+import {
+  InternalInput,
+  PlaceholderOrValue,
+  FormField,
+  InternalClearIndicator,
+  InternalLoadingIndicator,
+  InternalDropdownIndicator,
+  InternalIndicatorSeparator,
+} from './internal/index';
+import { isAppleDevice as detectAppleDevice } from './accessibility/helpers';
 import {
   type SelectContextValue,
   SelectContextProvider,
 } from './SelectContext';
 
 import {
-  filterOption,
-  getOptionLabel,
-  isOptionDisabled,
   isOptionSelected,
-  shouldHideSelectedOptions,
   buildCategorizedOptions,
   buildFocusableOptions,
   buildFocusableOptionsFromCategorizedOptions,
@@ -31,6 +44,7 @@ import {
   getFocusedOptionId,
   getNextFocusedOption,
   getNextFocusedValue,
+  useEventListeners,
 } from './select-utils';
 
 import {
@@ -38,13 +52,12 @@ import {
   cleanValue,
   isTouchCapable,
   isMobileDevice,
-  noop,
   scrollIntoView,
-  isDocumentElement,
   valueTernary,
   multiValueAsValue,
   singleValueAsValue,
   prependCn,
+  useOnMountEffect,
 } from './utils';
 
 import {
@@ -62,16 +75,15 @@ import type {
   GroupBase,
   InputActionMeta,
   OnChangeValue,
-  Options,
   SetValueAction,
   State,
   FocusableOptionWithId,
   SelectProps as Props,
+  DefaultSelectProps,
   FormatOptionLabelContext,
   ComponentNames,
   ClassNamesConfigComponentProps,
 } from './types';
-import FormField from './internal/FormField';
 import { InternalMenu } from './components/Menu';
 
 export const defaultProps = {
@@ -89,12 +101,13 @@ export const defaultProps = {
   formatGroupLabel: formatGroupLabelBuiltin,
   getOptionLabel: getOptionLabelBuiltin,
   getOptionValue: getOptionValueBuiltin,
+  inputValue: '',
   isDisabled: false,
   isLoading: false,
   isMulti: false,
+  isOptionDisabled: isOptionDisabledBuiltin,
   isRtl: false,
   isSearchable: true,
-  isOptionDisabled: isOptionDisabledBuiltin,
   loadingMessage: () => 'Loading...',
   maxMenuHeight: 300,
   minMenuHeight: 140,
@@ -118,143 +131,876 @@ export const defaultProps = {
   classNamePrefix: 'react-select',
 };
 
-let instanceId = 1;
+const isAppleDevice = detectAppleDevice();
 
-export default class Select<
+const Select = forwardRef(SelectInstance) as SelectType;
+
+export default Select;
+
+export type PublicBaseSelectProps<
+  Option,
+  IsMulti extends boolean,
+  Group extends GroupBase<Option>,
+> = JSX.LibraryManagedAttributes<typeof Select, Props<Option, IsMulti, Group>>;
+
+export type SelectRef = React.Ref<{
+  focus: () => void;
+  blur: () => void;
+}>;
+
+export type SelectType = <
   Option = unknown,
   IsMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>,
-> extends React.Component<
-  Props<Option, IsMulti, Group>,
-  State<Option, IsMulti, Group>
-> {
-  static defaultProps = defaultProps;
-  state: State<Option, IsMulti, Group> = {
-    ariaSelection: null,
-    focusedOption: null,
-    focusedOptionId: null,
-    focusableOptionsWithIds: [],
-    focusedValue: null,
-    inputIsHidden: false,
-    isFocused: false,
-    selectValue: [],
-    clearFocusValueOnUpdate: false,
-    prevWasFocused: false,
-    inputIsHiddenAfterUpdate: undefined,
-    prevProps: undefined,
-    instancePrefix: '',
-  };
+>(
+  props: Props<Option, IsMulti, Group> & { ref?: SelectRef }
+) => ReactElement;
 
-  // Misc. Instance Properties
-  // ------------------------------
+export type SelectInstance = typeof SelectInstance;
+function SelectInstance<
+  Option = unknown,
+  IsMulti extends boolean = false,
+  Group extends GroupBase<Option> = GroupBase<Option>,
+>(_props: Props<Option, IsMulti, Group>, selectRef: SelectRef) {
+  // defaultProps assigned to props
+  const props = useMemo(() => {
+    return {
+      ...defaultProps,
+      ..._props,
+    };
+  }, [_props]) as unknown as DefaultSelectProps<Option, IsMulti, Group>;
 
-  isOptionHoverBlocked = false;
-  isComposing = false;
-  initialTouchX = 0;
-  initialTouchY = 0;
-  openAfterFocus = false;
-  scrollToFocusedOptionOnUpdate = false;
-  userIsDragging?: boolean;
-  isAppleDevice = isAppleDevice();
+  const instanceId = useId();
+  // eslint-disable-next-line no-underscore-dangle
+  const _instancePrefix = `react-select-${props.instanceId || instanceId}`;
+  const [selectValue, setSelectValue] = useState(() => cleanValue(props.value));
 
-  // Refs
-  // ------------------------------
+  const getElementId = useCallback(
+    (
+      element:
+        | 'group'
+        | 'input'
+        | 'listbox'
+        | 'option'
+        | 'placeholder'
+        | 'live-region'
+    ) => {
+      return `${_instancePrefix}-${element}`;
+    },
+    [_instancePrefix]
+  );
 
-  controlRef: HTMLDivElement | null = null;
-  setControlRef: RefCallback<HTMLDivElement> = (ref) => {
-    this.controlRef = ref;
-  };
-  focusedOptionRef: HTMLDivElement | null = null;
-  setFocusedOptionRef: RefCallback<HTMLDivElement> = (ref) => {
-    this.focusedOptionRef = ref;
-  };
-  menuListRef: HTMLDivElement | null = null;
-  setMenuListRef: RefCallback<HTMLDivElement> = (ref) => {
-    this.menuListRef = ref;
-  };
-  inputRef: HTMLInputElement | null = null;
-  setInputRef: RefCallback<HTMLInputElement> = (ref) => {
-    this.inputRef = ref;
-  };
+  const internalBuildCategorizedOptions = useCallback(() => {
+    return buildCategorizedOptions(props, selectValue);
+  }, [props, selectValue]);
 
-  // Lifecycle
-  // ------------------------------
+  const internalBuildFocusableOptions = useCallback(() => {
+    return buildFocusableOptionsFromCategorizedOptions(
+      internalBuildCategorizedOptions()
+    );
+  }, [internalBuildCategorizedOptions]);
 
-  constructor(props: Props<Option, IsMulti, Group>) {
-    super(props);
-    this.state.instancePrefix =
-      'react-select-' + (this.props.instanceId || ++instanceId);
-    this.state.selectValue = cleanValue(props.value);
-    // Set focusedOption if menuIsOpen is set on init (e.g. defaultMenuIsOpen)
-    if (props.menuIsOpen && this.state.selectValue.length) {
+  // constructor
+  const [state, setState] = useState<State<Option, IsMulti>>(() => {
+    let intState: State<Option, IsMulti> = {
+      ariaSelection: null,
+      focusedOption: null,
+      focusedOptionId: null,
+      focusableOptionsWithIds: [],
+      focusedValue: null,
+      inputIsHidden: false,
+      isFocused: false,
+      clearFocusValueOnUpdate: false,
+      prevWasFocused: false,
+      inputIsHiddenAfterUpdate: undefined,
+      instancePrefix: _instancePrefix,
+    };
+
+    if (props.menuIsOpen && selectValue.length) {
       const focusableOptionsWithIds: FocusableOptionWithId<Option>[] =
-        this.getFocusableOptionsWithIds();
-      const focusableOptions = this.buildFocusableOptions();
-      const optionIndex = focusableOptions.indexOf(this.state.selectValue[0]);
-      this.state.focusableOptionsWithIds = focusableOptionsWithIds;
-      this.state.focusedOption = focusableOptions[optionIndex];
-      this.state.focusedOptionId = getFocusedOptionId(
+        buildFocusableOptionsWithIds(
+          internalBuildCategorizedOptions(),
+          getElementId('option')
+        );
+      const focusableOptions = internalBuildFocusableOptions();
+      const optionIndex = focusableOptions.indexOf(selectValue[0]);
+      const focusedOption = focusableOptions[optionIndex];
+      intState = {
+        ...intState,
         focusableOptionsWithIds,
-        focusableOptions[optionIndex]
-      );
+        focusedOption,
+        focusedOptionId: getFocusedOptionId(
+          focusableOptionsWithIds,
+          focusedOption
+        ),
+      };
     }
-  }
 
-  static getDerivedStateFromProps(
-    props: Props<unknown, boolean, GroupBase<unknown>>,
-    state: State<unknown, boolean, GroupBase<unknown>>
-  ) {
+    return intState;
+  });
+
+  const isOptionHoverBlocked = useRef(false);
+  const openAfterFocus = useRef(false);
+  const scrollToFocusedOptionOnUpdate = useRef(false);
+
+  const controlRef = useRef<HTMLDivElement | null>(null);
+  const focusedOptionRef = useRef<HTMLDivElement | null>(null);
+  const menuListRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  // focus control logic
+  const focusInput = useCallback(() => {
+    if (inputRef.current) inputRef.current.focus();
+  }, []);
+  const blurInput = useCallback(() => {
+    if (inputRef.current) inputRef.current.blur();
+  }, []);
+
+  useImperativeHandle(selectRef, () => {
+    return {
+      focus() {
+        focusInput();
+      },
+      blur() {
+        blurInput();
+      },
+    };
+  }, [focusInput, blurInput]);
+
+  const onInputChange = useCallback(
+    (newValue: string, actionMeta: InputActionMeta) => {
+      props.onInputChange?.(newValue, actionMeta);
+    },
+    [props]
+  );
+
+  const onMenuClose = useCallback(() => {
+    onInputChange('', {
+      action: 'menu-close',
+      prevInputValue: props.inputValue,
+    });
+    props.onMenuClose?.();
+  }, [props, onInputChange]);
+
+  const { isComposing, userIsDragging } = useEventListeners(
+    props,
+    blurInput,
+    onMenuClose,
+    controlRef,
+    menuListRef
+  );
+
+  const getComponents = useCallback(() => {
+    return defaultComponents(props);
+  }, [props]);
+
+  const getCategorizedOptions = useCallback(() => {
+    return props.menuIsOpen ? internalBuildCategorizedOptions() : [];
+  }, [props.menuIsOpen, internalBuildCategorizedOptions]);
+
+  const getFocusableOptions = useCallback(() => {
+    return props.menuIsOpen ? internalBuildFocusableOptions() : [];
+  }, [props.menuIsOpen, internalBuildFocusableOptions]);
+
+  const ariaOnChange = useCallback(
+    (value: OnChangeValue<Option, IsMulti>, actionMeta: ActionMeta<Option>) => {
+      setState((prevState) => ({
+        ...prevState,
+        ariaSelection: { value, ...actionMeta },
+      }));
+    },
+    []
+  );
+
+  const openMenu = useCallback(
+    (focusOption: 'first' | 'last') => {
+      const focusableOptions = internalBuildFocusableOptions();
+      let openAtIndex =
+        focusOption === 'first' ? 0 : focusableOptions.length - 1;
+
+      if (!props.isMulti) {
+        const selectedIndex = focusableOptions.indexOf(selectValue[0]);
+        if (selectedIndex > -1) {
+          openAtIndex = selectedIndex;
+        }
+      }
+
+      scrollToFocusedOptionOnUpdate.current = !(
+        state.isFocused && menuListRef.current
+      );
+
+      setState((prevState) => ({
+        ...prevState,
+        inputIsHiddenAfterUpdate: false,
+        focusedValue: null,
+        focusedOption: focusableOptions[openAtIndex],
+        focusedOptionId: getFocusedOptionId(
+          state.focusableOptionsWithIds,
+          focusableOptions[openAtIndex]
+        ),
+      }));
+      props.onMenuOpen?.();
+    },
+    [
+      internalBuildFocusableOptions,
+      props,
+      state.isFocused,
+      state.focusableOptionsWithIds,
+      selectValue,
+    ]
+  );
+
+  const focusValue = useCallback(
+    (direction: 'previous' | 'next') => {
+      if (!props.isMulti) return;
+
+      setState((prevState) => ({ ...prevState, focusedOption: null }));
+
+      let focusedIndex = selectValue.indexOf(state.focusedValue!);
+      if (!state.focusedValue) {
+        focusedIndex = -1;
+      }
+
+      const lastIndex = selectValue.length - 1;
+      let nextFocus = -1;
+      if (!selectValue.length) return;
+
+      switch (direction) {
+        case 'previous':
+          if (focusedIndex === 0) {
+            nextFocus = 0;
+          } else if (focusedIndex === -1) {
+            nextFocus = lastIndex;
+          } else {
+            nextFocus = focusedIndex - 1;
+          }
+          break;
+        case 'next':
+          if (focusedIndex > -1 && focusedIndex < lastIndex) {
+            nextFocus = focusedIndex + 1;
+          }
+          break;
+      }
+      setState((prevState) => ({
+        ...prevState,
+        inputIsHidden: nextFocus !== -1,
+        focusedValue: selectValue[nextFocus],
+      }));
+    },
+    [props.isMulti, selectValue, state.focusedValue]
+  );
+
+  const focusOption = useCallback(
+    (direction: FocusDirection = 'first') => {
+      const { pageSize } = props;
+      const { focusedOption } = state;
+      const options = getFocusableOptions();
+
+      if (!options.length) return;
+      let nextFocus = 0; // handles 'first'
+      let focusedIndex = options.indexOf(focusedOption!);
+      if (!focusedOption) {
+        focusedIndex = -1;
+      }
+
+      if (direction === 'up') {
+        nextFocus = focusedIndex > 0 ? focusedIndex - 1 : options.length - 1;
+      } else if (direction === 'down') {
+        nextFocus = (focusedIndex + 1) % options.length;
+      } else if (direction === 'pageup') {
+        nextFocus = focusedIndex - pageSize;
+        if (nextFocus < 0) nextFocus = 0;
+      } else if (direction === 'pagedown') {
+        nextFocus = focusedIndex + pageSize;
+        if (nextFocus > options.length - 1) nextFocus = options.length - 1;
+      } else if (direction === 'last') {
+        nextFocus = options.length - 1;
+      }
+      scrollToFocusedOptionOnUpdate.current = true;
+      setState((prevState) => ({
+        ...prevState,
+        focusedOption: options[nextFocus],
+        focusedValue: null,
+        focusedOptionId: getFocusedOptionId(
+          state.focusableOptionsWithIds,
+          options[nextFocus]
+        ),
+      }));
+    },
+    [props, state, getFocusableOptions]
+  );
+
+  const onChange = useCallback(
+    (
+      newValue: OnChangeValue<Option, IsMulti>,
+      actionMeta: ActionMeta<Option>
+    ) => {
+      actionMeta.name = props.name;
+
+      ariaOnChange(newValue, actionMeta);
+      props.onChange(newValue, actionMeta);
+    },
+    [props, ariaOnChange]
+  );
+
+  const setValue = useCallback(
+    (
+      newValue: OnChangeValue<Option, IsMulti>,
+      action: SetValueAction,
+      option?: Option
+    ) => {
+      const { closeMenuOnSelect, isMulti, inputValue } = props;
+      onInputChange('', { action: 'set-value', prevInputValue: inputValue });
+      if (closeMenuOnSelect) {
+        setState((prevState) => ({
+          ...prevState,
+          inputIsHiddenAfterUpdate: !isMulti,
+        }));
+        onMenuClose();
+      }
+      setState((prevState) => ({
+        ...prevState,
+        clearFocusValueOnUpdate: true,
+      }));
+      onChange(newValue, { action, option });
+    },
+    [props, onChange, onInputChange, onMenuClose]
+  );
+
+  const selectOption = useCallback(
+    (newValue: Option) => {
+      const { blurInputOnSelect, isMulti, name } = props;
+      const deselected =
+        isMulti && isOptionSelected(props, newValue, selectValue);
+      const isDisabled = props.isOptionDisabled(newValue, selectValue);
+
+      if (deselected) {
+        const candidate = props.getOptionValue(newValue);
+        setValue(
+          multiValueAsValue(
+            selectValue.filter((i) => props.getOptionValue(i) !== candidate)
+          ),
+          'deselect-option',
+          newValue
+        );
+      } else if (!isDisabled) {
+        // Select option if option is not disabled
+        if (isMulti) {
+          setValue(
+            multiValueAsValue([...selectValue, newValue]),
+            'select-option',
+            newValue
+          );
+        } else {
+          setValue(singleValueAsValue(newValue), 'select-option');
+        }
+      } else {
+        ariaOnChange(singleValueAsValue(newValue), {
+          action: 'select-option',
+          option: newValue,
+          name,
+        });
+        return;
+      }
+
+      if (blurInputOnSelect) {
+        blurInput();
+      }
+    },
+    [props, selectValue, setValue, ariaOnChange, blurInput]
+  );
+
+  const removeValue = useCallback(
+    (removedValue: Option) => {
+      const { isMulti } = props;
+      const candidate = props.getOptionValue(removedValue);
+      const newValueArray = selectValue.filter(
+        (i) => props.getOptionValue(i) !== candidate
+      );
+      const newValue = valueTernary(
+        isMulti,
+        newValueArray,
+        newValueArray[0] || null
+      );
+
+      onChange(newValue, { action: 'remove-value', removedValue });
+      focusInput();
+    },
+    [props, selectValue, onChange, focusInput]
+  );
+
+  const clearValue = useCallback(() => {
+    onChange(valueTernary(props.isMulti, [], null), {
+      action: 'clear',
+      removedValues: selectValue,
+    });
+  }, [props.isMulti, selectValue, onChange]);
+
+  const popValue = useCallback(() => {
+    const { isMulti } = props;
+
+    const lastSelectedValue = selectValue[selectValue.length - 1];
+    const newValueArray = selectValue.slice(0, selectValue.length - 1);
+    const newValue = valueTernary(
+      isMulti,
+      newValueArray,
+      newValueArray[0] || null
+    );
+
+    onChange(newValue, {
+      action: 'pop-value',
+      removedValue: lastSelectedValue,
+    });
+  }, [props, selectValue, onChange]);
+
+  const getValue = useCallback(() => selectValue, [selectValue]);
+
+  const cx = useCallback(
+    (...args: any) => classNames(props.classNamePrefix, ...args),
+    [props.classNamePrefix]
+  );
+
+  const getClassNames = useCallback(
+    <Key extends ComponentNames>(
+      key: Key,
+      context: SelectContextValue<Option, IsMulti, Group> & {
+        componentProps: ClassNamesConfigComponentProps<Option, Key>;
+      }
+    ) => {
+      if (typeof props.classNames[key] === 'function') {
+        return props.classNames[key](context);
+      }
+      return props.classNames[key];
+    },
+    [props.classNames]
+  );
+
+  const formatOptionLabel = useCallback(
+    (data: Option, context: FormatOptionLabelContext): ReactNode => {
+      if (typeof props.formatOptionLabel === 'function') {
+        const { inputValue } = props;
+        return props.formatOptionLabel(data, {
+          context,
+          inputValue,
+          selectValue: selectValue,
+        });
+      } else {
+        return props.getOptionLabel(data);
+      }
+    },
+    [props, selectValue]
+  );
+
+  // ==============================
+  // Mouse Handlers
+  // ==============================
+
+  const onMenuMouseDown = useCallback<MouseEventHandler<HTMLDivElement>>(
+    (event) => {
+      if (event.button !== 0) {
+        return;
+      }
+      event.stopPropagation();
+      event.preventDefault();
+      focusInput();
+    },
+    [focusInput]
+  );
+
+  const onMenuMouseMove = useCallback<MouseEventHandler<HTMLDivElement>>(
+    (event) => {
+      isOptionHoverBlocked.current = false;
+    },
+    []
+  );
+
+  const onControlMouseDown = useCallback(
+    (
+      event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
+    ) => {
+      // Event captured by dropdown indicator
+      if (event.defaultPrevented) {
+        return;
+      }
+      const { openMenuOnClick } = props;
+      if (!state.isFocused) {
+        if (openMenuOnClick) {
+          openAfterFocus.current = true;
+        }
+        focusInput();
+      } else if (!props.menuIsOpen) {
+        if (openMenuOnClick) {
+          openMenu('first');
+        }
+      } else {
+        if (
+          (event.target as HTMLElement).tagName !== 'INPUT' &&
+          (event.target as HTMLElement).tagName !== 'TEXTAREA'
+        ) {
+          onMenuClose();
+        }
+      }
+      if (
+        (event.target as HTMLElement).tagName !== 'INPUT' &&
+        (event.target as HTMLElement).tagName !== 'TEXTAREA'
+      ) {
+        event.preventDefault();
+      }
+    },
+    [props, state.isFocused, focusInput, openMenu, onMenuClose]
+  );
+
+  const onDropdownIndicatorMouseDown = useCallback(
+    (
+      event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
+    ) => {
+      // ignore mouse events that weren't triggered by the primary button
+      if (
+        event &&
+        event.type === 'mousedown' &&
+        (event as React.MouseEvent<HTMLDivElement>).button !== 0
+      ) {
+        return;
+      }
+      if (props.isDisabled) return;
+      const { isMulti, menuIsOpen } = props;
+      focusInput();
+      if (menuIsOpen) {
+        setState((prevState) => ({
+          ...prevState,
+          inputIsHiddenAfterUpdate: !isMulti,
+        }));
+        onMenuClose();
+      } else {
+        openMenu('first');
+      }
+      event.preventDefault();
+    },
+    [props, focusInput, onMenuClose, openMenu]
+  );
+
+  const onControlTouchEnd = useCallback<TouchEventHandler<HTMLDivElement>>(
+    (event) => {
+      if (userIsDragging.current) return;
+      onControlMouseDown(event);
+    },
+    [onControlMouseDown, userIsDragging]
+  );
+
+  const onDropdownIndicatorTouchEnd = useCallback<
+    TouchEventHandler<HTMLDivElement>
+  >(
+    (event) => {
+      if (userIsDragging.current) return;
+      onDropdownIndicatorMouseDown(event);
+    },
+    [onDropdownIndicatorMouseDown, userIsDragging]
+  );
+
+  // ==============================
+  // Focus Handlers
+  // ==============================
+
+  const handleInputChange = useCallback<FormEventHandler<HTMLInputElement>>(
+    (event) => {
+      const { inputValue: prevInputValue, menuIsOpen } = props;
+      const inputValue = event.currentTarget.value;
+      setState((prev) => ({ ...prev, inputIsHiddenAfterUpdate: false }));
+      onInputChange(inputValue, { action: 'input-change', prevInputValue });
+      if (!menuIsOpen) {
+        props.onMenuOpen?.();
+      }
+    },
+    [props, onInputChange]
+  );
+
+  const onInputFocus = useCallback<FocusEventHandler<HTMLInputElement>>(
+    (event) => {
+      if (props.onFocus) {
+        props.onFocus(event);
+      }
+      setState((prev) => ({
+        ...prev,
+        inputIsHiddenAfterUpdate: false,
+        isFocused: true,
+      }));
+      if (openAfterFocus.current || props.openMenuOnFocus) {
+        openMenu('first');
+      }
+      openAfterFocus.current = false;
+    },
+    [props, openMenu]
+  );
+
+  const onInputBlur = useCallback<FocusEventHandler<HTMLInputElement>>(
+    (event) => {
+      const { inputValue: prevInputValue, onBlur } = props;
+      if (
+        menuListRef.current &&
+        menuListRef.current.contains(document.activeElement)
+      ) {
+        inputRef.current?.focus();
+        return;
+      }
+      if (onBlur) {
+        onBlur(event);
+      }
+      onInputChange('', { action: 'input-blur', prevInputValue });
+      onMenuClose();
+      setState((prev) => ({
+        ...prev,
+        focusedValue: null,
+        isFocused: false,
+      }));
+    },
+    [props, onInputChange, onMenuClose]
+  );
+
+  const onOptionHover = useCallback(
+    (focusedOption: Option) => {
+      if (
+        isOptionHoverBlocked.current ||
+        state.focusedOption === focusedOption
+      ) {
+        return;
+      }
+      const options = getFocusableOptions();
+      const focusedOptionIndex = options.indexOf(focusedOption!);
+      setState((prev) => ({
+        ...prev,
+        focusedOption,
+        focusedOptionId:
+          focusedOptionIndex > -1
+            ? getFocusedOptionId(state.focusableOptionsWithIds, focusedOption)
+            : null,
+      }));
+    },
+    [state.focusedOption, state.focusableOptionsWithIds, getFocusableOptions]
+  );
+
+  // ==============================
+  // Keyboard Handler
+  // ==============================
+
+  const onKeyDown = useCallback<KeyboardEventHandler<HTMLDivElement>>(
+    (event) => {
+      const {
+        isMulti,
+        backspaceRemovesValue,
+        escapeClearsValue,
+        inputValue,
+        isClearable,
+        isDisabled,
+        menuIsOpen,
+        onKeyDown: onKeyDownProp,
+        tabSelectsValue,
+        openMenuOnFocus,
+      } = props;
+
+      if (isDisabled) return;
+
+      if (typeof onKeyDownProp === 'function') {
+        onKeyDownProp(event);
+        if (event.defaultPrevented) {
+          return;
+        }
+      }
+
+      // Block option hover events when the user has just pressed a key
+      isOptionHoverBlocked.current = true;
+      switch (event.key) {
+        case 'ArrowLeft':
+          if (!isMulti || inputValue) return;
+          focusValue('previous');
+          break;
+        case 'ArrowRight':
+          if (!isMulti || inputValue) return;
+          focusValue('next');
+          break;
+        case 'Delete':
+        case 'Backspace':
+          if (inputValue) return;
+          if (state.focusedValue) {
+            removeValue(state.focusedValue);
+          } else {
+            if (!backspaceRemovesValue) return;
+            if (isMulti) {
+              popValue();
+            } else if (isClearable) {
+              clearValue();
+            }
+          }
+          break;
+        case 'Tab':
+          if (isComposing.current) return;
+
+          if (
+            event.shiftKey ||
+            !menuIsOpen ||
+            !tabSelectsValue ||
+            !state.focusedOption ||
+            (openMenuOnFocus &&
+              isOptionSelected(props, state.focusedOption, selectValue))
+          ) {
+            return;
+          }
+          selectOption(state.focusedOption);
+          break;
+        case 'Enter':
+          if (event.keyCode === 229) {
+            break;
+          }
+          if (menuIsOpen) {
+            if (!state.focusedOption) return;
+            if (isComposing.current) return;
+            selectOption(state.focusedOption);
+            break;
+          }
+          return;
+        case 'Escape':
+          if (menuIsOpen) {
+            setState((prev) => ({
+              ...prev,
+              inputIsHiddenAfterUpdate: false,
+            }));
+            onInputChange('', {
+              action: 'menu-close',
+              prevInputValue: inputValue,
+            });
+            onMenuClose();
+          } else if (isClearable && escapeClearsValue) {
+            clearValue();
+          }
+          break;
+        case ' ': // space
+          if (inputValue) {
+            return;
+          }
+          if (!menuIsOpen) {
+            openMenu('first');
+            break;
+          }
+          if (!state.focusedOption) return;
+          selectOption(state.focusedOption);
+          break;
+        case 'ArrowUp':
+          if (menuIsOpen) {
+            focusOption('up');
+          } else {
+            openMenu('last');
+          }
+          break;
+        case 'ArrowDown':
+          if (menuIsOpen) {
+            focusOption('down');
+          } else {
+            openMenu('first');
+          }
+          break;
+        case 'PageUp':
+          if (!menuIsOpen) return;
+          focusOption('pageup');
+          break;
+        case 'PageDown':
+          if (!menuIsOpen) return;
+          focusOption('pagedown');
+          break;
+        case 'Home':
+          if (!menuIsOpen) return;
+          focusOption('first');
+          break;
+        case 'End':
+          if (!menuIsOpen) return;
+          focusOption('last');
+          break;
+        default:
+          return;
+      }
+      event.preventDefault();
+    },
+    [
+      props,
+      focusValue,
+      state.focusedValue,
+      state.focusedOption,
+      isComposing,
+      selectValue,
+      selectOption,
+      focusOption,
+      removeValue,
+      popValue,
+      clearValue,
+      onInputChange,
+      onMenuClose,
+      openMenu,
+    ]
+  );
+
+  // ==============================
+  // getDerivedStateFromProps
+  // ==============================
+
+  const prevProps = useRef<Props<Option, IsMulti, Group> | void>(undefined);
+  useEffect(() => {
+    const { options, value, menuIsOpen, inputValue, isMulti } = props;
+
     const {
-      prevProps,
       clearFocusValueOnUpdate,
       inputIsHiddenAfterUpdate,
       ariaSelection,
       isFocused,
       prevWasFocused,
-      instancePrefix,
     } = state;
-    const { options, value, menuIsOpen, inputValue, isMulti } = props;
-    const selectValue = cleanValue(value);
+
+    const newSelectValue = cleanValue(value);
     let newMenuOptionsState = {};
+
     if (
-      prevProps &&
-      (value !== prevProps.value ||
-        options !== prevProps.options ||
-        menuIsOpen !== prevProps.menuIsOpen ||
-        inputValue !== prevProps.inputValue)
+      prevProps.current &&
+      (value !== prevProps.current.value ||
+        options !== prevProps.current.options ||
+        menuIsOpen !== prevProps.current.menuIsOpen ||
+        inputValue !== prevProps.current.inputValue)
     ) {
       const focusableOptions = menuIsOpen
-        ? buildFocusableOptions(props, selectValue)
+        ? buildFocusableOptions(props, newSelectValue)
         : [];
 
       const focusableOptionsWithIds = menuIsOpen
         ? buildFocusableOptionsWithIds(
-            buildCategorizedOptions(props, selectValue),
-            `${instancePrefix}-option`
+            buildCategorizedOptions(props, newSelectValue),
+            getElementId('option')
           )
         : [];
 
       const focusedValue = clearFocusValueOnUpdate
-        ? getNextFocusedValue(state, selectValue)
+        ? getNextFocusedValue(state.focusedValue, selectValue, newSelectValue)
         : null;
-      const focusedOption = getNextFocusedOption(state, focusableOptions);
+      const focusedOption = getNextFocusedOption(
+        state.focusedOption,
+        focusableOptions
+      );
       const focusedOptionId = getFocusedOptionId(
         focusableOptionsWithIds,
         focusedOption
       );
 
       newMenuOptionsState = {
-        selectValue,
         focusedOption,
         focusedOptionId,
         focusableOptionsWithIds,
         focusedValue,
         clearFocusValueOnUpdate: false,
       };
+
+      setSelectValue(newSelectValue);
     }
+
     // some updates should toggle the state of the input visibility
+
+    // TODO: check if props !== prevProps.current needs deep comparison
     const newInputIsHiddenState =
-      inputIsHiddenAfterUpdate != null && props !== prevProps
+      inputIsHiddenAfterUpdate != null && props !== prevProps.current
         ? {
             inputIsHidden: inputIsHiddenAfterUpdate,
             inputIsHiddenAfterUpdate: undefined,
@@ -266,11 +1012,9 @@ export default class Select<
     let hasKeptFocus = isFocused && prevWasFocused;
 
     if (isFocused && !hasKeptFocus) {
-      // If `value` or `defaultValue` props are not empty then announce them
-      // when the Select is initially focused
       newAriaSelection = {
-        value: valueTernary(isMulti, selectValue, selectValue[0] || null),
-        options: selectValue,
+        value: valueTernary(isMulti, newSelectValue, newSelectValue[0] || null),
+        options: newSelectValue,
         action: 'initial-input-focus',
       };
 
@@ -283,1147 +1027,175 @@ export default class Select<
       newAriaSelection = null;
     }
 
-    return {
+    setState((prevState) => ({
+      ...prevState,
       ...newMenuOptionsState,
       ...newInputIsHiddenState,
-      prevProps: props,
       ariaSelection: newAriaSelection,
       prevWasFocused: hasKeptFocus,
-    };
-  }
-  componentDidMount() {
-    this.startListeningComposition();
-    this.startListeningToTouch();
+    }));
 
-    if (this.props.closeMenuOnScroll && document && document.addEventListener) {
-      // Listen to all scroll events, and filter them out inside of 'onScroll'
-      document.addEventListener('scroll', this.onScroll, true);
-    }
+    prevProps.current = props;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    props,
+    state.isFocused,
+    state.focusedValue,
+    state.focusedOption,
+    selectValue,
+  ]);
 
-    if (this.props.autoFocus) {
-      this.focusInput();
-    }
-
-    // Scroll focusedOption into view if menuIsOpen is set on mount (e.g. defaultMenuIsOpen)
-    if (
-      this.props.menuIsOpen &&
-      this.state.focusedOption &&
-      this.menuListRef &&
-      this.focusedOptionRef
-    ) {
-      scrollIntoView(this.menuListRef, this.focusedOptionRef);
-    }
-  }
-  componentDidUpdate(prevProps: Props<Option, IsMulti, Group>) {
-    const { isDisabled, menuIsOpen } = this.props;
-    const { isFocused } = this.state;
+  // Focus management
+  const prevPropsForFocusManagement = useRef({
+    isDisabled: props.isDisabled,
+    menuIsOpen: props.menuIsOpen,
+  });
+  useEffect(() => {
+    const { isDisabled, menuIsOpen } = props;
 
     if (
-      // ensure focus is restored correctly when the control becomes enabled
-      (isFocused && !isDisabled && prevProps.isDisabled) ||
-      // ensure focus is on the Input when the menu opens
-      (isFocused && menuIsOpen && !prevProps.menuIsOpen)
+      (state.isFocused &&
+        !isDisabled &&
+        prevPropsForFocusManagement.current.isDisabled) ||
+      (state.isFocused &&
+        menuIsOpen &&
+        !prevPropsForFocusManagement.current.menuIsOpen)
     ) {
-      this.focusInput();
+      focusInput();
     }
 
-    if (isFocused && isDisabled && !prevProps.isDisabled) {
-      // ensure select state gets blurred in case Select is programmatically disabled while focused
-
-      this.setState({ isFocused: false }, this.onMenuClose);
+    if (
+      state.isFocused &&
+      isDisabled &&
+      !prevPropsForFocusManagement.current.isDisabled
+    ) {
+      setState((prevState) => ({ ...prevState, isFocused: false }));
+      onMenuClose();
     } else if (
-      !isFocused &&
+      !state.isFocused &&
       !isDisabled &&
-      prevProps.isDisabled &&
-      this.inputRef === document.activeElement
+      prevPropsForFocusManagement.current.isDisabled &&
+      inputRef.current === document.activeElement
     ) {
-      // ensure select state gets focused in case Select is programatically re-enabled while focused (Firefox)
-
-      this.setState({ isFocused: true });
+      setState((prevState) => ({ ...prevState, isFocused: true }));
     }
 
-    // scroll the focused option into view if necessary
-    if (
-      this.menuListRef &&
-      this.focusedOptionRef &&
-      this.scrollToFocusedOptionOnUpdate
-    ) {
-      scrollIntoView(this.menuListRef, this.focusedOptionRef);
-      this.scrollToFocusedOptionOnUpdate = false;
-    }
-  }
-  componentWillUnmount() {
-    this.stopListeningComposition();
-    this.stopListeningToTouch();
-    document.removeEventListener('scroll', this.onScroll, true);
-  }
-
-  // ==============================
-  // Consumer Handlers
-  // ==============================
-
-  onMenuOpen() {
-    this.props.onMenuOpen();
-  }
-  onMenuClose() {
-    this.onInputChange('', {
-      action: 'menu-close',
-      prevInputValue: this.props.inputValue,
-    });
-
-    this.props.onMenuClose();
-  }
-  onInputChange(newValue: string, actionMeta: InputActionMeta) {
-    this.props.onInputChange(newValue, actionMeta);
-  }
-
-  // ==============================
-  // Methods
-  // ==============================
-
-  focusInput() {
-    if (!this.inputRef) return;
-    this.inputRef.focus();
-  }
-  blurInput() {
-    if (!this.inputRef) return;
-    this.inputRef.blur();
-  }
-
-  // aliased for consumers
-  focus = this.focusInput;
-  blur = this.blurInput;
-
-  openMenu(focusOption: 'first' | 'last') {
-    const { selectValue, isFocused } = this.state;
-    const focusableOptions = this.buildFocusableOptions();
-    let openAtIndex = focusOption === 'first' ? 0 : focusableOptions.length - 1;
-
-    if (!this.props.isMulti) {
-      const selectedIndex = focusableOptions.indexOf(selectValue[0]);
-      if (selectedIndex > -1) {
-        openAtIndex = selectedIndex;
-      }
-    }
-
-    // only scroll if the menu isn't already open
-    this.scrollToFocusedOptionOnUpdate = !(isFocused && this.menuListRef);
-
-    this.setState(
-      {
-        inputIsHiddenAfterUpdate: false,
-        focusedValue: null,
-        focusedOption: focusableOptions[openAtIndex],
-        focusedOptionId: this.getFocusedOptionId(focusableOptions[openAtIndex]),
-      },
-      () => this.onMenuOpen()
-    );
-  }
-
-  focusValue(direction: 'previous' | 'next') {
-    const { selectValue, focusedValue } = this.state;
-
-    // Only multiselects support value focusing
-    if (!this.props.isMulti) return;
-
-    this.setState({
-      focusedOption: null,
-    });
-
-    let focusedIndex = selectValue.indexOf(focusedValue!);
-    if (!focusedValue) {
-      focusedIndex = -1;
-    }
-
-    const lastIndex = selectValue.length - 1;
-    let nextFocus = -1;
-    if (!selectValue.length) return;
-
-    switch (direction) {
-      case 'previous':
-        if (focusedIndex === 0) {
-          // don't cycle from the start to the end
-          nextFocus = 0;
-        } else if (focusedIndex === -1) {
-          // if nothing is focused, focus the last value first
-          nextFocus = lastIndex;
-        } else {
-          nextFocus = focusedIndex - 1;
-        }
-        break;
-      case 'next':
-        if (focusedIndex > -1 && focusedIndex < lastIndex) {
-          nextFocus = focusedIndex + 1;
-        }
-        break;
-    }
-    this.setState({
-      inputIsHidden: nextFocus !== -1,
-      focusedValue: selectValue[nextFocus],
-    });
-  }
-
-  focusOption(direction: FocusDirection = 'first') {
-    const { pageSize } = this.props;
-    const { focusedOption } = this.state;
-    const options = this.getFocusableOptions();
-
-    if (!options.length) return;
-    let nextFocus = 0; // handles 'first'
-    let focusedIndex = options.indexOf(focusedOption!);
-    if (!focusedOption) {
-      focusedIndex = -1;
-    }
-
-    if (direction === 'up') {
-      nextFocus = focusedIndex > 0 ? focusedIndex - 1 : options.length - 1;
-    } else if (direction === 'down') {
-      nextFocus = (focusedIndex + 1) % options.length;
-    } else if (direction === 'pageup') {
-      nextFocus = focusedIndex - pageSize;
-      if (nextFocus < 0) nextFocus = 0;
-    } else if (direction === 'pagedown') {
-      nextFocus = focusedIndex + pageSize;
-      if (nextFocus > options.length - 1) nextFocus = options.length - 1;
-    } else if (direction === 'last') {
-      nextFocus = options.length - 1;
-    }
-    this.scrollToFocusedOptionOnUpdate = true;
-    this.setState({
-      focusedOption: options[nextFocus],
-      focusedValue: null,
-      focusedOptionId: this.getFocusedOptionId(options[nextFocus]),
-    });
-  }
-  onChange = (
-    newValue: OnChangeValue<Option, IsMulti>,
-    actionMeta: ActionMeta<Option>
-  ) => {
-    const { onChange, name } = this.props;
-    actionMeta.name = name;
-
-    this.ariaOnChange(newValue, actionMeta);
-    onChange(newValue, actionMeta);
-  };
-  setValue = (
-    newValue: OnChangeValue<Option, IsMulti>,
-    action: SetValueAction,
-    option?: Option
-  ) => {
-    const { closeMenuOnSelect, isMulti, inputValue } = this.props;
-    this.onInputChange('', { action: 'set-value', prevInputValue: inputValue });
-    if (closeMenuOnSelect) {
-      this.setState({
-        inputIsHiddenAfterUpdate: !isMulti,
-      });
-      this.onMenuClose();
-    }
-    // when the select value should change, we should reset focusedValue
-    this.setState({ clearFocusValueOnUpdate: true });
-    this.onChange(newValue, { action, option });
-  };
-  selectOption = (newValue: Option) => {
-    const { blurInputOnSelect, isMulti, name } = this.props;
-    const { selectValue } = this.state;
-    const deselected = isMulti && this.isOptionSelected(newValue, selectValue);
-    const isDisabled = this.isOptionDisabled(newValue, selectValue);
-
-    if (deselected) {
-      const candidate = this.getOptionValue(newValue);
-      this.setValue(
-        multiValueAsValue(
-          selectValue.filter((i) => this.getOptionValue(i) !== candidate)
-        ),
-        'deselect-option',
-        newValue
-      );
-    } else if (!isDisabled) {
-      // Select option if option is not disabled
-      if (isMulti) {
-        this.setValue(
-          multiValueAsValue([...selectValue, newValue]),
-          'select-option',
-          newValue
-        );
-      } else {
-        this.setValue(singleValueAsValue(newValue), 'select-option');
-      }
-    } else {
-      this.ariaOnChange(singleValueAsValue(newValue), {
-        action: 'select-option',
-        option: newValue,
-        name,
-      });
-      return;
-    }
-
-    if (blurInputOnSelect) {
-      this.blurInput();
-    }
-  };
-  removeValue = (removedValue: Option) => {
-    const { isMulti } = this.props;
-    const { selectValue } = this.state;
-    const candidate = this.getOptionValue(removedValue);
-    const newValueArray = selectValue.filter(
-      (i) => this.getOptionValue(i) !== candidate
-    );
-    const newValue = valueTernary(
-      isMulti,
-      newValueArray,
-      newValueArray[0] || null
-    );
-
-    this.onChange(newValue, { action: 'remove-value', removedValue });
-    this.focusInput();
-  };
-  clearValue = () => {
-    const { selectValue } = this.state;
-    this.onChange(valueTernary(this.props.isMulti, [], null), {
-      action: 'clear',
-      removedValues: selectValue,
-    });
-  };
-  popValue = () => {
-    const { isMulti } = this.props;
-    const { selectValue } = this.state;
-    const lastSelectedValue = selectValue[selectValue.length - 1];
-    const newValueArray = selectValue.slice(0, selectValue.length - 1);
-    const newValue = valueTernary(
-      isMulti,
-      newValueArray,
-      newValueArray[0] || null
-    );
-
-    this.onChange(newValue, {
-      action: 'pop-value',
-      removedValue: lastSelectedValue,
-    });
-  };
-
-  // ==============================
-  // Getters
-  // ==============================
-
-  getFocusedOptionId = (focusedOption: Option) => {
-    return getFocusedOptionId(
-      this.state.focusableOptionsWithIds,
-      focusedOption
-    );
-  };
-
-  getFocusableOptionsWithIds = () => {
-    return buildFocusableOptionsWithIds(
-      buildCategorizedOptions(this.props, this.state.selectValue),
-      this.getElementId('option')
-    );
-  };
-
-  getValue = () => this.state.selectValue;
-
-  cx = (...args: any) => classNames(this.props.classNamePrefix, ...args);
-
-  getOptionLabel = (data: Option): string => {
-    return getOptionLabel(this.props, data);
-  };
-  getOptionValue = (data: Option): string => {
-    return this.props.getOptionValue(data);
-  };
-  getClassNames = <Key extends ComponentNames>(
-    key: Key,
-    context: SelectContextValue<Option, IsMulti, Group> & {
-      componentProps: ClassNamesConfigComponentProps<Option, Key>;
-    }
-  ) => {
-    if (typeof this.props.classNames[key] === 'function') {
-      return this.props.classNames[key](context);
-    }
-    return this.props.classNames[key];
-  };
-  getElementId = (
-    element:
-      | 'group'
-      | 'input'
-      | 'listbox'
-      | 'option'
-      | 'placeholder'
-      | 'live-region'
-  ) => {
-    return `${this.state.instancePrefix}-${element}`;
-  };
-
-  getComponents = () => {
-    return defaultComponents(this.props);
-  };
-
-  buildCategorizedOptions = () =>
-    buildCategorizedOptions(this.props, this.state.selectValue);
-  getCategorizedOptions = () =>
-    this.props.menuIsOpen ? this.buildCategorizedOptions() : [];
-  buildFocusableOptions = () =>
-    buildFocusableOptionsFromCategorizedOptions(this.buildCategorizedOptions());
-  getFocusableOptions = () =>
-    this.props.menuIsOpen ? this.buildFocusableOptions() : [];
-
-  // ==============================
-  // Helpers
-  // ==============================
-
-  ariaOnChange = (
-    value: OnChangeValue<Option, IsMulti>,
-    actionMeta: ActionMeta<Option>
-  ) => {
-    this.setState({ ariaSelection: { value, ...actionMeta } });
-  };
-
-  hasValue() {
-    const { selectValue } = this.state;
-    return selectValue.length > 0;
-  }
-
-  isClearable(): boolean {
-    const { isClearable, isMulti } = this.props;
-
-    // single select, by default, IS NOT clearable
-    // multi select, by default, IS clearable
-    if (isClearable === undefined) return isMulti;
-
-    return isClearable;
-  }
-  isOptionDisabled(option: Option, selectValue: Options<Option>): boolean {
-    return isOptionDisabled(this.props, option, selectValue);
-  }
-  isOptionSelected(option: Option, selectValue: Options<Option>): boolean {
-    return isOptionSelected(this.props, option, selectValue);
-  }
-  filterOption(option: FilterOptionOption<Option>, inputValue: string) {
-    return filterOption(this.props, option, inputValue);
-  }
-  formatOptionLabel(
-    data: Option,
-    context: FormatOptionLabelContext
-  ): ReactNode {
-    if (typeof this.props.formatOptionLabel === 'function') {
-      const { inputValue } = this.props;
-      const { selectValue } = this.state;
-      return this.props.formatOptionLabel(data, {
-        context,
-        inputValue,
-        selectValue,
-      });
-    } else {
-      return this.getOptionLabel(data);
-    }
-  }
-  formatGroupLabel(data: Group) {
-    return this.props.formatGroupLabel(data);
-  }
-
-  // ==============================
-  // Mouse Handlers
-  // ==============================
-
-  onMenuMouseDown: MouseEventHandler<HTMLDivElement> = (event) => {
-    if (event.button !== 0) {
-      return;
-    }
-    event.stopPropagation();
-    event.preventDefault();
-    this.focusInput();
-  };
-  onMenuMouseMove: MouseEventHandler<HTMLDivElement> = (event) => {
-    this.isOptionHoverBlocked = false;
-  };
-  onControlMouseDown = (
-    event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
-  ) => {
-    // Event captured by dropdown indicator
-    if (event.defaultPrevented) {
-      return;
-    }
-    const { openMenuOnClick } = this.props;
-    if (!this.state.isFocused) {
-      if (openMenuOnClick) {
-        this.openAfterFocus = true;
-      }
-      this.focusInput();
-    } else if (!this.props.menuIsOpen) {
-      if (openMenuOnClick) {
-        this.openMenu('first');
-      }
-    } else {
-      if (
-        (event.target as HTMLElement).tagName !== 'INPUT' &&
-        (event.target as HTMLElement).tagName !== 'TEXTAREA'
-      ) {
-        this.onMenuClose();
-      }
-    }
-    if (
-      (event.target as HTMLElement).tagName !== 'INPUT' &&
-      (event.target as HTMLElement).tagName !== 'TEXTAREA'
-    ) {
-      event.preventDefault();
-    }
-  };
-  onDropdownIndicatorMouseDown = (
-    event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
-  ) => {
-    // ignore mouse events that weren't triggered by the primary button
-    if (
-      event &&
-      event.type === 'mousedown' &&
-      (event as React.MouseEvent<HTMLDivElement>).button !== 0
-    ) {
-      return;
-    }
-    if (this.props.isDisabled) return;
-    const { isMulti, menuIsOpen } = this.props;
-    this.focusInput();
-    if (menuIsOpen) {
-      this.setState({ inputIsHiddenAfterUpdate: !isMulti });
-      this.onMenuClose();
-    } else {
-      this.openMenu('first');
-    }
-    event.preventDefault();
-  };
-  onClearIndicatorMouseDown = (
-    event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>
-  ) => {
-    // ignore mouse events that weren't triggered by the primary button
-    if (
-      event &&
-      event.type === 'mousedown' &&
-      (event as React.MouseEvent<HTMLDivElement>).button !== 0
-    ) {
-      return;
-    }
-    this.clearValue();
-    event.preventDefault();
-    this.openAfterFocus = false;
-    if (event.type === 'touchend') {
-      this.focusInput();
-    } else {
-      setTimeout(() => this.focusInput());
-    }
-  };
-  onScroll = (event: Event) => {
-    if (typeof this.props.closeMenuOnScroll === 'boolean') {
-      if (
-        event.target instanceof HTMLElement &&
-        isDocumentElement(event.target)
-      ) {
-        this.props.onMenuClose();
-      }
-    } else if (typeof this.props.closeMenuOnScroll === 'function') {
-      if (this.props.closeMenuOnScroll(event)) {
-        this.props.onMenuClose();
-      }
-    }
-  };
-
-  // ==============================
-  // Composition Handlers
-  // ==============================
-
-  startListeningComposition() {
-    if (document && document.addEventListener) {
-      document.addEventListener(
-        'compositionstart',
-        this.onCompositionStart,
-        false
-      );
-      document.addEventListener('compositionend', this.onCompositionEnd, false);
-    }
-  }
-  stopListeningComposition() {
-    if (document && document.removeEventListener) {
-      document.removeEventListener('compositionstart', this.onCompositionStart);
-      document.removeEventListener('compositionend', this.onCompositionEnd);
-    }
-  }
-  onCompositionStart = () => {
-    this.isComposing = true;
-  };
-  onCompositionEnd = () => {
-    this.isComposing = false;
-  };
-
-  // ==============================
-  // Touch Handlers
-  // ==============================
-
-  startListeningToTouch() {
-    if (document && document.addEventListener) {
-      document.addEventListener('touchstart', this.onTouchStart, false);
-      document.addEventListener('touchmove', this.onTouchMove, false);
-      document.addEventListener('touchend', this.onTouchEnd, false);
-    }
-  }
-  stopListeningToTouch() {
-    if (document && document.removeEventListener) {
-      document.removeEventListener('touchstart', this.onTouchStart);
-      document.removeEventListener('touchmove', this.onTouchMove);
-      document.removeEventListener('touchend', this.onTouchEnd);
-    }
-  }
-  onTouchStart = ({ touches }: TouchEvent) => {
-    const touch = touches && touches.item(0);
-    if (!touch) {
-      return;
-    }
-
-    this.initialTouchX = touch.clientX;
-    this.initialTouchY = touch.clientY;
-    this.userIsDragging = false;
-  };
-  onTouchMove = ({ touches }: TouchEvent) => {
-    const touch = touches && touches.item(0);
-    if (!touch) {
-      return;
-    }
-
-    const deltaX = Math.abs(touch.clientX - this.initialTouchX);
-    const deltaY = Math.abs(touch.clientY - this.initialTouchY);
-    const moveThreshold = 5;
-
-    this.userIsDragging = deltaX > moveThreshold || deltaY > moveThreshold;
-  };
-  onTouchEnd = (event: TouchEvent) => {
-    if (this.userIsDragging) return;
-
-    // close the menu if the user taps outside
-    // we're checking on event.target here instead of event.currentTarget, because we want to assert information
-    // on events on child elements, not the document (which we've attached this handler to).
-    if (
-      this.controlRef &&
-      !this.controlRef.contains(event.target as Node) &&
-      this.menuListRef &&
-      !this.menuListRef.contains(event.target as Node)
-    ) {
-      this.blurInput();
-    }
-
-    // reset move vars
-    this.initialTouchX = 0;
-    this.initialTouchY = 0;
-  };
-  onControlTouchEnd: TouchEventHandler<HTMLDivElement> = (event) => {
-    if (this.userIsDragging) return;
-    this.onControlMouseDown(event);
-  };
-  onClearIndicatorTouchEnd: TouchEventHandler<HTMLDivElement> = (event) => {
-    if (this.userIsDragging) return;
-
-    this.onClearIndicatorMouseDown(event);
-  };
-  onDropdownIndicatorTouchEnd: TouchEventHandler<HTMLDivElement> = (event) => {
-    if (this.userIsDragging) return;
-
-    this.onDropdownIndicatorMouseDown(event);
-  };
-
-  // ==============================
-  // Focus Handlers
-  // ==============================
-
-  handleInputChange: FormEventHandler<HTMLInputElement> = (event) => {
-    const { inputValue: prevInputValue } = this.props;
-    const inputValue = event.currentTarget.value;
-    this.setState({ inputIsHiddenAfterUpdate: false });
-    this.onInputChange(inputValue, { action: 'input-change', prevInputValue });
-    if (!this.props.menuIsOpen) {
-      this.onMenuOpen();
-    }
-  };
-  onInputFocus: FocusEventHandler<HTMLInputElement> = (event) => {
-    if (this.props.onFocus) {
-      this.props.onFocus(event);
-    }
-    this.setState({
-      inputIsHiddenAfterUpdate: false,
-      isFocused: true,
-    });
-    if (this.openAfterFocus || this.props.openMenuOnFocus) {
-      this.openMenu('first');
-    }
-    this.openAfterFocus = false;
-  };
-  onInputBlur: FocusEventHandler<HTMLInputElement> = (event) => {
-    const { inputValue: prevInputValue } = this.props;
-    if (this.menuListRef && this.menuListRef.contains(document.activeElement)) {
-      this.inputRef!.focus();
-      return;
-    }
-    if (this.props.onBlur) {
-      this.props.onBlur(event);
-    }
-    this.onInputChange('', { action: 'input-blur', prevInputValue });
-    this.onMenuClose();
-    this.setState({
-      focusedValue: null,
-      isFocused: false,
-    });
-  };
-  onOptionHover = (focusedOption: Option) => {
-    if (
-      this.isOptionHoverBlocked ||
-      this.state.focusedOption === focusedOption
-    ) {
-      return;
-    }
-    const options = this.getFocusableOptions();
-    const focusedOptionIndex = options.indexOf(focusedOption!);
-    this.setState({
-      focusedOption,
-      focusedOptionId:
-        focusedOptionIndex > -1 ? this.getFocusedOptionId(focusedOption) : null,
-    });
-  };
-  shouldHideSelectedOptions = () => {
-    return shouldHideSelectedOptions(this.props);
-  };
-
-  // ==============================
-  // Keyboard Handlers
-  // ==============================
-
-  onKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
-    const {
-      isMulti,
-      backspaceRemovesValue,
-      escapeClearsValue,
-      inputValue,
-      isClearable,
+    prevPropsForFocusManagement.current = {
       isDisabled,
       menuIsOpen,
-      onKeyDown,
-      tabSelectsValue,
-      openMenuOnFocus,
-    } = this.props;
-    const { focusedOption, focusedValue, selectValue } = this.state;
-
-    if (isDisabled) return;
-
-    if (typeof onKeyDown === 'function') {
-      onKeyDown(event);
-      if (event.defaultPrevented) {
-        return;
-      }
-    }
-
-    // Block option hover events when the user has just pressed a key
-    this.isOptionHoverBlocked = true;
-    switch (event.key) {
-      case 'ArrowLeft':
-        if (!isMulti || inputValue) return;
-        this.focusValue('previous');
-        break;
-      case 'ArrowRight':
-        if (!isMulti || inputValue) return;
-        this.focusValue('next');
-        break;
-      case 'Delete':
-      case 'Backspace':
-        if (inputValue) return;
-        if (focusedValue) {
-          this.removeValue(focusedValue);
-        } else {
-          if (!backspaceRemovesValue) return;
-          if (isMulti) {
-            this.popValue();
-          } else if (isClearable) {
-            this.clearValue();
-          }
-        }
-        break;
-      case 'Tab':
-        if (this.isComposing) return;
-
-        if (
-          event.shiftKey ||
-          !menuIsOpen ||
-          !tabSelectsValue ||
-          !focusedOption ||
-          // don't capture the event if the menu opens on focus and the focused
-          // option is already selected; it breaks the flow of navigation
-          (openMenuOnFocus && this.isOptionSelected(focusedOption, selectValue))
-        ) {
-          return;
-        }
-        this.selectOption(focusedOption);
-        break;
-      case 'Enter':
-        if (event.keyCode === 229) {
-          // ignore the keydown event from an Input Method Editor(IME)
-          // ref. https://www.w3.org/TR/uievents/#determine-keydown-keyup-keyCode
-          break;
-        }
-        if (menuIsOpen) {
-          if (!focusedOption) return;
-          if (this.isComposing) return;
-          this.selectOption(focusedOption);
-          break;
-        }
-        return;
-      case 'Escape':
-        if (menuIsOpen) {
-          this.setState({
-            inputIsHiddenAfterUpdate: false,
-          });
-          this.onInputChange('', {
-            action: 'menu-close',
-            prevInputValue: inputValue,
-          });
-          this.onMenuClose();
-        } else if (isClearable && escapeClearsValue) {
-          this.clearValue();
-        }
-        break;
-      case ' ': // space
-        if (inputValue) {
-          return;
-        }
-        if (!menuIsOpen) {
-          this.openMenu('first');
-          break;
-        }
-        if (!focusedOption) return;
-        this.selectOption(focusedOption);
-        break;
-      case 'ArrowUp':
-        if (menuIsOpen) {
-          this.focusOption('up');
-        } else {
-          this.openMenu('last');
-        }
-        break;
-      case 'ArrowDown':
-        if (menuIsOpen) {
-          this.focusOption('down');
-        } else {
-          this.openMenu('first');
-        }
-        break;
-      case 'PageUp':
-        if (!menuIsOpen) return;
-        this.focusOption('pageup');
-        break;
-      case 'PageDown':
-        if (!menuIsOpen) return;
-        this.focusOption('pagedown');
-        break;
-      case 'Home':
-        if (!menuIsOpen) return;
-        this.focusOption('first');
-        break;
-      case 'End':
-        if (!menuIsOpen) return;
-        this.focusOption('last');
-        break;
-      default:
-        return;
-    }
-    event.preventDefault();
-  };
-
-  // ==============================
-  // Renderers
-  // ==============================
-  renderInput() {
-    const {
-      isDisabled,
-      isSearchable,
-      inputId,
-      inputValue,
-      tabIndex,
-      form,
-      menuIsOpen,
-      required,
-    } = this.props;
-    const { Input } = this.getComponents();
-    const { inputIsHidden, ariaSelection } = this.state;
-
-    const id = inputId || this.getElementId('input');
-
-    // aria attributes makes the JSX "noisy", separated for clarity
-    const ariaAttributes = {
-      'aria-autocomplete': 'list' as const,
-      'aria-expanded': menuIsOpen,
-      'aria-haspopup': true,
-      'aria-errormessage': this.props['aria-errormessage'],
-      'aria-invalid': this.props['aria-invalid'],
-      'aria-label': this.props['aria-label'],
-      'aria-labelledby': this.props['aria-labelledby'],
-      'aria-required': required,
-      role: 'combobox',
-      'aria-activedescendant': this.isAppleDevice
-        ? undefined
-        : this.state.focusedOptionId || '',
-
-      ...(menuIsOpen && {
-        'aria-controls': this.getElementId('listbox'),
-      }),
-      ...(!isSearchable && {
-        'aria-readonly': true,
-      }),
-      ...(this.hasValue()
-        ? ariaSelection?.action === 'initial-input-focus' && {
-            'aria-describedby': this.getElementId('live-region'),
-          }
-        : {
-            'aria-describedby': this.getElementId('placeholder'),
-          }),
     };
+  }, [
+    props,
+    state.isFocused,
+    focusInput,
+    onMenuClose,
+    prevPropsForFocusManagement,
+  ]);
 
-    if (!isSearchable) {
-      // use a dummy input to maintain focus/blur functionality
-      return (
-        <DummyInput
-          id={id}
-          innerRef={this.setInputRef}
-          onBlur={this.onInputBlur}
-          onChange={noop}
-          onFocus={this.onInputFocus}
-          disabled={isDisabled}
-          tabIndex={tabIndex}
-          inputMode="none"
-          form={form}
-          value=""
-          {...ariaAttributes}
-        />
-      );
+  useOnMountEffect(() => {
+    if (props.autoFocus) {
+      focusInput();
     }
+  });
 
-    return (
-      <Input
+  // Menu scroll management
+  useEffect(() => {
+    if (
+      menuListRef.current &&
+      focusedOptionRef.current &&
+      scrollToFocusedOptionOnUpdate.current
+    ) {
+      scrollIntoView(menuListRef.current, focusedOptionRef.current);
+      scrollToFocusedOptionOnUpdate.current = false;
+    }
+  }, [state.focusedOption]);
+
+  // Scroll focusedOption into view if menuIsOpen is set on mount (e.g. defaultMenuIsOpen)
+  useOnMountEffect(() => {
+    if (
+      props.menuIsOpen &&
+      state.focusedOption &&
+      menuListRef.current &&
+      focusedOptionRef.current
+    ) {
+      scrollIntoView(menuListRef.current, focusedOptionRef.current);
+    }
+  });
+
+  // Render method becomes the main function body
+  const { Control, IndicatorsContainer, SelectContainer, ValueContainer } =
+    getComponents();
+
+  return (
+    <SelectContextProvider<Option, IsMulti, Group>
+      value={{
+        selectProps: props,
+        components: getComponents(),
+        state: { ...state, selectValue },
+        // @ts-expect-error
+        getClassNames,
+        clearValue,
+        cx,
+        getValue,
+        hasValue: selectValue.length > 0,
+        selectOption,
+        setValue,
+        isOptionHoverBlocked: isOptionHoverBlocked.current,
+        isAppleDevice,
+        focusInput: focusInput,
+        blurInput: blurInput,
+        getFocusableOptions: getFocusableOptions,
+        getCategorizedOptions: getCategorizedOptions,
+        getElementId: getElementId,
+        removeValue,
+        onOptionHover: onOptionHover,
+        formatOptionLabel: formatOptionLabel,
+        focusedOptionRef,
+        controlRef,
+        menuListRef,
+        onMenuMouseDown: onMenuMouseDown,
+        onMenuMouseMove: onMenuMouseMove,
+        userIsDragging: userIsDragging,
+        openAfterFocus: openAfterFocus,
+      }}
+    >
+      <SelectContainer
         innerProps={{
-          autoCapitalize: 'none',
-          autoComplete: 'off',
-          autoCorrect: 'off',
-          id: id,
-          onBlur: this.onInputBlur,
-          onChange: this.handleInputChange,
-          onFocus: this.onInputFocus,
-          spellCheck: 'false',
-          tabIndex: tabIndex,
-          type: 'text',
-          form: form,
-          ...ariaAttributes,
-        }}
-        value={inputValue}
-        innerRef={this.setInputRef}
-        isHidden={inputIsHidden}
-      />
-    );
-  }
-  renderPlaceholderOrValue() {
-    const {
-      MultiValue,
-      MultiValueContainer,
-      MultiValueLabel,
-      MultiValueRemove,
-      SingleValue,
-      Placeholder,
-    } = this.getComponents();
-    const { controlShouldRenderValue, isMulti, inputValue, placeholder } =
-      this.props;
-    const { selectValue, focusedValue } = this.state;
-
-    if (!this.hasValue() || !controlShouldRenderValue) {
-      return inputValue ? null : (
-        <Placeholder
-          key="placeholder"
-          innerProps={{ id: this.getElementId('placeholder') }}
-        >
-          {placeholder}
-        </Placeholder>
-      );
-    }
-
-    if (isMulti) {
-      return selectValue.map((opt, index) => {
-        const isOptionFocused = opt === focusedValue;
-        const key = `${this.getOptionLabel(opt)}-${this.getOptionValue(opt)}`;
-
-        return (
-          <MultiValue
-            components={{
-              Container: MultiValueContainer,
-              Label: MultiValueLabel,
-              Remove: MultiValueRemove,
-            }}
-            isOptionFocused={isOptionFocused}
-            key={key}
-            index={index}
-            removeProps={{
-              onClick: () => this.removeValue(opt),
-              onTouchEnd: () => this.removeValue(opt),
-              onMouseDown: (e) => {
-                e.preventDefault();
-              },
-            }}
-            data={opt}
-          >
-            {this.formatOptionLabel(opt, 'value')}
-          </MultiValue>
-        );
-      });
-    }
-
-    if (inputValue) {
-      return null;
-    }
-
-    const singleValue = selectValue[0];
-    return (
-      <SingleValue data={singleValue}>
-        {this.formatOptionLabel(singleValue, 'value')}
-      </SingleValue>
-    );
-  }
-  renderClearIndicator() {
-    const { ClearIndicator } = this.getComponents();
-    const { isDisabled, isLoading } = this.props;
-
-    if (
-      !this.isClearable() ||
-      !ClearIndicator ||
-      isDisabled ||
-      !this.hasValue() ||
-      isLoading
-    ) {
-      return null;
-    }
-
-    const innerProps = {
-      onMouseDown: this.onClearIndicatorMouseDown,
-      onTouchEnd: this.onClearIndicatorTouchEnd,
-      'aria-hidden': true,
-    };
-
-    return <ClearIndicator innerProps={innerProps} />;
-  }
-  renderLoadingIndicator() {
-    const { LoadingIndicator } = this.getComponents();
-    const { isLoading } = this.props;
-
-    if (!LoadingIndicator || !isLoading) return null;
-
-    const innerProps = { 'aria-hidden': true };
-    return <LoadingIndicator innerProps={innerProps} />;
-  }
-  renderIndicatorSeparator() {
-    const { DropdownIndicator, IndicatorSeparator } = this.getComponents();
-
-    // separator doesn't make sense without the dropdown indicator
-    if (!DropdownIndicator || !IndicatorSeparator) return null;
-
-    return <IndicatorSeparator />;
-  }
-  renderDropdownIndicator() {
-    const { DropdownIndicator } = this.getComponents();
-    if (!DropdownIndicator) return null;
-
-    const innerProps = {
-      onMouseDown: this.onDropdownIndicatorMouseDown,
-      onTouchEnd: this.onDropdownIndicatorTouchEnd,
-      'aria-hidden': true,
-    };
-
-    return <DropdownIndicator innerProps={innerProps} />;
-  }
-
-  renderLiveRegion() {
-    return <LiveRegion id={this.getElementId('live-region')} />;
-  }
-
-  render() {
-    const { Control, IndicatorsContainer, SelectContainer, ValueContainer } =
-      this.getComponents();
-
-    const { className, id, classNamePrefix } = this.props;
-    const {
-      clearValue,
-      cx,
-      getClassNames,
-      getValue,
-      selectOption,
-      setValue,
-      props,
-    } = this;
-    const hasValue = this.hasValue();
-
-    return (
-      <SelectContextProvider
-        value={{
-          // @ts-expect-error classNamePrefix is not expected to be undefined
-          // but it is actually not because of defaultProps
-          // it will be fixed when refactoring to functional component
-          selectProps: props,
-          components: this.getComponents(),
-          state: this.state,
-          // @ts-expect-error
-          getClassNames,
-          clearValue,
-          cx,
-          getValue,
-          hasValue,
-          selectOption,
-          setValue,
-          isOptionHoverBlocked: this.isOptionHoverBlocked,
-          isAppleDevice: this.isAppleDevice,
-          focusInput: this.focusInput.bind(this),
-          blurInput: this.blurInput.bind(this),
-          getFocusableOptions: this.getFocusableOptions.bind(this),
-          getCategorizedOptions: this.getCategorizedOptions.bind(this),
-          getElementId: this.getElementId.bind(this),
-          onOptionHover: this.onOptionHover.bind(this),
-          formatOptionLabel: this.formatOptionLabel.bind(this),
-          setFocusedOptionRef: this.setFocusedOptionRef.bind(this),
-          controlRef: this.controlRef,
-          onMenuMouseDown: this.onMenuMouseDown.bind(this),
-          onMenuMouseMove: this.onMenuMouseMove.bind(this),
-          setMenuListRef: this.setMenuListRef.bind(this),
+          id: props.id,
+          onKeyDown,
+          className: prependCn(props.classNamePrefix!, '', props.className),
         }}
       >
-        <SelectContainer
+        <LiveRegion id={getElementId('live-region')} />
+        <Control
+          innerRef={controlRef}
           innerProps={{
-            id: id,
-            onKeyDown: this.onKeyDown,
-            className: prependCn(classNamePrefix!, '', className),
+            onMouseDown: onControlMouseDown,
+            onTouchEnd: onControlTouchEnd,
           }}
         >
-          {this.renderLiveRegion()}
-          <Control
-            innerRef={this.setControlRef}
-            innerProps={{
-              onMouseDown: this.onControlMouseDown,
-              onTouchEnd: this.onControlTouchEnd,
-            }}
-          >
-            <ValueContainer>
-              {this.renderPlaceholderOrValue()}
-              {this.renderInput()}
-            </ValueContainer>
-            <IndicatorsContainer>
-              {this.renderClearIndicator()}
-              {this.renderLoadingIndicator()}
-              {this.renderIndicatorSeparator()}
-              {this.renderDropdownIndicator()}
-            </IndicatorsContainer>
-          </Control>
-          <InternalMenu />
-          <FormField />
-        </SelectContainer>
-      </SelectContextProvider>
-    );
-  }
+          <ValueContainer>
+            <PlaceholderOrValue />
+            <InternalInput
+              inputRef={inputRef}
+              onInputBlur={onInputBlur}
+              onInputFocus={onInputFocus}
+              handleInputChange={handleInputChange}
+            />
+          </ValueContainer>
+          <IndicatorsContainer>
+            <InternalClearIndicator />
+            <InternalLoadingIndicator />
+            <InternalIndicatorSeparator />
+            <InternalDropdownIndicator
+              onMouseDown={onDropdownIndicatorMouseDown}
+              onTouchEnd={onDropdownIndicatorTouchEnd}
+            />
+          </IndicatorsContainer>
+        </Control>
+        <InternalMenu />
+        <FormField />
+      </SelectContainer>
+    </SelectContextProvider>
+  );
 }
-
-export type PublicBaseSelectProps<
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
-> = JSX.LibraryManagedAttributes<typeof Select, Props<Option, IsMulti, Group>>;

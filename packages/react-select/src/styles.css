@@ -61,7 +61,7 @@
   white-space: nowrap;
 }
 
-.react.select__dummy-input {
+.react-select__dummy-input {
   /* Get rid of any default styles */
   background: 0;
   border: 0;

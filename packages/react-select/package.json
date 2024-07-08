@@ -133,8 +133,18 @@
   },
   "jest": {
     "preset": "ts-jest",
+    "transform": {
+      "^.+\\.test.ts?$": [
+        "ts-jest",
+        {
+          "diagnostics": false
+        }
+      ]
+    },
     "modulePathIgnorePatterns": [
-      "./node_modules"
+      "./node_modules",
+      "./dist",
+      "./coverage"
     ],
     "testRegex": "src/*(/(__tests?__/)([^_].*/)*?[^_][^/]*?\\.(test|spec)?\\.(ts|js)x?)$",
     "setupFilesAfterEnv": [

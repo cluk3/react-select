@@ -1,11 +1,9 @@
-import type { InputHTMLAttributes } from 'react';
 import { useSelectContext } from '../SelectContext';
 import { prependCn, useGetClassNames } from '../utils';
 
-export interface InputSpecificProps
-  extends InputHTMLAttributes<HTMLInputElement> {
+export interface InputSpecificProps {
   /** Reference to the internal element */
-  innerRef?: (instance: HTMLInputElement | null) => void;
+  innerRef?: React.MutableRefObject<HTMLInputElement | null>;
   /** Set whether the input should be visible. Does not affect input size. */
   isHidden: boolean;
   /** Props that will be passed on to the input element. */
@@ -18,12 +16,12 @@ const Input = (props: InputProps) => {
   const {
     selectProps: { isDisabled, classNamePrefix },
   } = useSelectContext();
-  const { innerProps, value, innerRef, isHidden } = props;
+  const { innerProps, innerRef, isHidden } = props;
   const className = useGetClassNames('input', props, innerProps?.className);
   return (
     <div
       className={className}
-      data-value={value || ''}
+      data-value={innerProps.value || ''}
       style={{
         transform: isHidden ? 'translateZ(0)' : '',
       }}
@@ -35,7 +33,6 @@ const Input = (props: InputProps) => {
         }}
         disabled={isDisabled}
         {...innerProps}
-        value={value}
         className={prependCn(
           classNamePrefix,
           'hidden-input',

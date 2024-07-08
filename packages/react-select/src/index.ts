@@ -1,15 +1,9 @@
-import type Select from './Select';
-import type { GroupBase } from './types';
 import useStateManager from './useStateManager';
 
 export { default } from './stateManager';
 export { createFilter } from './filters';
 export { components } from './components';
-export type SelectInstance<
-  Option = unknown,
-  IsMulti extends boolean = false,
-  Group extends GroupBase<Option> = GroupBase<Option>,
-> = Select<Option, IsMulti, Group>;
+export type { SelectInstance } from './Select';
 export type { StateManagerProps as Props } from './useStateManager';
 export { useStateManager };
 

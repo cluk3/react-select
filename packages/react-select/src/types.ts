@@ -143,11 +143,7 @@ export type FocusDirection =
 export type GetOptionLabel<Option> = (option: Option) => string;
 export type GetOptionValue<Option> = (option: Option) => string;
 
-export interface State<
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
-> {
+export interface State<Option, IsMulti extends boolean> {
   ariaSelection: AriaSelection<Option, IsMulti> | null;
   inputIsHidden: boolean;
   isFocused: boolean;
@@ -155,11 +151,9 @@ export interface State<
   focusedOptionId: string | null;
   focusableOptionsWithIds: FocusableOptionWithId<Option>[];
   focusedValue: Option | null;
-  selectValue: Options<Option>;
   clearFocusValueOnUpdate: boolean;
   prevWasFocused: boolean;
   inputIsHiddenAfterUpdate: boolean | null | undefined;
-  prevProps: SelectProps<Option, IsMulti, Group> | void;
   instancePrefix: string;
 }
 
@@ -216,11 +210,11 @@ export interface SelectProps<
   /** Focus the control when it is mounted */
   autoFocus?: boolean;
   /** Remove the currently focused option when the user presses backspace when Select isClearable or isMulti */
-  backspaceRemovesValue: boolean;
+  backspaceRemovesValue?: boolean;
   /** Remove focus from the input when the user selects an option (handy for dismissing the keyboard on touch devices) */
-  blurInputOnSelect: boolean;
+  blurInputOnSelect?: boolean;
   /** When the user reaches the top/bottom of the menu, prevent scroll on the scroll-parent  */
-  captureMenuScroll: boolean;
+  captureMenuScroll?: boolean;
   /** Sets a className attribute on the outer component */
   className?: string;
   /**
@@ -232,9 +226,9 @@ export interface SelectProps<
   /**
    * Provide classNames based on state for each inner component
    */
-  classNames: ClassNamesConfig<Option, IsMulti, Group>;
+  classNames?: ClassNamesConfig<Option, IsMulti, Group>;
   /** Close the select menu when the user selects an option */
-  closeMenuOnSelect: boolean;
+  closeMenuOnSelect?: boolean;
   /**
    * If `true`, close the select menu when the user scrolls the document/body.
    *
@@ -247,25 +241,25 @@ export interface SelectProps<
    * This is useful when you have a scrollable modal and want to portal the menu out,
    * but want to avoid graphical issues.
    */
-  closeMenuOnScroll: boolean | ((event: Event) => boolean);
+  closeMenuOnScroll?: boolean | ((event: Event) => boolean);
   /**
    * This complex object includes all the compositional components that are used
    * in `react-select`. If you wish to overwrite a component, pass in an object
    * with the appropriate namespace.
    *
-   * If you only wish to restyle a component, we recommend using the `styles` prop
+   * If you only wish to restyle a component, we recommend using the `classNames` prop
    * instead. For a list of the components that can be passed in, and the shape
    * that will be passed to them, see [the components docs](/components)
    */
-  components: SelectComponentsConfig<Option>;
+  components?: SelectComponentsConfig<Option>;
   /** Whether the value of the select, e.g. SingleValue, should be displayed in the control. */
-  controlShouldRenderValue: boolean;
+  controlShouldRenderValue?: boolean;
   /** Delimiter used to join multiple values into a single HTML Input value */
   delimiter?: string;
   /** Clear all values when the user presses escape AND the menu is closed */
-  escapeClearsValue: boolean;
+  escapeClearsValue?: boolean;
   /** Custom method to filter whether an option should be displayed in the menu */
-  filterOption:
+  filterOption?:
     | ((option: FilterOptionOption<Option>, inputValue: string) => boolean)
     | null;
   /**
@@ -273,7 +267,7 @@ export interface SelectProps<
    *
    * An example can be found in the [Replacing builtins](/advanced#replacing-builtins) documentation.
    */
-  formatGroupLabel: (group: Group) => ReactNode;
+  formatGroupLabel?: (group: Group) => ReactNode;
   /** Formats option labels in the menu and control as React components */
   formatOptionLabel?: (
     data: Option,
@@ -285,15 +279,15 @@ export interface SelectProps<
    * Note: Failure to resolve to a string type can interfere with filtering and
    * screen reader support.
    */
-  getOptionLabel: GetOptionLabel<Option>;
+  getOptionLabel?: GetOptionLabel<Option>;
   /** Resolves option data to a string to compare options and specify value attributes */
-  getOptionValue: GetOptionValue<Option>;
+  getOptionValue?: GetOptionValue<Option>;
   /** Hide the selected option from the menu */
   hideSelectedOptions?: boolean;
   /** The id to set on the SelectContainer component. */
   id?: string;
   /** The value of the search input */
-  inputValue: string;
+  inputValue?: string;
   /** The id of the search input */
   inputId?: string;
   /** Define an id prefix for the select components e.g. {your-id}-value */
@@ -301,38 +295,38 @@ export interface SelectProps<
   /** Is the select value clearable */
   isClearable?: boolean;
   /** Is the select disabled */
-  isDisabled: boolean;
+  isDisabled?: boolean;
   /** Is the select in a state of loading (async) */
-  isLoading: boolean;
+  isLoading?: boolean;
   /**
    * Override the built-in logic to detect whether an option is disabled
    *
    * An example can be found in the [Replacing builtins](/advanced#replacing-builtins) documentation.
    */
-  isOptionDisabled: (option: Option, selectValue: Options<Option>) => boolean;
+  isOptionDisabled?: (option: Option, selectValue: Options<Option>) => boolean;
   /** Override the built-in logic to detect whether an option is selected */
   isOptionSelected?: (option: Option, selectValue: Options<Option>) => boolean;
   /** Support multiple selected options */
-  isMulti: IsMulti;
+  isMulti?: IsMulti;
   /** Is the select direction right-to-left */
-  isRtl: boolean;
+  isRtl?: boolean;
   /** Whether to enable search functionality */
-  isSearchable: boolean;
+  isSearchable?: boolean;
   /** Async: Text to display when loading options */
-  loadingMessage: (obj: { inputValue: string }) => ReactNode;
+  loadingMessage?: (obj: { inputValue: string }) => ReactNode;
   /** Minimum height of the menu before flipping */
-  minMenuHeight: number;
+  minMenuHeight?: number;
   /** Maximum height of the menu before scrolling */
-  maxMenuHeight: number;
+  maxMenuHeight?: number;
   /** Whether the menu is open */
-  menuIsOpen: boolean;
+  menuIsOpen?: boolean;
   /**
    * Default placement of the menu in relation to the control. 'auto' will flip
    * when there isn't enough space below the control.
    */
-  menuPlacement: MenuPlacement;
+  menuPlacement?: MenuPlacement;
   /** The CSS position value of the menu, when "fixed" extra layout management is required */
-  menuPosition: MenuPosition;
+  menuPosition?: MenuPosition;
   /**
    * Whether the menu should use a portal, and where it should attach
    *
@@ -340,13 +334,13 @@ export interface SelectProps<
    */
   menuPortalTarget?: HTMLElement | null;
   /** Whether to block scroll events when the menu is open */
-  menuShouldBlockScroll: boolean;
+  menuShouldBlockScroll?: boolean;
   /** Whether the menu should be scrolled into view when it opens */
-  menuShouldScrollIntoView: boolean;
+  menuShouldScrollIntoView?: boolean;
   /** Name of the HTML Input (optional - without this, no input will be rendered) */
   name?: string;
   /** Text to display when there are no options */
-  noOptionsMessage: (obj: { inputValue: string }) => ReactNode;
+  noOptionsMessage?: (obj: { inputValue: string }) => ReactNode;
   /** Handle blur events on the control */
   onBlur?: FocusEventHandler<HTMLInputElement>;
   /** Handle change events on the select */
@@ -357,35 +351,35 @@ export interface SelectProps<
   /** Handle focus events on the control */
   onFocus?: FocusEventHandler<HTMLInputElement>;
   /** Handle change events on the input */
-  onInputChange: (newValue: string, actionMeta: InputActionMeta) => void;
+  onInputChange?: (newValue: string, actionMeta: InputActionMeta) => void;
   /** Handle key down events on the select */
   onKeyDown?: KeyboardEventHandler<HTMLDivElement>;
   /** Handle the menu opening */
-  onMenuOpen: () => void;
+  onMenuOpen?: () => void;
   /** Handle the menu closing */
-  onMenuClose: () => void;
+  onMenuClose?: () => void;
   /** Fired when the user scrolls to the top of the menu */
   onMenuScrollToTop?: (event: WheelEvent | TouchEvent) => void;
   /** Fired when the user scrolls to the bottom of the menu */
   onMenuScrollToBottom?: (event: WheelEvent | TouchEvent) => void;
   /** Allows control of whether the menu is opened when the Select is focused */
-  openMenuOnFocus: boolean;
+  openMenuOnFocus?: boolean;
   /** Allows control of whether the menu is opened when the Select is clicked */
-  openMenuOnClick: boolean;
+  openMenuOnClick?: boolean;
   /** Array of options that populate the select menu */
-  options: OptionsOrGroups<Option, Group>;
+  options?: OptionsOrGroups<Option, Group>;
   /** Number of options to jump in menu when page{up|down} keys are used */
-  pageSize: number;
+  pageSize?: number;
   /** Placeholder for the select value */
-  placeholder: ReactNode;
+  placeholder?: ReactNode;
   /** Status to relay to screen readers */
-  screenReaderStatus: (obj: { count: number }) => string;
+  screenReaderStatus?: (obj: { count: number }) => string;
   /** Sets the tabIndex attribute on the input */
-  tabIndex: number;
+  tabIndex?: number;
   /** Select the currently focused option when the user presses tab */
-  tabSelectsValue: boolean;
+  tabSelectsValue?: boolean;
   /** Remove all non-essential styles */
-  unstyled: boolean;
+  unstyled?: boolean;
   /** The value of the select; reflected by the selected option */
   value: PropsValue<Option>;
   /** Sets the form attribute on the input */
@@ -393,6 +387,54 @@ export interface SelectProps<
   /** Marks the value-holding input as required for form validation */
   required?: boolean;
 }
+
+type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
+
+export type DefaultSelectProps<
+  Option,
+  IsMulti extends boolean = false,
+  Group extends GroupBase<Option> = GroupBase<Option>,
+> = WithRequired<
+  Omit<SelectProps<Option, IsMulti, Group>, 'isMulti'>,
+  | 'aria-live'
+  | 'backspaceRemovesValue'
+  | 'blurInputOnSelect'
+  | 'captureMenuScroll'
+  | 'classNames'
+  | 'closeMenuOnSelect'
+  | 'closeMenuOnScroll'
+  | 'components'
+  | 'controlShouldRenderValue'
+  | 'escapeClearsValue'
+  | 'filterOption'
+  | 'formatGroupLabel'
+  | 'getOptionLabel'
+  | 'getOptionValue'
+  | 'inputValue'
+  | 'isDisabled'
+  | 'isRtl'
+  | 'isOptionDisabled'
+  | 'isSearchable'
+  | 'loadingMessage'
+  | 'maxMenuHeight'
+  | 'minMenuHeight'
+  | 'menuIsOpen'
+  | 'menuPlacement'
+  | 'menuPosition'
+  | 'menuShouldBlockScroll'
+  | 'menuShouldScrollIntoView'
+  | 'noOptionsMessage'
+  | 'openMenuOnFocus'
+  | 'openMenuOnClick'
+  | 'options'
+  | 'pageSize'
+  | 'placeholder'
+  | 'screenReaderStatus'
+  | 'tabIndex'
+  | 'tabSelectsValue'
+  | 'unstyled'
+  | 'classNamePrefix'
+> & { isMulti: IsMulti };
 
 export type ClassNamesConfigComponentProps<
   Option,

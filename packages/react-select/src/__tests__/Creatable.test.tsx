@@ -127,12 +127,14 @@ cases<Opts>(
     let isValidNewOption = jest.fn((options) => options === 'new Option');
 
     const { container, rerender } = render(
+      // @ts-expect-error
       <Creatable menuIsOpen isValidNewOption={isValidNewOption} {...props} />
     );
 
     rerender(
       <Creatable
         menuIsOpen
+        // @ts-expect-error
         isValidNewOption={isValidNewOption}
         {...props}
         inputValue="new Option"
@@ -150,6 +152,7 @@ cases<Opts>(
     rerender(
       <Creatable
         menuIsOpen
+        // @ts-expect-error
         isValidNewOption={isValidNewOption}
         inputValue="invalid new Option"
         {...props}

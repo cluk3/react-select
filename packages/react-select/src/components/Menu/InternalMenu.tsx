@@ -8,7 +8,7 @@ export function InternalMenu() {
   const {
     getFocusableOptions,
     getElementId,
-    setMenuListRef,
+    menuListRef,
     controlRef,
     components: {
       Menu,
@@ -67,7 +67,7 @@ export function InternalMenu() {
         {(scrollTargetRef) => (
           <MenuList
             innerRef={(instance) => {
-              setMenuListRef(instance);
+              menuListRef.current = instance;
               scrollTargetRef(instance);
             }}
             innerProps={{
@@ -90,7 +90,7 @@ export function InternalMenu() {
   return menuPortalTarget || menuPosition === 'fixed' ? (
     <MenuPortal
       appendTo={menuPortalTarget}
-      controlElement={controlRef}
+      controlElement={controlRef.current}
       menuPlacement={menuPlacement}
       menuPosition={menuPosition}
     >
@@ -114,7 +114,7 @@ function InternalOption<Option>({
     onOptionHover,
     selectOption,
     formatOptionLabel,
-    setFocusedOptionRef,
+    focusedOptionRef,
     isAppleDevice,
     state: { focusedOption },
     components: { Option },
@@ -148,7 +148,7 @@ function InternalOption<Option>({
       key={optionId}
       label={label}
       type={type}
-      innerRef={isFocused ? setFocusedOptionRef : undefined}
+      innerRef={isFocused ? focusedOptionRef : undefined}
     >
       {formatOptionLabel(data, 'menu')}
     </Option>
@@ -184,6 +184,7 @@ function OptionsList() {
             <InternalOption
               option={option}
               id={`${groupIndex}-${option.index}`}
+              key={`${groupIndex}-${option.index}`}
             />
           ))}
         </Group>

@@ -9,9 +9,9 @@ import type {
   OnChangeValue,
   Options,
   SetValueAction,
-  SelectProps,
   ComponentNames,
   ClassNamesConfigComponentProps,
+  DefaultSelectProps,
 } from './types';
 import type { SelectComponentsGeneric } from './components/index';
 
@@ -20,11 +20,9 @@ export interface SelectContextValue<
   IsMulti extends boolean,
   Group extends GroupBase<Option>,
 > {
-  selectProps: Omit<SelectProps<Option, IsMulti, Group>, 'classNamePrefix'> & {
-    classNamePrefix: string;
-  };
+  selectProps: DefaultSelectProps<Option, IsMulti, Group>;
   components: SelectComponentsGeneric;
-  state: State<Option, IsMulti, Group>;
+  state: State<Option, IsMulti> & { selectValue: Options<Option> };
   cx: CX;
   getClassNames: <Key extends ComponentNames>(
     key: Key,
@@ -65,11 +63,14 @@ export interface SelectContextValue<
     context: FormatOptionLabelContext
   ) => React.ReactNode;
   onOptionHover: (focusedOption: Option) => void;
+  removeValue: (removedOption: Option) => void;
   onMenuMouseDown: React.MouseEventHandler<HTMLDivElement>;
   onMenuMouseMove: React.MouseEventHandler<HTMLDivElement>;
-  setMenuListRef: React.RefCallback<HTMLDivElement>;
-  setFocusedOptionRef: React.RefCallback<HTMLDivElement>;
-  controlRef: HTMLDivElement | null;
+  menuListRef: React.MutableRefObject<HTMLDivElement | null>;
+  focusedOptionRef: React.MutableRefObject<HTMLDivElement | null>;
+  controlRef: React.MutableRefObject<HTMLDivElement | null>;
+  userIsDragging: React.MutableRefObject<boolean | undefined>;
+  openAfterFocus: React.MutableRefObject<boolean>;
 }
 
 const SelectContext = createContext<unknown | undefined>(undefined);

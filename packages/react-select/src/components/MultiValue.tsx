@@ -66,6 +66,7 @@ export function MultiValueRemove<Option>({
   innerProps,
 }: MultiValueRemoveProps<Option>) {
   return (
+    // TODO we should use a button element here
     <div role="button" {...innerProps}>
       {children || <CrossIcon size={14} />}
     </div>

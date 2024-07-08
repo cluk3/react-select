@@ -1,11 +1,11 @@
-import type { ReactNode, RefCallback } from 'react';
+import type { ReactNode, MutableRefObject } from 'react';
 import { useGetClassNames } from '../utils';
 
 export interface OptionProps<Option = unknown> {
   /** The children to be rendered. */
   children: ReactNode;
   /** Inner ref to DOM Node */
-  innerRef?: RefCallback<HTMLDivElement>;
+  innerRef?: MutableRefObject<HTMLDivElement | null>;
   /** props passed to the wrapping element for the group. */
   innerProps: JSX.IntrinsicElements['div'];
   /** Text to be displayed representing the option. */

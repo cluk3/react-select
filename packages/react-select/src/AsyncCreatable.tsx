@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
-import type { MutableRefObject, ReactElement, RefAttributes } from 'react';
-import Select from './Select';
+import type { ReactElement } from 'react';
+import Select, { type SelectRef } from './Select';
 import type { GroupBase } from './types';
 import useAsync, { type AsyncAdditionalProps } from './useAsync';
 import useStateManager, { type StateManagerProps } from './useStateManager';
@@ -20,17 +20,13 @@ type AsyncCreatableSelect = <
   IsMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>,
 >(
-  props: AsyncCreatableProps<Option, IsMulti, Group> &
-    RefAttributes<Select<Option, IsMulti, Group>>
+  props: AsyncCreatableProps<Option, IsMulti, Group> & { ref?: SelectRef }
 ) => ReactElement;
 
 const AsyncCreatableSelect = forwardRef(
   <Option, IsMulti extends boolean, Group extends GroupBase<Option>>(
     props: AsyncCreatableProps<Option, IsMulti, Group>,
-    ref:
-      | ((instance: Select<Option, IsMulti, Group> | null) => void)
-      | MutableRefObject<Select<Option, IsMulti, Group> | null>
-      | null
+    ref: SelectRef
   ) => {
     const stateManagerProps = useAsync(props);
     const creatableProps = useStateManager(stateManagerProps);
