@@ -16,7 +16,7 @@ export function normalizedHeight(el: HTMLElement | typeof window): number {
 
 export function getScrollTop(el: HTMLElement | typeof window): number {
   if (isDocumentElement(el)) {
-    return window.pageYOffset;
+    return window.scrollY;
   }
   return el.scrollTop;
 }
@@ -105,7 +105,7 @@ interface PlacementArgs {
   placement: MenuPlacement;
   shouldScroll: boolean;
   isFixedPosition: boolean;
-  controlHeight: number;
+  controlEl: HTMLDivElement | null;
 }
 
 export function getMenuPlacement({
@@ -115,7 +115,7 @@ export function getMenuPlacement({
   placement: preferredPlacement,
   shouldScroll,
   isFixedPosition,
-  controlHeight,
+  controlEl,
 }: PlacementArgs): CalculatedMenuPlacementAndHeight {
   const scrollParent = getScrollParent(menuEl!);
   const defaultState: CalculatedMenuPlacementAndHeight = {
@@ -197,6 +197,7 @@ export function getMenuPlacement({
         // may need to be constrained after flipping
         let constrainedHeight = preferredMaxHeight;
         const spaceAbove = isFixedPosition ? viewSpaceAbove : scrollSpaceAbove;
+        const controlHeight = controlEl?.getBoundingClientRect().height || 38;
 
         if (spaceAbove >= minHeight) {
           constrainedHeight = Math.min(

@@ -46,14 +46,13 @@ export const useMenuPlacer = () => {
       menuPosition,
       menuShouldScrollIntoView,
     },
+    controlRef,
   } = useSelectContext();
 
   const { setPortalPlacement } = useContext(PortalPlacementContext) || {};
   const ref = useRef<HTMLDivElement | null>(null);
   const [maxHeight, setMaxHeight] = useState(maxMenuHeight);
   const [placement, setPlacement] = useState<CoercedMenuPlacement | null>(null);
-  // TODO we should calculate it dynamically instead of hard coding it
-  const controlHeight = 38;
 
   useLayoutEffect(() => {
     const menuEl = ref.current;
@@ -70,7 +69,7 @@ export const useMenuPlacer = () => {
       placement: menuPlacement,
       shouldScroll,
       isFixedPosition,
-      controlHeight,
+      controlEl: controlRef.current,
     });
 
     setMaxHeight(state.maxHeight);
@@ -83,7 +82,8 @@ export const useMenuPlacer = () => {
     menuShouldScrollIntoView,
     minMenuHeight,
     setPortalPlacement,
-    controlHeight,
+    controlRef,
+    ref,
   ]);
 
   return {
