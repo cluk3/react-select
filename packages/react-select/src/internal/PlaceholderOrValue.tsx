@@ -1,6 +1,13 @@
-import { useSelectContext } from '../SelectContext';
+import { type SelectContextValue } from '../SelectContext';
+import { type GroupBase } from '../types';
 
-export default function PlaceholderOrValue() {
+// we are using a render function instead of a regular component in order to
+// make TransitionGroup in src/animated/ValueContainer.tsx work
+export default function PlaceholderOrValue<
+  Option,
+  IsMulti extends boolean = false,
+  Group extends GroupBase<Option> = GroupBase<Option>,
+>(context: SelectContextValue<Option, IsMulti, Group>) {
   const {
     selectProps: {
       controlShouldRenderValue,
@@ -23,7 +30,7 @@ export default function PlaceholderOrValue() {
     getElementId,
     state: { selectValue, focusedValue },
     removeValue,
-  } = useSelectContext();
+  } = context;
 
   if (!hasValue || !controlShouldRenderValue) {
     return inputValue ? null : (

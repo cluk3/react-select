@@ -38,7 +38,6 @@ export interface SelectContextValue<
   getValue: () => Options<Option>;
   clearValue: () => void;
   hasValue: boolean;
-  isFocused: boolean;
   isOptionHoverBlocked: boolean;
   isAppleDevice: boolean;
   focusInput: () => void;

@@ -1126,39 +1126,38 @@ function SelectInstance<
   const { Control, IndicatorsContainer, SelectContainer, ValueContainer } =
     getComponents();
 
+  const context = {
+    selectProps: props,
+    components: getComponents(),
+    state: { ...state, selectValue },
+    getClassNames,
+    clearValue,
+    cx,
+    getValue,
+    hasValue: selectValue.length > 0,
+    selectOption,
+    setValue,
+    isOptionHoverBlocked: isOptionHoverBlocked.current,
+    isAppleDevice,
+    focusInput: focusInput,
+    blurInput: blurInput,
+    getFocusableOptions: getFocusableOptions,
+    getCategorizedOptions: getCategorizedOptions,
+    getElementId: getElementId,
+    removeValue,
+    onOptionHover: onOptionHover,
+    formatOptionLabel: formatOptionLabel,
+    focusedOptionRef,
+    controlRef,
+    menuListRef,
+    onMenuMouseDown: onMenuMouseDown,
+    onMenuMouseMove: onMenuMouseMove,
+    userIsDragging: userIsDragging,
+    openAfterFocus: openAfterFocus,
+  } as SelectContextValue<Option, IsMulti, Group>;
+
   return (
-    <SelectContextProvider<Option, IsMulti, Group>
-      value={{
-        selectProps: props,
-        components: getComponents(),
-        state: { ...state, selectValue },
-        // @ts-expect-error
-        getClassNames,
-        clearValue,
-        cx,
-        getValue,
-        hasValue: selectValue.length > 0,
-        selectOption,
-        setValue,
-        isOptionHoverBlocked: isOptionHoverBlocked.current,
-        isAppleDevice,
-        focusInput: focusInput,
-        blurInput: blurInput,
-        getFocusableOptions: getFocusableOptions,
-        getCategorizedOptions: getCategorizedOptions,
-        getElementId: getElementId,
-        removeValue,
-        onOptionHover: onOptionHover,
-        formatOptionLabel: formatOptionLabel,
-        focusedOptionRef,
-        controlRef,
-        menuListRef,
-        onMenuMouseDown: onMenuMouseDown,
-        onMenuMouseMove: onMenuMouseMove,
-        userIsDragging: userIsDragging,
-        openAfterFocus: openAfterFocus,
-      }}
-    >
+    <SelectContextProvider<Option, IsMulti, Group> value={context}>
       <SelectContainer
         innerProps={{
           id: props.id,
@@ -1175,7 +1174,7 @@ function SelectInstance<
           }}
         >
           <ValueContainer>
-            <PlaceholderOrValue />
+            {PlaceholderOrValue(context)}
             <InternalInput
               inputRef={inputRef}
               onInputBlur={onInputBlur}

@@ -128,6 +128,7 @@ export const Collapse = ({ children, in: _in, onExited }: CollapseProps) => {
           style={{
             overflow: 'hidden',
             whiteSpace: 'nowrap',
+            gridArea: '1 / 1 / 2 / 3',
             ...getStyleFromStatus(status),
           }}
         >

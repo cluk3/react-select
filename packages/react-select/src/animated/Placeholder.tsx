@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import type { ReactElement } from 'react';
 import type { PlaceholderProps } from '../components/Placeholder';
 import { Fade, collapseDuration } from './transitions';
 import { useSelectContext } from '../SelectContext';
+import { useAnimatedContext } from './context';
 
 export type PlaceholderComponent = (props: PlaceholderProps) => ReactElement;
 
@@ -10,8 +12,14 @@ const AnimatedPlaceholder =
   (WrappedComponent: PlaceholderComponent) => (props: PlaceholderProps) => {
     const {
       selectProps: { isMulti },
-      // eslint-disable-next-line react-hooks/rules-of-hooks
     } = useSelectContext();
+
+    const { shouldHidePlaceholder } = useAnimatedContext();
+
+    if (shouldHidePlaceholder) {
+      return null;
+    }
+
     return (
       <Fade<PlaceholderProps>
         component={WrappedComponent}

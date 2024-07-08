@@ -1,9 +1,10 @@
 import * as React from 'react';
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactElement } from 'react';
 import { useEffect, useState } from 'react';
 import { TransitionGroup } from 'react-transition-group';
 import type { ValueContainerProps } from '../components/containers';
 import { useSelectContext } from '../SelectContext';
+import { AnimatedContextProvider, type AnimatedContextValue } from './context';
 
 export type ValueContainerComponent = (
   props: ValueContainerProps
@@ -32,19 +33,22 @@ const IsMultiValueContainer = ({
   component,
   ...restProps
 }: IsMultiValueContainerProps) => {
-  const multiProps = useIsMultiValueContainer(restProps);
+  const [multiProps, context] = useIsMultiValueContainer(restProps);
 
-  return <TransitionGroup component={component} {...(multiProps as any)} />;
+  return (
+    <AnimatedContextProvider value={context}>
+      <TransitionGroup component={component} {...(multiProps as any)} />
+    </AnimatedContextProvider>
+  );
 };
 
-const useIsMultiValueContainer = ({
-  children,
-  ...props
-}: ValueContainerProps) => {
+const useIsMultiValueContainer = (
+  props: ValueContainerProps
+): [ValueContainerProps, AnimatedContextValue] => {
   const { innerProps } = props;
   const {
     hasValue,
-    selectProps: { isMulti, components, controlShouldRenderValue },
+    selectProps: { isMulti, controlShouldRenderValue },
   } = useSelectContext();
 
   const [cssDisplayFlex, setCssDisplayFlex] = useState(
@@ -65,23 +69,7 @@ const useIsMultiValueContainer = ({
     setRemovingValue(false);
   }, [removingValue, hasValue, cssDisplayFlex]);
 
-  const onExited = () => setRemovingValue(true);
-
-  const childMapper = (child: ReactNode) => {
-    if (isMulti && React.isValidElement(child)) {
-      // Add onExited callback to MultiValues
-      if (child.type === components.MultiValue) {
-        // @ts-expect-error
-        return React.cloneElement(child, { onExited });
-      }
-      // While container flexed, Input cursor is shown after Placeholder text,
-      // so remove Placeholder until display is set back to grid
-      if (child.type === components.Placeholder && cssDisplayFlex) {
-        return null;
-      }
-    }
-    return child;
-  };
+  const onExited = () => isMulti && setRemovingValue(true);
 
   const newInnerProps = {
     ...innerProps,
@@ -94,10 +82,15 @@ const useIsMultiValueContainer = ({
   const newProps = {
     ...props,
     innerProps: newInnerProps,
-    children: React.Children.toArray(children).map(childMapper),
   };
 
-  return newProps;
+  return [
+    newProps,
+    {
+      onExited,
+      shouldHidePlaceholder: isMulti && cssDisplayFlex,
+    },
+  ];
 };
 
 export default AnimatedValueContainer;
