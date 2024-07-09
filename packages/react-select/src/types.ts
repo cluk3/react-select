@@ -149,7 +149,6 @@ export interface State<Option, IsMulti extends boolean> {
   isFocused: boolean;
   focusedOption: Option | null;
   focusedOptionId: string | null;
-  focusableOptionsWithIds: FocusableOptionWithId<Option>[];
   focusedValue: Option | null;
   clearFocusValueOnUpdate: boolean;
   prevWasFocused: boolean;

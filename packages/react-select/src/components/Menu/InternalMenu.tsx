@@ -162,10 +162,10 @@ function OptionsList() {
     components: { Group, GroupHeading },
     selectProps: { formatGroupLabel },
   } = useSelectContext();
-  return getCategorizedOptions().map((item, i) => {
+  return getCategorizedOptions().map((item) => {
     if (item.type === 'group') {
       const { data, options, index: groupIndex } = item;
-      const groupId = `${getElementId('group')}-${groupIndex}-${i}`;
+      const groupId = `${getElementId('group')}-${groupIndex}`;
       const headingId = `${groupId}-heading`;
 
       return (

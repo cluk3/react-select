@@ -1,7 +1,7 @@
 import type { DefaultSelectProps as SelectProps } from './types';
 import type { Options, GroupBase } from './types';
 import type { CategorizedOption, CategorizedGroupOrOption } from './types';
-import type { FocusableOptionWithId, State } from './types';
+import type { State } from './types';
 import { notNullish, useOnMountEffect, isDocumentElement } from './utils';
 import type { FilterOptionOption } from './filters';
 import { useCallback, useRef } from 'react';
@@ -93,41 +93,31 @@ export function buildFocusableOptionsFromCategorizedOptions<
   );
 }
 
-export function buildFocusableOptionsWithIds<
+export function buildFocusableOptionsIdsMap<
   Option,
   Group extends GroupBase<Option>,
 >(
   categorizedOptions: readonly CategorizedGroupOrOption<Option, Group>[],
   optionId: string
 ) {
-  return categorizedOptions.reduce<FocusableOptionWithId<Option>[]>(
-    (optionsAccumulator, categorizedOption) => {
+  return categorizedOptions.reduce<Map<Option, string>>(
+    (optionsIdMap, categorizedOption) => {
       if (categorizedOption.type === 'group') {
-        optionsAccumulator.push(
-          ...categorizedOption.options.map((option) => ({
-            data: option.data,
-            id: `${optionId}-${categorizedOption.index}-${option.index}`,
-          }))
-        );
-      } else {
-        optionsAccumulator.push({
-          data: categorizedOption.data,
-          id: `${optionId}-${categorizedOption.index}`,
+        categorizedOption.options.forEach((option) => {
+          optionsIdMap.set(
+            option.data,
+            `${optionId}-${categorizedOption.index}-${option.index}`
+          );
         });
+      } else {
+        optionsIdMap.set(
+          categorizedOption.data,
+          `${optionId}-${categorizedOption.index}`
+        );
       }
-      return optionsAccumulator;
+      return optionsIdMap;
     },
-    []
-  );
-}
-
-export function buildFocusableOptions<
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->(props: SelectProps<Option, IsMulti, Group>, selectValue: Options<Option>) {
-  return buildFocusableOptionsFromCategorizedOptions(
-    buildCategorizedOptions(props, selectValue)
+    new Map<Option, string>()
   );
 }
 
@@ -194,13 +184,10 @@ export function getNextFocusedOption<Option, IsMulti extends boolean>(
 }
 
 export const getFocusedOptionId = <Option>(
-  focusableOptionsWithIds: FocusableOptionWithId<Option>[],
+  focusableOptionsIdsMap: Map<Option, string>,
   focusedOption: Option
 ) => {
-  const focusedOptionId = focusableOptionsWithIds.find(
-    (option) => option.data === focusedOption
-  )?.id;
-  return focusedOptionId || null;
+  return focusableOptionsIdsMap.get(focusedOption) || null;
 };
 
 export const getOptionLabel = <

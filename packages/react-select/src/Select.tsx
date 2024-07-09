@@ -38,9 +38,8 @@ import {
 import {
   isOptionSelected,
   buildCategorizedOptions,
-  buildFocusableOptions,
   buildFocusableOptionsFromCategorizedOptions,
-  buildFocusableOptionsWithIds,
+  buildFocusableOptionsIdsMap,
   getFocusedOptionId,
   getNextFocusedOption,
   getNextFocusedValue,
@@ -77,7 +76,6 @@ import type {
   OnChangeValue,
   SetValueAction,
   State,
-  FocusableOptionWithId,
   SelectProps as Props,
   DefaultSelectProps,
   FormatOptionLabelContext,
@@ -190,15 +188,20 @@ function SelectInstance<
     [_instancePrefix]
   );
 
-  const internalBuildCategorizedOptions = useCallback(() => {
-    return buildCategorizedOptions(props, selectValue);
-  }, [props, selectValue]);
+  const { categorizedOptions, focusableOptions, focusableOptionsIdsMap } =
+    useMemo(() => {
+      const categorizedOpts = buildCategorizedOptions(props, selectValue);
 
-  const internalBuildFocusableOptions = useCallback(() => {
-    return buildFocusableOptionsFromCategorizedOptions(
-      internalBuildCategorizedOptions()
-    );
-  }, [internalBuildCategorizedOptions]);
+      return {
+        categorizedOptions: categorizedOpts,
+        focusableOptions:
+          buildFocusableOptionsFromCategorizedOptions(categorizedOpts),
+        focusableOptionsIdsMap: buildFocusableOptionsIdsMap(
+          categorizedOpts,
+          getElementId('option')
+        ),
+      };
+    }, [props, selectValue, getElementId]);
 
   // constructor
   const [state, setState] = useState<State<Option, IsMulti>>(() => {
@@ -206,7 +209,6 @@ function SelectInstance<
       ariaSelection: null,
       focusedOption: null,
       focusedOptionId: null,
-      focusableOptionsWithIds: [],
       focusedValue: null,
       inputIsHidden: false,
       isFocused: false,
@@ -217,20 +219,13 @@ function SelectInstance<
     };
 
     if (props.menuIsOpen && selectValue.length) {
-      const focusableOptionsWithIds: FocusableOptionWithId<Option>[] =
-        buildFocusableOptionsWithIds(
-          internalBuildCategorizedOptions(),
-          getElementId('option')
-        );
-      const focusableOptions = internalBuildFocusableOptions();
       const optionIndex = focusableOptions.indexOf(selectValue[0]);
       const focusedOption = focusableOptions[optionIndex];
       intState = {
         ...intState,
-        focusableOptionsWithIds,
         focusedOption,
         focusedOptionId: getFocusedOptionId(
-          focusableOptionsWithIds,
+          focusableOptionsIdsMap,
           focusedOption
         ),
       };
@@ -295,12 +290,12 @@ function SelectInstance<
   }, [props]);
 
   const getCategorizedOptions = useCallback(() => {
-    return props.menuIsOpen ? internalBuildCategorizedOptions() : [];
-  }, [props.menuIsOpen, internalBuildCategorizedOptions]);
+    return props.menuIsOpen ? categorizedOptions : [];
+  }, [props.menuIsOpen, categorizedOptions]);
 
   const getFocusableOptions = useCallback(() => {
-    return props.menuIsOpen ? internalBuildFocusableOptions() : [];
-  }, [props.menuIsOpen, internalBuildFocusableOptions]);
+    return props.menuIsOpen ? focusableOptions : [];
+  }, [props.menuIsOpen, focusableOptions]);
 
   const ariaOnChange = useCallback(
     (value: OnChangeValue<Option, IsMulti>, actionMeta: ActionMeta<Option>) => {
@@ -314,7 +309,6 @@ function SelectInstance<
 
   const openMenu = useCallback(
     (focusOption: 'first' | 'last') => {
-      const focusableOptions = internalBuildFocusableOptions();
       let openAtIndex =
         focusOption === 'first' ? 0 : focusableOptions.length - 1;
 
@@ -329,24 +323,26 @@ function SelectInstance<
         state.isFocused && menuListRef.current
       );
 
+      const focusedOption = focusableOptions[openAtIndex];
+
       setState((prevState) => ({
         ...prevState,
         inputIsHiddenAfterUpdate: false,
         focusedValue: null,
-        focusedOption: focusableOptions[openAtIndex],
+        focusedOption,
         focusedOptionId: getFocusedOptionId(
-          state.focusableOptionsWithIds,
-          focusableOptions[openAtIndex]
+          focusableOptionsIdsMap,
+          focusedOption
         ),
       }));
       props.onMenuOpen?.();
     },
     [
-      internalBuildFocusableOptions,
+      focusableOptions,
       props,
       state.isFocused,
-      state.focusableOptionsWithIds,
       selectValue,
+      focusableOptionsIdsMap,
     ]
   );
 
@@ -393,13 +389,12 @@ function SelectInstance<
   const focusOption = useCallback(
     (direction: FocusDirection = 'first') => {
       const { pageSize } = props;
-      const { focusedOption } = state;
       const options = getFocusableOptions();
 
       if (!options.length) return;
       let nextFocus = 0; // handles 'first'
-      let focusedIndex = options.indexOf(focusedOption!);
-      if (!focusedOption) {
+      let focusedIndex = options.indexOf(state.focusedOption!);
+      if (!state.focusedOption) {
         focusedIndex = -1;
       }
 
@@ -422,12 +417,12 @@ function SelectInstance<
         focusedOption: options[nextFocus],
         focusedValue: null,
         focusedOptionId: getFocusedOptionId(
-          state.focusableOptionsWithIds,
+          focusableOptionsIdsMap,
           options[nextFocus]
         ),
       }));
     },
-    [props, state, getFocusableOptions]
+    [props, state.focusedOption, getFocusableOptions, focusableOptionsIdsMap]
   );
 
   const onChange = useCallback(
@@ -771,11 +766,11 @@ function SelectInstance<
         focusedOption,
         focusedOptionId:
           focusedOptionIndex > -1
-            ? getFocusedOptionId(state.focusableOptionsWithIds, focusedOption)
+            ? getFocusedOptionId(focusableOptionsIdsMap, focusedOption)
             : null,
       }));
     },
-    [state.focusedOption, state.focusableOptionsWithIds, getFocusableOptions]
+    [state.focusedOption, getFocusableOptions, focusableOptionsIdsMap]
   );
 
   // ==============================
@@ -962,33 +957,26 @@ function SelectInstance<
         menuIsOpen !== prevProps.current.menuIsOpen ||
         inputValue !== prevProps.current.inputValue)
     ) {
-      const focusableOptions = menuIsOpen
-        ? buildFocusableOptions(props, newSelectValue)
-        : [];
-
-      const focusableOptionsWithIds = menuIsOpen
-        ? buildFocusableOptionsWithIds(
-            buildCategorizedOptions(props, newSelectValue),
-            getElementId('option')
-          )
-        : [];
+      const newFocusableOptions = menuIsOpen ? focusableOptions : [];
+      const newFocusableOptionsIdsMap = menuIsOpen
+        ? focusableOptionsIdsMap
+        : new Map<Option, string>();
 
       const focusedValue = clearFocusValueOnUpdate
         ? getNextFocusedValue(state.focusedValue, selectValue, newSelectValue)
         : null;
       const focusedOption = getNextFocusedOption(
         state.focusedOption,
-        focusableOptions
+        newFocusableOptions
       );
       const focusedOptionId = getFocusedOptionId(
-        focusableOptionsWithIds,
+        newFocusableOptionsIdsMap,
         focusedOption
       );
 
       newMenuOptionsState = {
         focusedOption,
         focusedOptionId,
-        focusableOptionsWithIds,
         focusedValue,
         clearFocusValueOnUpdate: false,
       };
