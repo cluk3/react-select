@@ -51,7 +51,9 @@ export default function InternalInput({
     'aria-labelledby': selectProps['aria-labelledby'],
     'aria-required': required,
     role: 'combobox',
-    'aria-activedescendant': isAppleDevice ? undefined : focusedOptionId || '',
+    'aria-activedescendant': isAppleDevice
+      ? undefined
+      : focusedOptionId || undefined,
 
     ...(menuIsOpen && {
       'aria-controls': getElementId('listbox'),
