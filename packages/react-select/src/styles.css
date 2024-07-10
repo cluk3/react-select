@@ -9,7 +9,7 @@
 @import url('./components/placeholder.css');
 @import url('./components/single-value.css');
 
-.react-select {
+:root {
   --rs-primary: #2684ff;
   --rs-primary75: #4c9aff;
   --rs-primary50: #b2d4ff;
@@ -43,10 +43,10 @@
   --rs-loading-indicator-size: 4px;
   --rs-text-overflow: ellipsis;
   --rs-menu-z-index: 9999;
+}
 
-  & * {
-    box-sizing: border-box;
-  }
+.react-select * {
+  box-sizing: border-box;
 }
 
 .react-select__a11y-text {

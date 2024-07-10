@@ -1180,7 +1180,7 @@ function SelectInstance<
             />
           </IndicatorsContainer>
         </Control>
-        <InternalMenu />
+        {props.menuIsOpen && <InternalMenu />}
         <FormField />
       </SelectContainer>
     </SelectContextProvider>

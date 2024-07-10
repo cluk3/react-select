@@ -1,5 +1,6 @@
 .react-select__select-container {
   position: relative;
+  box-sizing: border-box;
 
   &[data-is-disabled='true'] {
     pointer-events: none;

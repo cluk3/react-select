@@ -37,64 +37,6 @@ export interface MenuProps {
   children: ReactNode;
 }
 
-export const useMenuPlacer = () => {
-  const {
-    selectProps: {
-      minMenuHeight,
-      maxMenuHeight,
-      menuPlacement,
-      menuPosition,
-      menuShouldScrollIntoView,
-    },
-    controlRef,
-  } = useSelectContext();
-
-  const { setPortalPlacement } = useContext(PortalPlacementContext) || {};
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [maxHeight, setMaxHeight] = useState(maxMenuHeight);
-  const [placement, setPlacement] = useState<CoercedMenuPlacement | null>(null);
-
-  useLayoutEffect(() => {
-    const menuEl = ref.current;
-    if (!menuEl) return;
-
-    // DO NOT scroll if position is fixed
-    const isFixedPosition = menuPosition === 'fixed';
-    const shouldScroll = menuShouldScrollIntoView && !isFixedPosition;
-
-    const state = getMenuPlacement({
-      maxHeight: maxMenuHeight,
-      menuEl,
-      minHeight: minMenuHeight,
-      placement: menuPlacement,
-      shouldScroll,
-      isFixedPosition,
-      controlEl: controlRef.current,
-    });
-
-    setMaxHeight(state.maxHeight);
-    setPlacement(state.placement);
-    setPortalPlacement?.(state.placement);
-  }, [
-    maxMenuHeight,
-    menuPlacement,
-    menuPosition,
-    menuShouldScrollIntoView,
-    minMenuHeight,
-    setPortalPlacement,
-    controlRef,
-    ref,
-  ]);
-
-  return {
-    ref,
-    placerProps: {
-      placement: placement || coercePlacement(menuPlacement),
-      maxHeight,
-    },
-  };
-};
-
 const Menu = (props: MenuProps) => {
   const { onMenuMouseDown, onMenuMouseMove } = useSelectContext();
   const { children, innerRef, placement, innerProps } = props;
@@ -188,4 +130,76 @@ export const LoadingMessage = (props: NoticeProps) => {
       {children}
     </div>
   );
+};
+
+interface PlacerProps {
+  placement: CoercedMenuPlacement;
+  maxHeight: number;
+}
+
+interface ChildrenProps {
+  ref: Ref<HTMLDivElement>;
+  placerProps: PlacerProps;
+}
+export interface MenuPlacerProps {
+  /** The children to be rendered. */
+  children: (childrenProps: ChildrenProps) => React.ReactElement;
+}
+
+export const MenuPlacer = (props: MenuPlacerProps) => {
+  const {
+    selectProps: {
+      minMenuHeight,
+      maxMenuHeight,
+      menuPlacement,
+      menuPosition,
+      menuShouldScrollIntoView,
+    },
+    controlRef,
+  } = useSelectContext();
+
+  const { setPortalPlacement } = useContext(PortalPlacementContext) || {};
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [maxHeight, setMaxHeight] = useState(maxMenuHeight);
+  const [placement, setPlacement] = useState<CoercedMenuPlacement | null>(null);
+
+  useLayoutEffect(() => {
+    const menuEl = ref.current;
+    if (!menuEl) return;
+
+    // DO NOT scroll if position is fixed
+    const isFixedPosition = menuPosition === 'fixed';
+    const shouldScroll = menuShouldScrollIntoView && !isFixedPosition;
+
+    const state = getMenuPlacement({
+      maxHeight: maxMenuHeight,
+      menuEl,
+      minHeight: minMenuHeight,
+      placement: menuPlacement,
+      shouldScroll,
+      isFixedPosition,
+      controlEl: controlRef.current,
+    });
+
+    setMaxHeight(state.maxHeight);
+    setPlacement(state.placement);
+    setPortalPlacement?.(state.placement);
+  }, [
+    controlRef,
+    maxMenuHeight,
+    menuPlacement,
+    menuPosition,
+    menuShouldScrollIntoView,
+    minMenuHeight,
+    setPortalPlacement,
+  ]);
+
+  return props.children({
+    ref,
+    placerProps: {
+      ...props,
+      placement: placement || coercePlacement(menuPlacement),
+      maxHeight,
+    },
+  });
 };

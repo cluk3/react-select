@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useMenuPlacer } from './index';
+import { MenuPlacer } from './index';
 import { ScrollManager } from '../../internal';
 import { useSelectContext } from '../../SelectContext';
 import type { CategorizedOption } from '../../types';
@@ -21,7 +21,6 @@ export function InternalMenu() {
       captureMenuScroll,
       inputValue,
       isLoading,
-      menuIsOpen,
       menuPlacement,
       menuPosition,
       menuShouldBlockScroll,
@@ -33,13 +32,6 @@ export function InternalMenu() {
       isMulti,
     },
   } = useSelectContext();
-
-  const {
-    ref,
-    placerProps: { placement, maxHeight },
-  } = useMenuPlacer();
-
-  if (!menuIsOpen) return null;
 
   let menuUI: ReactNode;
   const hasOptions = !!getFocusableOptions().length;
@@ -57,31 +49,35 @@ export function InternalMenu() {
   }
 
   const menuElement = (
-    <Menu innerRef={ref} placement={placement}>
-      <ScrollManager
-        captureEnabled={captureMenuScroll}
-        onTopArrive={onMenuScrollToTop}
-        onBottomArrive={onMenuScrollToBottom}
-        lockEnabled={menuShouldBlockScroll}
-      >
-        {(scrollTargetRef) => (
-          <MenuList
-            innerRef={(instance) => {
-              menuListRef.current = instance;
-              scrollTargetRef(instance);
-            }}
-            innerProps={{
-              role: 'listbox',
-              'aria-multiselectable': isMulti,
-              id: getElementId('listbox'),
-            }}
-            maxHeight={maxHeight}
+    <MenuPlacer>
+      {({ ref, placerProps: { placement, maxHeight } }) => (
+        <Menu innerRef={ref} placement={placement}>
+          <ScrollManager
+            captureEnabled={captureMenuScroll}
+            onTopArrive={onMenuScrollToTop}
+            onBottomArrive={onMenuScrollToBottom}
+            lockEnabled={menuShouldBlockScroll}
           >
-            {menuUI}
-          </MenuList>
-        )}
-      </ScrollManager>
-    </Menu>
+            {(scrollTargetRef) => (
+              <MenuList
+                innerRef={(instance) => {
+                  menuListRef.current = instance;
+                  scrollTargetRef(instance);
+                }}
+                innerProps={{
+                  role: 'listbox',
+                  'aria-multiselectable': isMulti,
+                  id: getElementId('listbox'),
+                }}
+                maxHeight={maxHeight}
+              >
+                {menuUI}
+              </MenuList>
+            )}
+          </ScrollManager>
+        </Menu>
+      )}
+    </MenuPlacer>
   );
 
   // positioning behaviour is almost identical for portalled and fixed,

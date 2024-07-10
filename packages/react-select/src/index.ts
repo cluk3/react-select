@@ -27,6 +27,7 @@ export type {
   MultiValueGenericProps,
   MultiValueProps,
   MultiValueRemoveProps,
+  MultiValueLabelProps,
 } from './components/MultiValue';
 export type { OptionProps } from './components/Option';
 export type { PlaceholderProps } from './components/Placeholder';
