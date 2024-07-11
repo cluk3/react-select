@@ -4,7 +4,6 @@ import type { IndicatorsContainerProps } from 'react-select';
 import Select, { components } from 'react-select';
 
 import { Field } from '../components';
-import type { ColourOption } from '../data';
 import { colourOptions } from '../data';
 
 export default {
@@ -35,9 +34,7 @@ export function CustomIndicatorsContainer() {
 // Components
 // =============================================================================
 
-function IndicatorsContainer(
-  props: IndicatorsContainerProps<ColourOption, true>
-) {
+function IndicatorsContainer(props: IndicatorsContainerProps) {
   return (
     <div style={{ background: colourOptions[2].color }}>
       <components.IndicatorsContainer {...props} />

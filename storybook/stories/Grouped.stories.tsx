@@ -1,4 +1,4 @@
-import type { Meta, ComponentStory } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select from 'react-select';
 
@@ -11,10 +11,7 @@ export default {
   argTypes: {},
 } as Meta<typeof Select>;
 
-const Template: ComponentStory<typeof Select> = ({
-  inputId = 'react-select',
-  ...props
-}) => {
+const Template = ({ inputId = 'react-select', ...props }) => {
   return (
     <Field
       htmlFor={inputId}
@@ -26,8 +23,10 @@ const Template: ComponentStory<typeof Select> = ({
   );
 };
 
-export const Grouped = Template.bind({});
-Grouped.args = {
-  ...defaultArgs,
-  options: groupedOptions,
+export const Grouped = {
+  render: Template,
+  args: {
+    ...defaultArgs,
+    options: groupedOptions,
+  },
 };

@@ -1,6 +1,5 @@
 import type { Preview } from '@storybook/react';
 import '../styles/tailwind.css';
-import 'react-select/styles';
 
 const preview: Preview = {
   parameters: {
@@ -8,6 +7,12 @@ const preview: Preview = {
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,
+      },
+    },
+    argTypes: {
+      menuPlacement: {
+        options: ['auto', 'bottom', 'top'],
+        control: { type: 'select' },
       },
     },
   },

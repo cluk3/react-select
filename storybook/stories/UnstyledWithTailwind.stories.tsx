@@ -1,6 +1,6 @@
 import '../styles/tailwind.css';
 
-import type { Meta, ComponentStory } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import classNames from 'classnames';
 import * as React from 'react';
 import Select from 'react-select';
@@ -14,10 +14,7 @@ export default {
   argTypes: {},
 } as Meta<typeof Select>;
 
-const Template: ComponentStory<typeof Select> = ({
-  inputId = 'react-select',
-  ...props
-}) => {
+const Template = ({ inputId = 'react-select', ...props }) => {
   return (
     <Field htmlFor={inputId} label="Unstyled With Tailwind">
       <Select

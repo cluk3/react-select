@@ -2,7 +2,7 @@ import EditorPanelIcon from '@atlaskit/icon/glyph/editor/panel';
 import Tooltip from '@atlaskit/tooltip';
 import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import type { GroupHeadingProps, StylesConfig } from 'react-select';
+import type { ClassNamesConfig, GroupHeadingProps } from 'react-select';
 import Select, { components } from 'react-select';
 import { Field } from '../components';
 import type { ColourOption, FlavourOption } from '../data';
@@ -22,7 +22,7 @@ export function CustomGroupHeading() {
         defaultValue={colourOptions[1]}
         options={groupedOptions}
         components={{ GroupHeading }}
-        styles={styles}
+        classNames={classNames}
       />
     </Field>
   );
@@ -32,13 +32,8 @@ export function CustomGroupHeading() {
 // Styles
 // =============================================================================
 
-const styles: StylesConfig<ColourOption | FlavourOption> = {
-  groupHeading: (base) => ({
-    ...base,
-    flex: '1 1',
-    color: 'white',
-    margin: 0,
-  }),
+const classNames: ClassNamesConfig<ColourOption | FlavourOption> = {
+  groupHeading: 'flex-1 text-violet-700 text-lg m-0',
 };
 
 // =============================================================================
@@ -50,10 +45,10 @@ function GroupHeading(props: GroupHeadingProps<ColourOption | FlavourOption>) {
     <div
       style={{
         border: `2px dotted ${colourOptions[2].color}`,
-        color: 'white',
-        background: colourOptions[2].color,
+        color: colourOptions[2].color,
         padding: '5px 0px',
         display: 'flex',
+        alignItems: 'center',
       }}
     >
       <components.GroupHeading {...props} />

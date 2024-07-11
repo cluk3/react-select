@@ -1,5 +1,4 @@
 import type { Meta } from '@storybook/react';
-import * as React from 'react';
 import Select from 'react-select';
 import { Field } from '../components';
 

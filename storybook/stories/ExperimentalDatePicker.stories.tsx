@@ -1,4 +1,3 @@
-import type { CSSObject } from '@emotion/serialize';
 import type { Meta } from '@storybook/react';
 import * as chrono from 'chrono-node';
 import moment, { type Moment } from 'moment';
@@ -57,55 +56,44 @@ export function ExperimentalDatePicker() {
 // Components
 // =============================================================================
 
-function Group(props: GroupProps<DateOption, false>) {
-  const {
-    Heading,
-    getStyles,
-    children,
-    label,
-    headingProps,
-    cx,
-    theme,
-    selectProps,
-  } = props;
+function Group(props: GroupProps<DateOption>) {
+  const { Heading, children, label, headingProps } = props;
   return (
-    <div aria-label={label as string} css={getStyles('group', props)}>
-      <Heading
-        selectProps={selectProps}
-        theme={theme}
-        getStyles={getStyles}
-        cx={cx}
-        {...headingProps}
-      >
-        {label}
-      </Heading>
-      <div css={daysHeaderStyles}>
+    <div
+      aria-label={label as string}
+      className="react-select__group react-select__group--styled"
+    >
+      <Heading {...headingProps}>{label}</Heading>
+      <div style={daysHeaderStyles}>
         {days.map((day, i) => (
-          <span key={`${i}-${day}`} css={daysHeaderItemStyles}>
+          <span key={`${i}-${day}`} style={daysHeaderItemStyles}>
             {day}
           </span>
         ))}
       </div>
-      <div css={daysContainerStyles}>{children}</div>
+      <div style={daysContainerStyles}>{children}</div>
     </div>
   );
 }
 
-function Option(props: OptionProps<DateOption, false>) {
-  const { data, getStyles, innerRef, innerProps } = props;
+function Option(props: OptionProps<DateOption>) {
+  const { data, innerRef, innerProps } = props;
+  let marginLeft;
   if (data.display === 'calendar') {
-    const defaultStyles = getStyles('option', props);
-    const styles = getOptionStyles(defaultStyles);
-
     if (data.date.date() === 1) {
       const indentBy = data.date.day();
       if (indentBy) {
-        styles.marginLeft = `${indentBy * 14 + 1}%`;
+        marginLeft = `${indentBy * 14 + 1}%`;
       }
     }
 
     return (
-      <span {...innerProps} css={styles} ref={innerRef}>
+      <span
+        {...innerProps}
+        className="react-select__option react-select__option--styled"
+        style={{ ...optionStyles, marginLeft }}
+        ref={innerRef}
+      >
         {data.date.format('D')}
       </span>
     );
@@ -193,13 +181,13 @@ function suggest(str: string) {
 
 const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
-const daysHeaderStyles: CSSObject = {
+const daysHeaderStyles: React.CSSProperties = {
   marginTop: '5px',
   paddingTop: '5px',
   paddingLeft: '2%',
   borderTop: '1px solid #eee',
 };
-const daysHeaderItemStyles: CSSObject = {
+const daysHeaderItemStyles: React.CSSProperties = {
   color: '#999',
   cursor: 'default',
   fontSize: '75%',
@@ -209,21 +197,18 @@ const daysHeaderItemStyles: CSSObject = {
   margin: '0 1%',
   textAlign: 'center',
 };
-const daysContainerStyles: CSSObject = {
+const daysContainerStyles: React.CSSProperties = {
   paddingTop: '5px',
   paddingLeft: '2%',
 };
 
-function getOptionStyles(defaultStyles: CSSObject): CSSObject {
-  return {
-    ...defaultStyles,
-    display: 'inline-block',
-    width: '12%',
-    margin: '0 1%',
-    textAlign: 'center',
-    borderRadius: '4px',
-  };
-}
+const optionStyles: React.CSSProperties = {
+  display: 'inline-block',
+  width: '12%',
+  margin: '0 1%',
+  textAlign: 'center',
+  borderRadius: '4px',
+};
 
 // =============================================================================
 // Types

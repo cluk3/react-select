@@ -1,7 +1,7 @@
 import Button from '@atlaskit/button/standard-button';
 import type { Meta } from '@storybook/react';
 import React, { useRef } from 'react';
-import Select, { type SelectInstance } from 'react-select';
+import Select, { type SelectRef } from 'react-select';
 import AsyncSelect from 'react-select/async';
 import CreatableSelect from 'react-select/creatable';
 
@@ -15,9 +15,9 @@ export default {
 } as Meta<typeof Select>;
 
 export function AccessingInternalsViaRef() {
-  const selectRef = useRef<SelectInstance<ColourOption> | null>(null);
-  const asyncRef = useRef<SelectInstance<ColourOption> | null>(null);
-  const creatableRef = useRef<SelectInstance<ColourOption> | null>(null);
+  const selectRef = useRef<SelectRef | null>(null);
+  const asyncRef = useRef<SelectRef | null>(null);
+  const creatableRef = useRef<SelectRef | null>(null);
 
   // Focus handlers
   const focus = () => {

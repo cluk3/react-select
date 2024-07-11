@@ -5,7 +5,6 @@ import type { DropdownIndicatorProps } from 'react-select';
 import Select, { components } from 'react-select';
 
 import { Field } from '../components';
-import type { ColourOption } from '../data';
 import { colourOptions } from '../data';
 
 export default {
@@ -30,7 +29,7 @@ export function CustomDropdownIndicator() {
 // Components
 // =============================================================================
 
-function DropdownIndicator(props: DropdownIndicatorProps<ColourOption, true>) {
+function DropdownIndicator(props: DropdownIndicatorProps) {
   return (
     <components.DropdownIndicator {...props}>
       <EmojiIcon label="Emoji" primaryColor={colourOptions[2].color} />

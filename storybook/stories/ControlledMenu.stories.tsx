@@ -1,6 +1,6 @@
 import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import type { SelectInstance, StylesConfig } from 'react-select';
+import type { SelectRef, ClassNamesConfig } from 'react-select';
 import Select from 'react-select';
 
 import { Field, Inline, Stack } from '../components';
@@ -13,7 +13,7 @@ export default {
 } as Meta<typeof Select>;
 
 export function ControlledMenu() {
-  const inputRef = React.useRef<SelectInstance<ColourOption>>(null);
+  const inputRef = React.useRef<SelectRef | null>(null);
   const [menuIsOpen, setMenuIsOpen] = React.useState<boolean>(false);
 
   function toggleMenuIsOpen() {
@@ -42,7 +42,7 @@ export function ControlledMenu() {
           defaultValue={colourOptions[0]}
           menuIsOpen={menuIsOpen}
           options={colourOptions}
-          styles={styles}
+          classNames={classNames}
         />
       </Field>
     </Stack>
@@ -53,6 +53,6 @@ export function ControlledMenu() {
 // Styles
 // =============================================================================
 
-const styles: StylesConfig<ColourOption, false> = {
-  menu: (base) => ({ ...base, position: 'relative' }),
+const classNames: ClassNamesConfig<ColourOption, false> = {
+  menu: () => 'relative',
 };

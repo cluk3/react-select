@@ -5,7 +5,6 @@ import type { InputProps } from 'react-select';
 import Select, { components } from 'react-select';
 
 import { Field } from '../components';
-import type { ColourOption } from '../data';
 import { colourOptions } from '../data';
 
 export default {
@@ -32,7 +31,7 @@ export function CustomInput() {
 // Components
 // =============================================================================
 
-function Input(props: InputProps<ColourOption, true>) {
+function Input(props: InputProps) {
   const component = <components.Input {...props} />;
   if (props.isHidden) return component;
   return (

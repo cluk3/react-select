@@ -2,11 +2,10 @@ import Button from '@atlaskit/button/standard-button';
 import Modal from '@atlaskit/modal-dialog';
 import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import type { MenuPlacement, StylesConfig } from 'react-select';
-import Select, { defaultTheme } from 'react-select';
+import type { MenuPlacement } from 'react-select';
+import Select from 'react-select';
 
 import { ChevronDown, Field, Inline, Stack } from '../components';
-import type { ColourOption } from '../data';
 import { colourOptions } from '../data';
 
 export default {
@@ -28,8 +27,7 @@ export function MenuPortal() {
         <Stack
           style={{
             fontFamily: 'system-ui',
-            paddingTop: '6rem',
-            paddingBottom: '6rem',
+            padding: '6rem 2rem',
           }}
         >
           <Field
@@ -46,7 +44,6 @@ export function MenuPortal() {
               menuPortalTarget={document.body}
               menuPosition={isFixed ? 'fixed' : 'absolute'}
               menuShouldScrollIntoView={false}
-              styles={styles}
             />
           </Field>
           <Inline gap="large">
@@ -70,7 +67,7 @@ export function MenuPortal() {
                     fontSize: '1rem',
                     display: 'block',
                     appearance: 'none',
-                    border: `1px solid ${defaultTheme.colors.neutral20}`,
+                    border: '1px solid var(--rs-neutral20)',
                     width: '100%',
                     borderRadius: '4px',
                     height: '2.5rem',
@@ -137,11 +134,3 @@ export function MenuPortal() {
     </>
   );
 }
-
-// =============================================================================
-// Utils
-// =============================================================================
-
-const styles: StylesConfig<ColourOption> = {
-  menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-};

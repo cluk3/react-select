@@ -4,7 +4,6 @@ import type { ControlProps } from 'react-select';
 import Select, { components } from 'react-select';
 
 import { Field } from '../components';
-import type { ColourOption } from '../data';
 import { colourOptions } from '../data';
 
 export default {
@@ -30,7 +29,7 @@ export function CustomControl() {
 // Components
 // =============================================================================
 
-function ControlComponent(props: ControlProps<ColourOption, false>) {
+function ControlComponent(props: ControlProps) {
   return (
     <div
       style={{

@@ -1,5 +1,4 @@
 import type { Meta } from '@storybook/react';
-import * as React from 'react';
 import AsyncCreatableSelect from 'react-select/async-creatable';
 
 import { Field } from '../components';

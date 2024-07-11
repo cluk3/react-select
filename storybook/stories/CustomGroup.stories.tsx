@@ -30,7 +30,7 @@ export function CustomGroup() {
 // Components
 // =============================================================================
 
-function Group(props: GroupProps<ColourOption | FlavourOption, false>) {
+function Group(props: GroupProps<ColourOption | FlavourOption>) {
   return (
     <div
       style={{

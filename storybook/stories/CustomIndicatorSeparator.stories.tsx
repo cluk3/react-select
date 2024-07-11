@@ -4,7 +4,6 @@ import type { IndicatorSeparatorProps } from 'react-select';
 import Select from 'react-select';
 
 import { Field } from '../components';
-import type { ColourOption } from '../data';
 import { colourOptions } from '../data';
 
 export default {
@@ -34,9 +33,7 @@ export function CustomIndicatorSeparator() {
 // Components
 // =============================================================================
 
-function IndicatorSeparator({
-  innerProps,
-}: IndicatorSeparatorProps<ColourOption, true>) {
+function IndicatorSeparator({ innerProps }: IndicatorSeparatorProps) {
   return (
     <span
       style={{

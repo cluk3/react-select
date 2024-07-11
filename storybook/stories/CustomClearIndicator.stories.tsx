@@ -1,8 +1,7 @@
 import type { Meta } from '@storybook/react';
-import * as React from 'react';
-import type { ClearIndicatorProps, StylesConfig } from 'react-select';
-import Select from 'react-select';
-
+import type { ClassNamesConfig, ClearIndicatorProps } from 'react-select';
+import Select, { useGetClassNames } from 'react-select';
+import cn from 'classnames';
 import { Field } from '../components';
 import type { ColourOption } from '../data';
 import { colourOptions } from '../data';
@@ -22,7 +21,7 @@ export function CustomClearIndicator() {
         defaultValue={[colourOptions[4], colourOptions[5]]}
         isMulti
         options={colourOptions}
-        styles={styles}
+        classNames={classNames}
       />
     </Field>
   );
@@ -32,32 +31,27 @@ export function CustomClearIndicator() {
 // Styles
 // =============================================================================
 
-const styles: StylesConfig<ColourOption> = {
-  clearIndicator: (base, state) => ({
-    ...base,
-    cursor: 'pointer',
-    color: state.isFocused ? 'blue' : 'black',
-  }),
+const classNames: ClassNamesConfig<ColourOption> = {
+  clearIndicator: ({ state: { isFocused } }) =>
+    cn({
+      'cursor-pointer': true,
+      'text-blue-400': isFocused,
+      'text-black': !isFocused,
+    }),
 };
 
 // =============================================================================
 // Components
 // =============================================================================
 
-function ClearIndicator(props: ClearIndicatorProps<ColourOption, true>) {
+function ClearIndicator(props: ClearIndicatorProps) {
   const {
-    getStyles,
     innerProps: { ref, ...restInnerProps },
   } = props;
+  const className = useGetClassNames('clearIndicator', props);
   return (
-    <div
-      {...restInnerProps}
-      ref={ref}
-      style={getStyles('clearIndicator', props) as React.CSSProperties}
-    >
-      <span style={{ padding: '0px 5px', color: colourOptions[2].color }}>
-        clear all
-      </span>
+    <div {...restInnerProps} ref={ref} className={className}>
+      <span style={{ padding: '0px 5px' }}>clear all</span>
     </div>
   );
 }

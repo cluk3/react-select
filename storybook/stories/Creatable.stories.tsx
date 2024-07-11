@@ -1,7 +1,7 @@
-import type { Meta, ComponentStory } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import type { SelectInstance } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
+import type { SelectRef } from 'react-select';
 
 import { Field } from '../components';
 import { defaultArgs } from '../data';
@@ -29,11 +29,8 @@ const defaultOptions: Option[] = [
   createOption('Three'),
 ];
 
-const Template: ComponentStory<typeof CreatableSelect> = ({
-  inputId = 'react-select',
-  ...props
-}) => {
-  const creatableRef = React.useRef<SelectInstance<Option> | null>(null);
+const Template = ({ inputId = 'react-select', ...props }) => {
+  const creatableRef = React.useRef<SelectRef | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [options, setOptions] = React.useState(props.options as Option[]);
   const [value, setValue] = React.useState<Option | null>();
@@ -57,7 +54,7 @@ const Template: ComponentStory<typeof CreatableSelect> = ({
       secondaryLabel="The Creatable API lets users add their own options to the list."
     >
       <CreatableSelect
-        {...(props /** Casting as `unknown` here so types for `ref` are correct */ as unknown)}
+        {...props}
         inputId={inputId}
         isDisabled={isLoading}
         isLoading={isLoading}
@@ -70,9 +67,11 @@ const Template: ComponentStory<typeof CreatableSelect> = ({
   );
 };
 
-export const Creatable = Template.bind({});
-Creatable.args = {
-  ...defaultArgs,
-  options: defaultOptions,
-  isClearable: true,
+export const Creatable = {
+  render: Template,
+  args: {
+    ...defaultArgs,
+    options: defaultOptions,
+    isClearable: true,
+  },
 };

@@ -2,7 +2,7 @@ import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select, {
   components,
-  type MultiValueGenericProps,
+  type MultiValueLabelProps,
   type MultiValueProps,
   type OnChangeValue,
   type Props,
@@ -56,8 +56,9 @@ export function MultiSelectSort() {
       value={selected}
       onChange={onChange}
       components={{
-        // @ts-ignore We're failing to provide a required index prop to SortableElement
+        // @ts-expect-error We're failing to provide a required index prop to SortableElement
         MultiValue: SortableMultiValue,
+        // @ts-expect-error
         MultiValueLabel: SortableMultiValueLabel,
       }}
       closeMenuOnSelect={false}
@@ -99,7 +100,9 @@ const SortableMultiValue = SortableElement(
 );
 
 const SortableMultiValueLabel = SortableHandle(
-  (props: MultiValueGenericProps) => <components.MultiValueLabel {...props} />
+  (props: MultiValueLabelProps<ColourOption>) => (
+    <components.MultiValueLabel {...props} />
+  )
 );
 
 const SortableSelect = SortableContainer(Select) as React.ComponentClass<

@@ -17,11 +17,11 @@ export default {
 export function CustomMultiValueLabel() {
   return (
     <Field
-      label="Custom Multi Value Remove"
-      htmlFor="custom-multi-value-remove-id"
+      label="Custom Multi Value Label"
+      htmlFor="custom-multi-value-label-id"
     >
       <Select
-        inputId="custom-multi-value-remove-id"
+        inputId="custom-multi-value-label-id"
         components={{ MultiValueLabel }}
         defaultValue={[colourOptions[4], colourOptions[5]]}
         isMulti

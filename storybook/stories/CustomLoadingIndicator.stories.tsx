@@ -34,7 +34,7 @@ export function CustomLoadingIndicator() {
 // Components
 // =============================================================================
 
-function LoadingIndicator(props: LoadingIndicatorProps<ColourOption>) {
+function LoadingIndicator(props: LoadingIndicatorProps) {
   return (
     <Tooltip content="Custom Loader">
       <Spinner {...props} delay={0} />

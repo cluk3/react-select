@@ -1,4 +1,4 @@
-import type { Meta, ComponentStory } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -13,10 +13,7 @@ export default {
 
 const animatedComponents = makeAnimated();
 
-const Template: ComponentStory<typeof Select> = ({
-  inputId = 'react-select',
-  ...props
-}) => {
+const Template = ({ inputId = 'react-select', ...props }) => {
   return (
     <Field
       htmlFor={inputId}
@@ -28,9 +25,11 @@ const Template: ComponentStory<typeof Select> = ({
   );
 };
 
-export const AnimatedMulti = Template.bind({});
-AnimatedMulti.args = {
-  ...defaultArgs,
-  defaultValue: [colourOptions[0], colourOptions[1], colourOptions[2]],
-  isMulti: true,
+export const AnimatedMulti = {
+  render: Template,
+  args: {
+    ...defaultArgs,
+    defaultValue: [colourOptions[0], colourOptions[1], colourOptions[2]],
+    isMulti: true,
+  },
 };
