@@ -122,7 +122,7 @@ function InternalOption<Option>({
     : () => {
         onOptionHover(data);
       };
-  const onSelect = isDisabled ? undefined : () => selectOption(data);
+  const onSelect = () => selectOption(data);
   const optionId = `${getElementId('option')}-${id}`;
   const innerProps = {
     id: optionId,
