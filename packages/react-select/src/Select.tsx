@@ -141,25 +141,30 @@ export type PublicBaseSelectProps<
   Group extends GroupBase<Option>,
 > = JSX.LibraryManagedAttributes<typeof Select, Props<Option, IsMulti, Group>>;
 
-export type SelectRef = React.Ref<{
+export type SelectRef = {
   focus: () => void;
   blur: () => void;
-}>;
+};
 
 export type SelectType = <
   Option = unknown,
   IsMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>,
 >(
-  props: Props<Option, IsMulti, Group> & { ref?: SelectRef }
+  props: Props<Option, IsMulti, Group> & {
+    ref?: React.ForwardedRef<SelectRef>;
+  }
 ) => ReactElement;
 
-export type SelectInstance = typeof SelectInstance;
+export type SelectInstance = SelectType;
 function SelectInstance<
   Option = unknown,
   IsMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>,
->(_props: Props<Option, IsMulti, Group>, selectRef: SelectRef) {
+>(
+  _props: Props<Option, IsMulti, Group>,
+  selectRef: React.ForwardedRef<SelectRef>
+) {
   // defaultProps assigned to props
   const props = useMemo(() => {
     return {

@@ -3,9 +3,11 @@ import useStateManager from './useStateManager';
 export { default } from './stateManager';
 export { createFilter } from './filters';
 export { components } from './components';
-export type { SelectInstance } from './Select';
+export type { SelectInstance, SelectRef } from './Select';
 export type { StateManagerProps as Props } from './useStateManager';
 export { useStateManager };
+export { useGetClassNames } from './utils';
+export { useSelectContext } from './SelectContext';
 
 export type { SelectComponentsConfig } from './components';
 export type {

@@ -18,13 +18,15 @@ type CreatableSelect = <
   IsMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>,
 >(
-  props: CreatableProps<Option, IsMulti, Group> & { ref?: SelectRef }
+  props: CreatableProps<Option, IsMulti, Group> & {
+    ref?: React.ForwardedRef<SelectRef>;
+  }
 ) => ReactElement;
 
 const CreatableSelect = forwardRef(
   <Option, IsMulti extends boolean, Group extends GroupBase<Option>>(
     props: CreatableProps<Option, IsMulti, Group>,
-    ref: SelectRef
+    ref: React.ForwardedRef<SelectRef>
   ) => {
     const creatableProps = useStateManager(props);
     const selectProps = useCreatable(creatableProps);

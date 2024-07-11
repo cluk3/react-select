@@ -13,13 +13,15 @@ type AsyncSelect = <
   IsMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>,
 >(
-  props: AsyncProps<Option, IsMulti, Group> & { ref?: SelectRef }
+  props: AsyncProps<Option, IsMulti, Group> & {
+    ref?: React.ForwardedRef<SelectRef>;
+  }
 ) => ReactElement;
 
 const AsyncSelect = forwardRef(
   <Option, IsMulti extends boolean, Group extends GroupBase<Option>>(
     props: AsyncProps<Option, IsMulti, Group>,
-    ref: SelectRef
+    ref: React.ForwardedRef<SelectRef>
   ) => {
     const stateManagedProps = useAsync(props);
     const selectProps = useStateManager(stateManagedProps);

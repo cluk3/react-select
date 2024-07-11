@@ -445,7 +445,7 @@ export type ClassNamesConfigComponentProps<
 
 export type ClassNamesConfig<
   Option = unknown,
-  IsMulti extends boolean = boolean,
+  IsMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>,
 > = {
   [K in ComponentNames]?:

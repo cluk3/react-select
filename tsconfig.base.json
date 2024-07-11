@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "commonjs",
+    "module": "Preserve",
     "jsx": "react",
     "noEmit": true,
     "strict": true,
     "lib": ["dom", "dom.iterable", "es2017"],
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "moduleResolution": "Bundler"
   }
 }

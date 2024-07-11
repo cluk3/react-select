@@ -30,7 +30,7 @@ export interface GroupProps<
   options: readonly CategorizedOption<Option>[];
 }
 
-const Group = <Option, Group extends GroupBase<Option>>(
+const Group = <Option, Group extends GroupBase<Option> = GroupBase<Option>>(
   props: GroupProps<Option, Group>
 ) => {
   const { children, Heading, headingProps, innerProps, label } = props;
@@ -53,7 +53,10 @@ export type GroupHeadingProps<
   Group extends GroupBase<Option> = GroupBase<Option>,
 > = GroupHeadingPropsDefinedProps<Option, Group> & JSX.IntrinsicElements['div'];
 
-export const GroupHeading = <Option, Group extends GroupBase<Option>>(
+export const GroupHeading = <
+  Option,
+  Group extends GroupBase<Option> = GroupBase<Option>,
+>(
   props: GroupHeadingProps<Option, Group>
 ) => {
   const { id, innerProps } = props;

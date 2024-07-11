@@ -51,14 +51,14 @@ import Option, { type OptionProps } from './Option';
 import Placeholder, { type PlaceholderProps } from './Placeholder';
 import SingleValue, { type SingleValueProps } from './SingleValue';
 
-export interface SelectComponents<Option> {
+export interface SelectComponents<Opt> {
   ClearIndicator: typeof ClearIndicator;
   Control: typeof Control;
   DropdownIndicator: typeof DropdownIndicator | null;
   DownChevron: typeof DownChevron;
   CrossIcon: typeof CrossIcon;
-  Group: typeof Group;
-  GroupHeading: typeof GroupHeading;
+  Group: typeof Group<Opt>;
+  GroupHeading: typeof GroupHeading<Opt>;
   IndicatorsContainer: typeof IndicatorsContainer;
   IndicatorSeparator: typeof IndicatorSeparator | null;
   Input: typeof Input;
@@ -69,13 +69,13 @@ export interface SelectComponents<Option> {
   LoadingMessage: typeof LoadingMessage;
   NoOptionsMessage: typeof NoOptionsMessage;
   MultiValue: typeof MultiValue;
-  MultiValueContainer: typeof MultiValueContainer<Option>;
-  MultiValueLabel: typeof MultiValueLabel<Option>;
-  MultiValueRemove: typeof MultiValueRemove<Option>;
-  Option: typeof Option;
+  MultiValueContainer: typeof MultiValueContainer<Opt>;
+  MultiValueLabel: typeof MultiValueLabel<Opt>;
+  MultiValueRemove: typeof MultiValueRemove<Opt>;
+  Option: typeof Option<Opt>;
   Placeholder: typeof Placeholder;
   SelectContainer: typeof SelectContainer;
-  SingleValue: typeof SingleValue;
+  SingleValue: typeof SingleValue<Opt>;
   ValueContainer: typeof ValueContainer;
 }
 
@@ -85,7 +85,7 @@ export interface SelectComponentsProps<Option> {
   DropdownIndicator: DropdownIndicatorProps;
   DownChevron: DownChevronProps;
   CrossIcon: CrossIconProps;
-  Group: GroupProps;
+  Group: GroupProps<Option>;
   GroupHeading: GroupHeadingProps;
   IndicatorsContainer: IndicatorsContainerProps;
   IndicatorSeparator: IndicatorSeparatorProps;
@@ -100,7 +100,7 @@ export interface SelectComponentsProps<Option> {
   MultiValueContainer: MultiValueGenericProps<Option>;
   MultiValueLabel: MultiValueLabelProps<Option>;
   MultiValueRemove: MultiValueRemoveProps<Option>;
-  Option: OptionProps;
+  Option: OptionProps<Option>;
   Placeholder: PlaceholderProps;
   SelectContainer: ContainerProps;
   SingleValue: SingleValueProps;
@@ -137,16 +137,13 @@ export const components = {
   ValueContainer: ValueContainer,
 };
 
-export type SelectComponentsGeneric = typeof components;
-
 interface Props<Option> {
   components: SelectComponentsConfig<Option>;
 }
 
 export const defaultComponents = <Option>(
   props: Props<Option>
-): SelectComponentsGeneric =>
-  ({
-    ...components,
-    ...props.components,
-  }) as SelectComponentsGeneric;
+): SelectComponents<Option> => ({
+  ...components,
+  ...props.components,
+});

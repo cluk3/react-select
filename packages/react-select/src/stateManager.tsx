@@ -12,13 +12,15 @@ type StateManagedSelect = <
   IsMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>,
 >(
-  props: StateManagerProps<Option, IsMulti, Group> & { ref?: SelectRef }
+  props: StateManagerProps<Option, IsMulti, Group> & {
+    ref?: React.ForwardedRef<SelectRef>;
+  }
 ) => ReactElement;
 
 const StateManagedSelect = forwardRef(
   <Option, IsMulti extends boolean, Group extends GroupBase<Option>>(
     props: StateManagerProps<Option, IsMulti, Group>,
-    ref: SelectRef
+    ref: React.ForwardedRef<SelectRef>
   ) => {
     const baseSelectProps = useStateManager(props);
 

@@ -12,7 +12,7 @@ export interface SingleValueProps<Option = unknown> {
   innerProps?: JSX.IntrinsicElements['div'];
 }
 
-const SingleValue = (props: SingleValueProps) => {
+const SingleValue = <Option,>(props: SingleValueProps<Option>) => {
   const { children, innerProps } = props;
   const className = useGetClassNames(
     'singleValue',

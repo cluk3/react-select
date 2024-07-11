@@ -44,7 +44,7 @@ export default defineConfig((configEnv) => ({
     //aiding in debugging.
     sourcemap: configEnv.mode === 'development',
     //Clears the output directory before building.
-    emptyOutDir: true,
+    emptyOutDir: configEnv.mode !== 'development',
     outDir: 'dist',
   },
   //react() enables React support.
