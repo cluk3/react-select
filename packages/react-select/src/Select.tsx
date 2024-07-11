@@ -752,6 +752,7 @@ function SelectInstance<
         focusedValue: null,
         isFocused: false,
       }));
+      (event.relatedTarget as HTMLElement)?.focus?.();
     },
     [props, onInputChange, onMenuClose]
   );
