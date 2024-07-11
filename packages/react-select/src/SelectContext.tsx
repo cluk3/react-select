@@ -13,7 +13,7 @@ import type {
   ClassNamesConfigComponentProps,
   DefaultSelectProps,
 } from './types';
-import type { SelectComponentsGeneric } from './components/index';
+import type { SelectComponents } from './components/index';
 
 export interface SelectContextValue<
   Option,
@@ -21,7 +21,7 @@ export interface SelectContextValue<
   Group extends GroupBase<Option>,
 > {
   selectProps: DefaultSelectProps<Option, IsMulti, Group>;
-  components: SelectComponentsGeneric;
+  components: SelectComponents<Option>;
   state: State<Option, IsMulti> & { selectValue: Options<Option> };
   cx: CX;
   getClassNames: <Key extends ComponentNames>(

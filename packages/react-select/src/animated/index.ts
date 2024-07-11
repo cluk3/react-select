@@ -1,15 +1,15 @@
 import memoize from 'memoize-one';
 import {
   defaultComponents,
-  type SelectComponentsGeneric,
+  type SelectComponents,
 } from '../components/index';
 import { default as AnimatedMultiValue } from './MultiValue';
 import { default as AnimatedPlaceholder } from './Placeholder';
 import { default as AnimatedValueContainer } from './ValueContainer';
 
-const makeAnimated = (
-  externalComponents: Partial<SelectComponentsGeneric> = {}
-): Partial<SelectComponentsGeneric> => {
+const makeAnimated = <Option>(
+  externalComponents: Partial<SelectComponents<Option>> = {}
+): Partial<SelectComponents<Option>> => {
   const components = defaultComponents({ components: externalComponents });
   const {
     Input,
