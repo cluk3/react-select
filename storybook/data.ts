@@ -168,18 +168,41 @@ export const numbers: NumberOption[] = [
 
 export const EMOJIS = ['👍', '🤙', '👏', '👌', '🙌', '✌️', '🖖', '👐'];
 
-export const defaultArgs = {
-  defaultMenuIsOpen: false,
-  defaultValue: undefined,
-  inputId: 'react-select-id',
-  isClearable: true,
+const defaultProps = {
+  'aria-live': 'polite',
+  backspaceRemovesValue: true,
+  classNames: {},
+  closeMenuOnSelect: true,
+  closeMenuOnScroll: false,
+  controlShouldRenderValue: true,
+  escapeClearsValue: false,
   isDisabled: false,
   isLoading: false,
   isMulti: false,
   isRtl: false,
+  isClearable: true,
   isSearchable: true,
+  maxMenuHeight: 300,
+  minMenuHeight: 140,
   menuPlacement: 'bottom',
+  menuPosition: 'absolute',
+  menuShouldBlockScroll: false,
+  openMenuOnFocus: false,
+  openMenuOnClick: true,
+  pageSize: 5,
+  placeholder: 'Select...',
+  tabIndex: 0,
+  tabSelectsValue: true,
+  unstyled: false,
+  classNamePrefix: 'react-select',
+  required: false,
+};
+
+export const defaultArgs = {
+  ...defaultProps,
+  defaultMenuIsOpen: false,
+  defaultValue: undefined,
+  inputId: 'react-select-id',
   menuPortalTarget: undefined,
   options: colourOptions,
-  placeholder: 'Select...',
 } as const;

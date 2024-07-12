@@ -404,6 +404,7 @@ export type DefaultSelectProps<
   | 'getOptionLabel'
   | 'getOptionValue'
   | 'inputValue'
+  | 'isClearable'
   | 'isDisabled'
   | 'isRtl'
   | 'isOptionDisabled'

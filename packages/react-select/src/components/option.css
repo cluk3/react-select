@@ -9,20 +9,39 @@
 
 .react-select__option--styled {
   background-color: transparent;
-  color: inherit;
+  color: var(--rs-neutral90);
   padding: calc(var(--rs-base-unit) * 2) calc(var(--rs-base-unit) * 3);
 
   &[data-is-focused='true'] {
     background-color: var(--rs-primary25);
+
+    &[data-is-disabled='true']:not([data-is-selected='true']) {
+      background-color: var(--rs-neutral10);
+      color: var(--rs-neutral60);
+      cursor: not-allowed;
+    }
+
+    &[data-is-selected='true'] {
+      background-color: var(--rs-primary);
+    }
+
+    &[data-is-selected='true'][data-is-deselectable='true'] {
+      color: var(--rs-danger);
+      background-color: var(--rs-danger-light);
+    }
   }
 
   &[data-is-selected='true'] {
     color: var(--rs-neutral0);
-    background-color: var(--rs-primary);
+    background-color: var(--rs-primary75);
   }
 
   &[data-is-disabled='true'] {
-    color: var(--rs-neutral20);
+    color: var(--rs-neutral40);
+
+    &[data-is-selected='true'] {
+      color: var(--rs-neutral20);
+    }
   }
 
   &:active:not([data-is-disabled='true']) {

@@ -16,6 +16,7 @@
 .react-select__dropdown-indicator--styled {
   padding: calc(var(--rs-base-unit) * 2);
   color: var(--rs-neutral20);
+  cursor: pointer;
 
   &:hover {
     color: var(--rs-neutral40);

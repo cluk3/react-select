@@ -19,6 +19,7 @@ export default function PlaceholderOrValue<
       placeholder,
       getOptionLabel,
       getOptionValue,
+      isClearable,
     },
     components: {
       MultiValue,
@@ -67,6 +68,7 @@ export default function PlaceholderOrValue<
               e.preventDefault();
             },
           }}
+          isClearable={isClearable}
           data={opt}
         >
           {formatOptionLabel(opt, 'value')}

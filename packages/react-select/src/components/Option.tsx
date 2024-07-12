@@ -21,6 +21,8 @@ export interface OptionProps<Option = unknown> {
   isOptionDisabled: boolean;
   /** Whether the option is focused. */
   isOptionFocused: boolean;
+  /** Whether the option is deselectable (multi-select only). */
+  isOptionDeselectable: boolean;
 }
 
 const Option = <Option,>(props: OptionProps<Option>) => {
@@ -29,6 +31,7 @@ const Option = <Option,>(props: OptionProps<Option>) => {
     isOptionSelected,
     isOptionDisabled,
     isOptionFocused,
+    isOptionDeselectable,
     innerRef,
     innerProps,
   } = props;
@@ -39,6 +42,7 @@ const Option = <Option,>(props: OptionProps<Option>) => {
       data-is-disabled={isOptionDisabled}
       data-is-focused={isOptionFocused}
       data-is-selected={isOptionSelected}
+      data-is-deselectable={isOptionDeselectable}
       ref={innerRef}
       aria-disabled={isOptionDisabled}
       {...innerProps}

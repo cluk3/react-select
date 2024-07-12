@@ -114,6 +114,7 @@ const InternalOption = React.memo(
       ) => React.ReactNode;
     }>;
     isFocused: boolean;
+    isClearable: boolean;
     OptionComponent: React.ComponentType<OptionProps<Option>>;
   }) {
     const {
@@ -122,6 +123,7 @@ const InternalOption = React.memo(
       methods,
       focusedOptionRef,
       isAppleDevice,
+      isClearable,
       isFocused,
       OptionComponent,
     } = props;
@@ -150,6 +152,7 @@ const InternalOption = React.memo(
         isOptionSelected={isSelected}
         isOptionDisabled={isDisabled}
         isOptionFocused={isFocused}
+        isOptionDeselectable={isClearable}
         key={optionId}
         label={label}
         type={type}
@@ -182,7 +185,7 @@ function OptionsList() {
     isAppleDevice,
     onOptionHover,
     components: { Group, GroupHeading, Option },
-    selectProps: { formatGroupLabel },
+    selectProps: { formatGroupLabel, isClearable },
     state: { focusedOption },
   } = useInternalContext();
 
@@ -226,6 +229,7 @@ function OptionsList() {
               option={option}
               optionId={`${getElementId('option')}-${groupIndex}-${option.index}`}
               key={`${groupIndex}-${option.index}`}
+              isClearable={isClearable}
               isFocused={focusedOption === item.data}
               OptionComponent={Option}
               {...internalOptionProps}
@@ -239,6 +243,7 @@ function OptionsList() {
           option={item}
           optionId={`${getElementId('option')}-${item.index}`}
           key={item.index}
+          isClearable={isClearable}
           isFocused={focusedOption === item.data}
           OptionComponent={Option}
           {...internalOptionProps}

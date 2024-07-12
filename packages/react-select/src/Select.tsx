@@ -99,6 +99,7 @@ const defaultProps = {
   getOptionLabel: getOptionLabelBuiltin,
   getOptionValue: getOptionValueBuiltin,
   inputValue: '',
+  isClearable: true,
   isDisabled: false,
   isLoading: false,
   isMulti: false,
@@ -466,12 +467,14 @@ function SelectInstance<
 
   const selectOption = useCallback(
     (newValue: Option) => {
-      const { blurInputOnSelect, isMulti, name } = props;
-      const deselected =
-        isMulti && isOptionSelected(props, newValue, selectValue);
+      const { blurInputOnSelect, isMulti, name, isClearable } = props;
+      const isAlreadySelected = isOptionSelected(props, newValue, selectValue);
       const isDisabled = props.isOptionDisabled(newValue, selectValue);
 
-      if (deselected) {
+      if (isAlreadySelected) {
+        if (!isClearable) {
+          return;
+        }
         const candidate = props.getOptionValue(newValue);
         setValue(
           multiValueAsValue(
@@ -532,23 +535,6 @@ function SelectInstance<
       removedValues: selectValue,
     });
   }, [props.isMulti, selectValue, onChange]);
-
-  const popValue = useCallback(() => {
-    const { isMulti } = props;
-
-    const lastSelectedValue = selectValue[selectValue.length - 1];
-    const newValueArray = selectValue.slice(0, selectValue.length - 1);
-    const newValue = valueTernary(
-      isMulti,
-      newValueArray,
-      newValueArray[0] || null
-    );
-
-    onChange(newValue, {
-      action: 'pop-value',
-      removedValue: lastSelectedValue,
-    });
-  }, [props, selectValue, onChange]);
 
   const getValue = useCallback(() => selectValue, [selectValue]);
 
@@ -806,15 +792,13 @@ function SelectInstance<
           break;
         case 'Delete':
         case 'Backspace':
-          if (inputValue) return;
+          if (inputValue || selectValue.length === 0) return;
           if (state.focusedValue) {
             removeValue(state.focusedValue);
           } else {
             if (!backspaceRemovesValue) return;
-            if (isMulti) {
-              popValue();
-            } else if (isClearable) {
-              clearValue();
+            if (isClearable) {
+              removeValue(selectValue[selectValue.length - 1]);
             }
           }
           break;
@@ -915,7 +899,6 @@ function SelectInstance<
       selectOption,
       focusOption,
       removeValue,
-      popValue,
       clearValue,
       onInputChange,
       onMenuClose,

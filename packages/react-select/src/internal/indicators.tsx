@@ -5,20 +5,9 @@ import {
 } from 'react';
 import { useInternalContext } from '../SelectContext';
 
-function shouldShowClearIndicator(
-  isClearable: boolean | undefined,
-  isMulti: boolean
-) {
-  // single select, by default, IS NOT clearable
-  // multi select, by default, IS clearable
-  if (isClearable === undefined) return isMulti;
-
-  return isClearable;
-}
-
 export function InternalClearIndicator() {
   const {
-    selectProps: { isDisabled, isLoading, isClearable, isMulti },
+    selectProps: { isDisabled, isLoading, isClearable },
     components: { ClearIndicator },
     hasValue,
     userIsDragging,
@@ -61,13 +50,7 @@ export function InternalClearIndicator() {
     [onClearIndicatorMouseDown, userIsDragging]
   );
 
-  if (
-    !shouldShowClearIndicator(isClearable, isMulti) ||
-    !ClearIndicator ||
-    isDisabled ||
-    !hasValue ||
-    isLoading
-  ) {
+  if (!isClearable || !ClearIndicator || isDisabled || !hasValue || isLoading) {
     return null;
   }
 

@@ -32,7 +32,7 @@ export interface ClassNamesContextValue<
 > {
   getClassNames: getClassNames<Option, IsMulti, Group>;
   classNamePrefix: string;
-  isClearable?: boolean;
+  isClearable: boolean;
   isDisabled: boolean;
   isFocused: boolean;
   isLoading?: boolean;

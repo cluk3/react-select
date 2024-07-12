@@ -1,6 +1,7 @@
 import React, { type KeyboardEvent } from 'react';
 import { render, fireEvent, type EventType } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { screen } from '@testing-library/dom';
 import cases from 'jest-in-case';
 
 import {
@@ -1809,7 +1810,7 @@ test('multi select > call onChange with all values but last selected value and r
       { label: '1', value: 'one' },
     ],
     {
-      action: 'pop-value',
+      action: 'remove-value',
       removedValue: { label: '2', value: 'two' },
       name: BASIC_PROPS.name,
     }
@@ -1849,8 +1850,9 @@ test('should not call onChange on hitting backspace even when backspaceRemovesVa
   expect(onChangeSpy).not.toHaveBeenCalled();
 });
 
-test('should call onChange with `null` on hitting backspace when backspaceRemovesValue is true and isMulti is false', () => {
+test('should call onChange with `null` on hitting backspace when isClearable and backspaceRemovesValue are true and isMulti is false', () => {
   let onChangeSpy = jest.fn();
+  const value = [OPTIONS[0]];
   let { container } = render(
     <Select
       {...BASIC_PROPS}
@@ -1858,6 +1860,7 @@ test('should call onChange with `null` on hitting backspace when backspaceRemove
       isClearable
       isMulti={false}
       onChange={onChangeSpy}
+      value={value}
     />
   );
   fireEvent.keyDown(container.querySelector('.react-select__control')!, {
@@ -1865,15 +1868,39 @@ test('should call onChange with `null` on hitting backspace when backspaceRemove
     key: 'Backspace',
   });
   expect(onChangeSpy).toHaveBeenCalledWith(null, {
-    action: 'clear',
+    action: 'remove-value',
     name: 'test-input-name',
-    removedValues: [],
+    removedValue: value.at(-1),
   });
 });
 
-test('should call onChange with an array on hitting backspace when backspaceRemovesValue is true and isMulti is true', () => {
+test('should call onChange on hitting backspace when backspaceRemovesValue is true and isMulti is true', () => {
   let onChangeSpy = jest.fn();
+  const value = OPTIONS.slice(0, 2);
   let { container } = render(
+    <Select
+      {...BASIC_PROPS}
+      backspaceRemovesValue
+      isClearable
+      isMulti
+      onChange={onChangeSpy}
+      value={value}
+    />
+  );
+  fireEvent.keyDown(container.querySelector('.react-select__control')!, {
+    keyCode: 8,
+    key: 'Backspace',
+  });
+  expect(onChangeSpy).toHaveBeenCalledWith(value.slice(0, 1), {
+    action: 'remove-value',
+    name: 'test-input-name',
+    removedValue: value.at(-1),
+  });
+});
+
+test('should NOT call onChange when hitting backspace when backspaceRemovesValue is true but no value is selected', () => {
+  let onChangeSpy = jest.fn();
+  let { container, rerender } = render(
     <Select
       {...BASIC_PROPS}
       backspaceRemovesValue
@@ -1886,11 +1913,22 @@ test('should call onChange with an array on hitting backspace when backspaceRemo
     keyCode: 8,
     key: 'Backspace',
   });
-  expect(onChangeSpy).toHaveBeenCalledWith([], {
-    action: 'pop-value',
-    name: 'test-input-name',
-    removedValue: undefined,
+  expect(onChangeSpy).not.toHaveBeenCalled();
+
+  rerender(
+    <Select
+      {...BASIC_PROPS}
+      backspaceRemovesValue
+      isClearable
+      onChange={onChangeSpy}
+    />
+  );
+
+  fireEvent.keyDown(container.querySelector('.react-select__control')!, {
+    keyCode: 8,
+    key: 'Backspace',
   });
+  expect(onChangeSpy).not.toHaveBeenCalled();
 });
 
 test('multi select > clicking on X next to option will call onChange with all options other that the clicked option', async () => {
@@ -2001,7 +2039,7 @@ cases(
       container
         .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
-    ).toBe('');
+    ).toBeFalsy();
 
     // searching should update activedescendant
     rerender(<Select {...renderProps} isSearchable />);
@@ -2032,7 +2070,7 @@ cases(
       container
         .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
-    ).toBe('');
+    ).toBeFalsy();
   },
   {
     'single select > should update aria-activedescendant as per focused option':
@@ -2123,7 +2161,7 @@ cases(
       container
         .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
-    ).toBe('');
+    ).toBeFalsy();
 
     // searching should update activedescendant
     rerender(<Select {...renderProps} isSearchable />);
@@ -2154,7 +2192,7 @@ cases(
       container
         .querySelector('input.react-select__hidden-input')!
         .getAttribute('aria-activedescendant')
-    ).toBe('');
+    ).toBeFalsy();
   },
   {
     'single select > should update aria-activedescendant as per focused option':
@@ -2184,7 +2222,7 @@ test('accessibility > aria-activedescendant should not exist if hideSelectedOpti
     container
       .querySelector('input.react-select__hidden-input')!
       .getAttribute('aria-activedescendant')
-  ).toBe('');
+  ).toBeFalsy();
 });
 
 cases(
@@ -2885,31 +2923,6 @@ test('render custom Option Component', () => {
   expect(container.querySelector('.my-option-component')).toBeInTheDocument();
 });
 
-cases(
-  'isClearable is false',
-  ({ props = BASIC_PROPS }) => {
-    let { container } = render(<Select {...props} />);
-    expect(
-      container.querySelector('react-select__clear-indicator')
-    ).not.toBeInTheDocument();
-  },
-  {
-    'single select > should not show the X (clear) button': {
-      props: {
-        ...BASIC_PROPS,
-        isClearable: false,
-        value: OPTIONS[0],
-      },
-    },
-    'multi select > should not show X (clear) button': {
-      ...BASIC_PROPS,
-      isMulti: true,
-      isClearable: false,
-      value: [OPTIONS[0]],
-    },
-  }
-);
-
 test('clear select by clicking on clear button > should not call onMenuOpen', () => {
   let onChangeSpy = jest.fn();
   let props = { ...BASIC_PROPS, onChange: onChangeSpy };
@@ -3199,7 +3212,7 @@ test('hitting ArrowUp key on closed select should focus last element', () => {
   ).toEqual('16');
 });
 
-test('close menu on hitting escape and clear input value if menu is open even if escapeClearsValue and isClearable are true', () => {
+test('should close menu on hitting escape and clear input value if menu is open even if escapeClearsValue and isClearable are true', () => {
   let onMenuCloseSpy = jest.fn();
   let onInputChangeSpy = jest.fn();
   let props = {
@@ -3229,64 +3242,6 @@ test('close menu on hitting escape and clear input value if menu is open even if
   expect(onInputChangeSpy).toHaveBeenLastCalledWith('', {
     action: 'menu-close',
     prevInputValue: '',
-  });
-});
-
-test('to not clear value when hitting escape if escapeClearsValue is false (default) and isClearable is false', () => {
-  let onChangeSpy = jest.fn();
-  let props = { ...BASIC_PROPS, onChange: onChangeSpy, value: OPTIONS[0] };
-  let { container } = render(
-    <Select {...props} escapeClearsValue isClearable={false} />
-  );
-
-  fireEvent.keyDown(container.querySelector('.react-select')!, {
-    keyCode: 27,
-    key: 'Escape',
-  });
-  expect(onChangeSpy).not.toHaveBeenCalled();
-});
-
-test('to not clear value when hitting escape if escapeClearsValue is true and isClearable is false', () => {
-  let onChangeSpy = jest.fn();
-  let props = { ...BASIC_PROPS, onChange: onChangeSpy, value: OPTIONS[0] };
-  let { container } = render(
-    <Select {...props} escapeClearsValue isClearable={false} />
-  );
-
-  fireEvent.keyDown(container.querySelector('.react-select')!, {
-    keyCode: 27,
-    key: 'Escape',
-  });
-  expect(onChangeSpy).not.toHaveBeenCalled();
-});
-
-test('to not clear value when hitting escape if escapeClearsValue is false (default) and isClearable is true', () => {
-  let onChangeSpy = jest.fn();
-  let props = { ...BASIC_PROPS, onChange: onChangeSpy, value: OPTIONS[0] };
-  let { container } = render(<Select {...props} isClearable />);
-
-  fireEvent.keyDown(container.querySelector('.react-select')!, {
-    keyCode: 27,
-    key: 'Escape',
-  });
-  expect(onChangeSpy).not.toHaveBeenCalled();
-});
-
-test('to clear value when hitting escape if escapeClearsValue and isClearable are true', () => {
-  let onInputChangeSpy = jest.fn();
-  let props = { ...BASIC_PROPS, onChange: onInputChangeSpy, value: OPTIONS[0] };
-  let { container } = render(
-    <Select {...props} isClearable escapeClearsValue />
-  );
-
-  fireEvent.keyDown(container.querySelector('.react-select')!, {
-    keyCode: 27,
-    key: 'Escape',
-  });
-  expect(onInputChangeSpy).toHaveBeenCalledWith(null, {
-    action: 'clear',
-    name: BASIC_PROPS.name,
-    removedValues: [{ label: '0', value: 'zero' }],
   });
 });
 
@@ -3338,3 +3293,173 @@ cases(
     },
   }
 );
+
+describe('isClearable', () => {
+  test('should not show clear indicator when isClearable is false', () => {
+    let { container } = render(
+      <Select {...BASIC_PROPS} value={OPTIONS[0]} isClearable={false} />
+    );
+    expect(
+      container.querySelector('.react-select__clear-indicator')
+    ).toBeFalsy();
+  });
+  test('should show clear indicator when isClearable is true', () => {
+    let { container } = render(
+      <Select {...BASIC_PROPS} value={OPTIONS[0]} isClearable />
+    );
+    expect(
+      container.querySelector('.react-select__clear-indicator')
+    ).toBeTruthy();
+  });
+
+  test('to not clear value when hitting escape if escapeClearsValue is false (default) and isClearable is false', () => {
+    let onChangeSpy = jest.fn();
+    let props = { ...BASIC_PROPS, onChange: onChangeSpy, value: OPTIONS[0] };
+    let { container } = render(<Select {...props} isClearable={false} />);
+
+    fireEvent.keyDown(container.querySelector('.react-select')!, {
+      keyCode: 27,
+      key: 'Escape',
+    });
+    expect(onChangeSpy).not.toHaveBeenCalled();
+  });
+
+  test('to not clear value when hitting escape if escapeClearsValue is true and isClearable is false', () => {
+    let onChangeSpy = jest.fn();
+    let props = { ...BASIC_PROPS, onChange: onChangeSpy, value: OPTIONS[0] };
+    let { container } = render(
+      <Select {...props} escapeClearsValue isClearable={false} />
+    );
+
+    fireEvent.keyDown(container.querySelector('.react-select')!, {
+      keyCode: 27,
+      key: 'Escape',
+    });
+    expect(onChangeSpy).not.toHaveBeenCalled();
+  });
+
+  test('to not clear value when hitting escape if escapeClearsValue is false (default) and isClearable is true', () => {
+    let onChangeSpy = jest.fn();
+    let props = { ...BASIC_PROPS, onChange: onChangeSpy, value: OPTIONS[0] };
+    let { container } = render(<Select {...props} isClearable />);
+
+    fireEvent.keyDown(container.querySelector('.react-select')!, {
+      keyCode: 27,
+      key: 'Escape',
+    });
+    expect(onChangeSpy).not.toHaveBeenCalled();
+  });
+
+  test('to clear value when hitting escape if escapeClearsValue and isClearable are true', () => {
+    let onInputChangeSpy = jest.fn();
+    let props = {
+      ...BASIC_PROPS,
+      onChange: onInputChangeSpy,
+      value: OPTIONS[0],
+    };
+    let { container } = render(
+      <Select {...props} isClearable escapeClearsValue />
+    );
+
+    fireEvent.keyDown(container.querySelector('.react-select')!, {
+      keyCode: 27,
+      key: 'Escape',
+    });
+    expect(onInputChangeSpy).toHaveBeenCalledWith(null, {
+      action: 'clear',
+      name: BASIC_PROPS.name,
+      removedValues: [{ label: '0', value: 'zero' }],
+    });
+  });
+
+  test('should not show multi value remove when isClearable is false', () => {
+    let { container } = render(
+      <Select
+        {...BASIC_PROPS}
+        value={OPTIONS.slice(0, 2)}
+        isClearable={false}
+        isMulti
+      />
+    );
+    expect(
+      container.querySelector('.react-select__multi-value-remove')
+    ).toBeFalsy();
+  });
+
+  test('should show multi value remove when isClearable is true', () => {
+    let { container } = render(
+      <Select
+        {...BASIC_PROPS}
+        value={OPTIONS.slice(0, 2)}
+        isClearable
+        isMulti
+      />
+    );
+    expect(
+      container.querySelector('.react-select__multi-value-remove')
+    ).toBeTruthy();
+  });
+
+  const options = [
+    { label: 'zero', value: '0' },
+    { label: 'one', value: '1' },
+    { label: 'two', value: '2' },
+    { label: 'three', value: '3' },
+  ];
+
+  test('should deselect an option when clicking on it in the menu if isClearable is true', async () => {
+    let onChangeSpy = jest.fn();
+
+    let props = {
+      ...BASIC_PROPS,
+      options,
+      onChange: onChangeSpy,
+      value: options.slice(0, 2),
+      hideSelectedOptions: false,
+      isClearable: true,
+      menuIsOpen: true,
+      isMulti: true,
+    };
+    const user = userEvent.setup();
+
+    render(<Select {...props} />);
+
+    const selectedOption = screen.getByText(/one/i, {
+      selector: '.react-select__option',
+    });
+
+    await user.click(selectedOption);
+
+    expect(onChangeSpy).toHaveBeenCalledWith(options.slice(0, 1), {
+      action: 'deselect-option',
+      name: BASIC_PROPS.name,
+      option: options[1],
+    });
+  });
+
+  test('should NOT deselect an option when clicking on it in the menu if isClearable is false', async () => {
+    let onChangeSpy = jest.fn();
+
+    let props = {
+      ...BASIC_PROPS,
+      options,
+      onChange: onChangeSpy,
+      value: options.slice(0, 2),
+      hideSelectedOptions: false,
+      isClearable: false,
+      menuIsOpen: true,
+      isMulti: true,
+    };
+    const user = userEvent.setup();
+
+    render(<Select {...props} />);
+
+    const selectedOption = screen.getByText(/one/i, {
+      selector: '.react-select__option',
+    });
+
+    await user.click(selectedOption);
+
+    expect(onChangeSpy).not.toHaveBeenCalled();
+  });
+});

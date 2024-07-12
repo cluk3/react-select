@@ -15,6 +15,7 @@ export interface MultiValueProps<Option = unknown> {
   data: Option;
   innerProps?: JSX.IntrinsicElements['div'];
   isOptionFocused: boolean;
+  isClearable: boolean;
   removeProps: JSX.IntrinsicElements['div'];
   index: number;
 }
@@ -82,6 +83,7 @@ const MultiValue = <Option,>(props: MultiValueProps<Option>) => {
     isOptionFocused,
     removeProps,
     cropWithEllipsis = true,
+    isClearable,
   } = props;
 
   const { Container, Label, Remove } = components;
@@ -124,17 +126,19 @@ const MultiValue = <Option,>(props: MultiValueProps<Option>) => {
       >
         {children}
       </Label>
-      <Remove
-        data={data}
-        innerProps={
-          {
-            'aria-label': `Remove ${children || 'option'}`,
-            'data-is-focused': isOptionFocused,
-            ...removeProps,
-            className: removeClassName,
-          } as JSX.IntrinsicElements['div']
-        }
-      />
+      {isClearable && (
+        <Remove
+          data={data}
+          innerProps={
+            {
+              'aria-label': `Remove ${children || 'option'}`,
+              'data-is-focused': isOptionFocused,
+              ...removeProps,
+              className: removeClassName,
+            } as JSX.IntrinsicElements['div']
+          }
+        />
+      )}
     </Container>
   );
 };

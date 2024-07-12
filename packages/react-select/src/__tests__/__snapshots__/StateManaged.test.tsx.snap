@@ -38,7 +38,6 @@ exports[`defaults > snapshot 1`] = `
           data-value=""
         >
           <input
-            aria-activedescendant=""
             aria-autocomplete="list"
             aria-describedby="react-select-:r0:-placeholder"
             aria-expanded="false"
