@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { prependCn, useGetClassNames } from '../utils';
-import { useSelectContext } from '../SelectContext';
+import { useInternalContext } from '../SelectContext';
 
 // ==============================
 // Dropdown & Clear Icons
@@ -14,7 +14,7 @@ const Svg = ({
 }: JSX.IntrinsicElements['svg'] & { size: number }) => {
   const {
     selectProps: { classNamePrefix },
-  } = useSelectContext();
+  } = useInternalContext();
   return (
     <svg
       height={size}
@@ -56,7 +56,7 @@ export const DropdownIndicator = (props: DropdownIndicatorProps) => {
   const { children, innerProps } = props;
   const {
     state: { isFocused },
-  } = useSelectContext();
+  } = useInternalContext();
   const className = useGetClassNames(
     'dropdownIndicator',
     props,
@@ -79,7 +79,7 @@ export const ClearIndicator = (props: ClearIndicatorProps) => {
   const { children, innerProps } = props;
   const {
     state: { isFocused },
-  } = useSelectContext();
+  } = useInternalContext();
   const className = useGetClassNames(
     'clearIndicator',
     props,
@@ -104,7 +104,7 @@ export const IndicatorSeparator = (props: IndicatorSeparatorProps) => {
   const { innerProps } = props;
   const {
     selectProps: { isDisabled },
-  } = useSelectContext();
+  } = useInternalContext();
   const className = useGetClassNames(
     'indicatorSeparator',
     props,
@@ -146,7 +146,7 @@ export const LoadingIndicator = (props: LoadingIndicatorProps) => {
   const {
     state: { isFocused },
     selectProps: { isRtl },
-  } = useSelectContext();
+  } = useInternalContext();
   const className = useGetClassNames(
     'loadingIndicator',
     props,

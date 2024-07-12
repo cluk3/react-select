@@ -1,4 +1,4 @@
-import { type SelectContextValue } from '../SelectContext';
+import { type InternalContextValue } from '../SelectContext';
 import { type GroupBase } from '../types';
 
 // we are using a render function instead of a regular component in order to
@@ -7,7 +7,10 @@ export default function PlaceholderOrValue<
   Option,
   IsMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>,
->(context: SelectContextValue<Option, IsMulti, Group>) {
+>(
+  context: InternalContextValue<Option, IsMulti, Group>,
+  removeValue: (removedOption: Option) => void
+) {
   const {
     selectProps: {
       controlShouldRenderValue,
@@ -29,7 +32,6 @@ export default function PlaceholderOrValue<
     formatOptionLabel,
     getElementId,
     state: { selectValue, focusedValue },
-    removeValue,
   } = context;
 
   if (!hasValue || !controlShouldRenderValue) {

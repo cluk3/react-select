@@ -12,7 +12,7 @@ import type {
   SelectComponents,
   SelectComponentsProps,
 } from './components/index';
-import type { SelectContextValue } from './SelectContext';
+import type { ClassNamesContextValue } from './SelectContext';
 
 export interface GroupBase<Option> {
   readonly options: readonly Option[];
@@ -49,11 +49,6 @@ export type CamelToKebab<S extends string> = S extends `${infer T}${infer U}`
 export type ComponentClassNames = CamelToKebab<ComponentNames>;
 
 export type ClassNamesState = { [key: string]: boolean };
-
-export type CX = (
-  state: ClassNamesState,
-  ...classNames: (string | undefined)[]
-) => string;
 
 export interface ActionMetaBase<Option> {
   option?: Option | undefined;
@@ -145,15 +140,14 @@ export type GetOptionValue<Option> = (option: Option) => string;
 
 export interface State<Option, IsMulti extends boolean> {
   ariaSelection: AriaSelection<Option, IsMulti> | null;
-  inputIsHidden: boolean;
+  isInputHidden: boolean;
   isFocused: boolean;
   focusedOption: Option | null;
   focusedOptionId: string | null;
   focusedValue: Option | null;
   clearFocusValueOnUpdate: boolean;
   prevWasFocused: boolean;
-  inputIsHiddenAfterUpdate: boolean | null | undefined;
-  instancePrefix: string;
+  isInputHiddenAfterUpdate: boolean | null | undefined;
 }
 
 export interface CategorizedOption<Option> {
@@ -451,8 +445,10 @@ export type ClassNamesConfig<
   [K in ComponentNames]?:
     | string
     | ((
-        context: SelectContextValue<Option, IsMulti, Group> & {
-          componentProps: ClassNamesConfigComponentProps<Option, K>;
-        }
+        context: Omit<
+          ClassNamesContextValue<Option, IsMulti, Group>,
+          'classNamePrefix' | 'getClassNames' | 'unstyled'
+        > &
+          ClassNamesConfigComponentProps<Option, K>
       ) => string);
 };

@@ -1,11 +1,20 @@
-import { useSelectContext } from '../SelectContext';
+import { useInternalContext } from '../SelectContext';
 import RequiredInput from './RequiredInput';
 
 export default function FormField() {
-  const ctx = useSelectContext();
-  const { hasValue, getValue } = ctx;
-  const { delimiter, isDisabled, isMulti, name, required, getOptionValue } =
-    ctx.selectProps;
+  const {
+    hasValue,
+    getValue,
+    selectProps: {
+      delimiter,
+      isDisabled,
+      isMulti,
+      name,
+      required,
+      getOptionValue,
+    },
+  } = useInternalContext();
+
   const selectValue = getValue();
 
   // If the hidden input gets focus through form submit,

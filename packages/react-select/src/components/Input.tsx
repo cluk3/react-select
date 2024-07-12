@@ -1,4 +1,4 @@
-import { useSelectContext } from '../SelectContext';
+import { useInternalContext } from '../SelectContext';
 import { prependCn, useGetClassNames } from '../utils';
 
 export interface InputSpecificProps {
@@ -15,7 +15,7 @@ export type InputProps = InputSpecificProps;
 const Input = (props: InputProps) => {
   const {
     selectProps: { isDisabled, classNamePrefix },
-  } = useSelectContext();
+  } = useInternalContext();
   const { innerProps, innerRef, isHidden } = props;
   const className = useGetClassNames('input', props, innerProps?.className);
   return (

@@ -3,7 +3,7 @@ import type {
   FormEventHandler,
   MutableRefObject,
 } from 'react';
-import { useSelectContext } from '../SelectContext';
+import { useInternalContext } from '../SelectContext';
 import { noop } from '../utils';
 import DummyInput from './DummyInput';
 
@@ -21,11 +21,11 @@ export default function InternalInput({
   const {
     selectProps,
     components: { Input },
-    state: { inputIsHidden, ariaSelection, focusedOptionId },
+    state: { isInputHidden, ariaSelection, focusedOptionId },
     getElementId,
     isAppleDevice,
     hasValue,
-  } = useSelectContext();
+  } = useInternalContext();
 
   const {
     isDisabled,
@@ -107,7 +107,7 @@ export default function InternalInput({
         ...ariaAttributes,
       }}
       innerRef={inputRef}
-      isHidden={inputIsHidden}
+      isHidden={isInputHidden}
     />
   );
 }

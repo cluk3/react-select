@@ -4,7 +4,7 @@ import A11yText from '../internal/A11yText';
 import { defaultAriaLiveMessages } from '../accessibility';
 
 import type { GroupBase, OnChangeValue } from '../types';
-import { useSelectContext } from '../SelectContext';
+import { useInternalContext } from '../SelectContext';
 
 // ==============================
 // Root Container
@@ -46,7 +46,7 @@ const LiveRegion = <
     },
     isAppleDevice,
     getFocusableOptions,
-  } = useSelectContext<Option, IsMulti, Group>();
+  } = useInternalContext<Option, IsMulti, Group>();
 
   const focusableOptions = getFocusableOptions();
 

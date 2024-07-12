@@ -9,7 +9,7 @@ import type {
   SingleValue,
   ComponentNames,
 } from './types';
-import { useSelectContext } from './SelectContext';
+import { useClassNamesContext } from './SelectContext';
 import type { SelectComponentsProps } from './components';
 import { type EffectCallback, useEffect } from 'react';
 
@@ -23,10 +23,10 @@ export const emptyString = () => '';
 function applyPrefixToName(prefix: string, name: string) {
   if (!name) {
     return prefix;
-  } else if (name[0] === '-') {
+  } else if (name.startsWith('-')) {
     return prefix + name;
   } else {
-    return prefix + '__' + name;
+    return `${prefix}__${name}`;
   }
 }
 
@@ -41,12 +41,12 @@ export function prependCn(
     : prefixedClassName;
 }
 
-export function classNames(
+function buildClassNames(
   prefix?: string | null,
   state?: ClassNamesState,
   ...classNameList: Array<string | undefined>
 ) {
-  const arr = classNameList.filter((i) => i).map((i) => String(i).trim());
+  const arr = classNameList.filter((i) => i);
 
   if (state && prefix) {
     for (let key in state) {
@@ -94,21 +94,18 @@ export const useGetClassNames = <
   props: SelectComponentsProps<Option>[Capitalize<ComponentNames>],
   className?: string
 ) => {
-  const context = useSelectContext<Option, IsMulti, Group>();
+  const context = useClassNamesContext<Option, IsMulti, Group>();
   const kebabName = kebabize(name);
-  const {
-    getClassNames,
-    selectProps: { unstyled, classNamePrefix },
-  } = context;
-  return classNames(
+  const { getClassNames, unstyled, classNamePrefix, ...restContext } = context;
+  return buildClassNames(
     classNamePrefix,
     {
       [kebabName]: true,
       [`${kebabName}--styled`]: !unstyled,
     },
     getClassNames(name, {
-      ...context,
-      componentProps: cleanComponentProps<Option, ComponentNames>(props),
+      ...restContext,
+      ...cleanComponentProps<Option, ComponentNames>(props),
     }),
     className
   );

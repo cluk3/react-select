@@ -31,8 +31,10 @@ import {
 } from './internal/index';
 import { isAppleDevice as detectAppleDevice } from './accessibility/helpers';
 import {
-  type SelectContextValue,
-  SelectContextProvider,
+  ClassNamesContextProvider,
+  InternalContextProvider,
+  type getClassNames,
+  type InternalContextValue,
 } from './SelectContext';
 
 import {
@@ -47,7 +49,6 @@ import {
 } from './select-utils';
 
 import {
-  classNames,
   cleanValue,
   isTouchCapable,
   isMobileDevice,
@@ -79,12 +80,10 @@ import type {
   SelectProps as Props,
   DefaultSelectProps,
   FormatOptionLabelContext,
-  ComponentNames,
-  ClassNamesConfigComponentProps,
 } from './types';
 import { InternalMenu } from './components/Menu';
 
-export const defaultProps = {
+const defaultProps = {
   'aria-live': 'polite',
   backspaceRemovesValue: true,
   blurInputOnSelect: isTouchCapable(),
@@ -122,7 +121,6 @@ export const defaultProps = {
   placeholder: 'Select...',
   screenReaderStatus: ({ count }: { count: number }) =>
     `${count} result${count !== 1 ? 's' : ''} available`,
-  styles: {},
   tabIndex: 0,
   tabSelectsValue: true,
   unstyled: false,
@@ -174,8 +172,7 @@ function SelectInstance<
   }, [_props]) as unknown as DefaultSelectProps<Option, IsMulti, Group>;
 
   const instanceId = useId();
-  // eslint-disable-next-line no-underscore-dangle
-  const _instancePrefix = `react-select-${props.instanceId || instanceId}`;
+  const instancePrefix = `react-select-${props.instanceId || instanceId}`;
   const [selectValue, setSelectValue] = useState(() => cleanValue(props.value));
 
   const getElementId = useCallback(
@@ -188,9 +185,9 @@ function SelectInstance<
         | 'placeholder'
         | 'live-region'
     ) => {
-      return `${_instancePrefix}-${element}`;
+      return `${instancePrefix}-${element}`;
     },
-    [_instancePrefix]
+    [instancePrefix]
   );
 
   const { categorizedOptions, focusableOptions, focusableOptionsIdsMap } =
@@ -211,16 +208,16 @@ function SelectInstance<
   // constructor
   const [state, setState] = useState<State<Option, IsMulti>>(() => {
     let intState: State<Option, IsMulti> = {
-      ariaSelection: null,
       focusedOption: null,
+      isInputHidden: false,
+      isFocused: false,
+      // vars below are internal only
+      ariaSelection: null,
       focusedOptionId: null,
       focusedValue: null,
-      inputIsHidden: false,
-      isFocused: false,
       clearFocusValueOnUpdate: false,
       prevWasFocused: false,
-      inputIsHiddenAfterUpdate: undefined,
-      instancePrefix: _instancePrefix,
+      isInputHiddenAfterUpdate: undefined,
     };
 
     if (props.menuIsOpen && selectValue.length) {
@@ -332,7 +329,7 @@ function SelectInstance<
 
       setState((prevState) => ({
         ...prevState,
-        inputIsHiddenAfterUpdate: false,
+        isInputHiddenAfterUpdate: false,
         focusedValue: null,
         focusedOption,
         focusedOptionId: getFocusedOptionId(
@@ -384,7 +381,7 @@ function SelectInstance<
       }
       setState((prevState) => ({
         ...prevState,
-        inputIsHidden: nextFocus !== -1,
+        isInputHidden: nextFocus !== -1,
         focusedValue: selectValue[nextFocus],
       }));
     },
@@ -454,7 +451,7 @@ function SelectInstance<
       if (closeMenuOnSelect) {
         setState((prevState) => ({
           ...prevState,
-          inputIsHiddenAfterUpdate: !isMulti,
+          isInputHiddenAfterUpdate: !isMulti,
         }));
         onMenuClose();
       }
@@ -555,37 +552,28 @@ function SelectInstance<
 
   const getValue = useCallback(() => selectValue, [selectValue]);
 
-  const cx = useCallback(
-    (...args: any) => classNames(props.classNamePrefix, ...args),
-    [props.classNamePrefix]
-  );
-
-  const getClassNames = useCallback(
-    <Key extends ComponentNames>(
-      key: Key,
-      context: SelectContextValue<Option, IsMulti, Group> & {
-        componentProps: ClassNamesConfigComponentProps<Option, Key>;
+  const getClassNames = useCallback<getClassNames<Option, IsMulti, Group>>(
+    (key, context) => {
+      const componentClassNamesGetter = props.classNames[key];
+      if (typeof componentClassNamesGetter === 'function') {
+        return componentClassNamesGetter(context);
       }
-    ) => {
-      if (typeof props.classNames[key] === 'function') {
-        return props.classNames[key](context);
-      }
-      return props.classNames[key];
+      return componentClassNamesGetter as string;
     },
     [props.classNames]
   );
 
   const formatOptionLabel = useCallback(
     (data: Option, context: FormatOptionLabelContext): ReactNode => {
+      const { inputValue, getOptionLabel } = props;
       if (typeof props.formatOptionLabel === 'function') {
-        const { inputValue } = props;
         return props.formatOptionLabel(data, {
           context,
           inputValue,
           selectValue: selectValue,
         });
       } else {
-        return props.getOptionLabel(data);
+        return getOptionLabel(data);
       }
     },
     [props, selectValue]
@@ -668,12 +656,13 @@ function SelectInstance<
       if (menuIsOpen) {
         setState((prevState) => ({
           ...prevState,
-          inputIsHiddenAfterUpdate: !isMulti,
+          isInputHiddenAfterUpdate: !isMulti,
         }));
         onMenuClose();
       } else {
         openMenu('first');
       }
+      // TODO: move to the top of the function
       event.preventDefault();
     },
     [props, focusInput, onMenuClose, openMenu]
@@ -705,7 +694,7 @@ function SelectInstance<
     (event) => {
       const { inputValue: prevInputValue, menuIsOpen } = props;
       const inputValue = event.currentTarget.value;
-      setState((prev) => ({ ...prev, inputIsHiddenAfterUpdate: false }));
+      setState((prev) => ({ ...prev, isInputHiddenAfterUpdate: false }));
       onInputChange(inputValue, { action: 'input-change', prevInputValue });
       if (!menuIsOpen) {
         props.onMenuOpen?.();
@@ -721,7 +710,7 @@ function SelectInstance<
       }
       setState((prev) => ({
         ...prev,
-        inputIsHiddenAfterUpdate: false,
+        isInputHiddenAfterUpdate: false,
         isFocused: true,
       }));
       if (openAfterFocus.current || props.openMenuOnFocus) {
@@ -759,10 +748,7 @@ function SelectInstance<
 
   const onOptionHover = useCallback(
     (focusedOption: Option) => {
-      if (
-        isOptionHoverBlocked.current ||
-        state.focusedOption === focusedOption
-      ) {
+      if (isOptionHoverBlocked.current) {
         return;
       }
       const options = getFocusableOptions();
@@ -776,7 +762,7 @@ function SelectInstance<
             : null,
       }));
     },
-    [state.focusedOption, getFocusableOptions, focusableOptionsIdsMap]
+    [getFocusableOptions, focusableOptionsIdsMap]
   );
 
   // ==============================
@@ -862,7 +848,7 @@ function SelectInstance<
           if (menuIsOpen) {
             setState((prev) => ({
               ...prev,
-              inputIsHiddenAfterUpdate: false,
+              isInputHiddenAfterUpdate: false,
             }));
             onInputChange('', {
               action: 'menu-close',
@@ -947,7 +933,7 @@ function SelectInstance<
 
     const {
       clearFocusValueOnUpdate,
-      inputIsHiddenAfterUpdate,
+      isInputHiddenAfterUpdate,
       ariaSelection,
       isFocused,
       prevWasFocused,
@@ -994,25 +980,21 @@ function SelectInstance<
 
     // TODO: check if props !== prevProps.current needs deep comparison
     const newInputIsHiddenState =
-      inputIsHiddenAfterUpdate != null && props !== prevProps.current
+      isInputHiddenAfterUpdate != null && props !== prevProps.current
         ? {
-            inputIsHidden: inputIsHiddenAfterUpdate,
-            inputIsHiddenAfterUpdate: undefined,
+            isInputHidden: isInputHiddenAfterUpdate,
+            isInputHiddenAfterUpdate: undefined,
           }
         : {};
 
     let newAriaSelection = ariaSelection;
 
-    let hasKeptFocus = isFocused && prevWasFocused;
-
-    if (isFocused && !hasKeptFocus) {
+    if (isFocused && !prevWasFocused) {
       newAriaSelection = {
         value: valueTernary(isMulti, newSelectValue, newSelectValue[0] || null),
         options: newSelectValue,
         action: 'initial-input-focus',
       };
-
-      hasKeptFocus = !prevWasFocused;
     }
 
     // If the 'initial-input-focus' action has been set already
@@ -1026,7 +1008,7 @@ function SelectInstance<
       ...newMenuOptionsState,
       ...newInputIsHiddenState,
       ariaSelection: newAriaSelection,
-      prevWasFocused: hasKeptFocus,
+      prevWasFocused: isFocused,
     }));
 
     prevProps.current = props;
@@ -1122,73 +1104,101 @@ function SelectInstance<
 
   const context = {
     selectProps: props,
-    components: getComponents(),
     state: { ...state, selectValue },
-    getClassNames,
-    clearValue,
-    cx,
     getValue,
     hasValue: selectValue.length > 0,
-    selectOption,
-    setValue,
-    isOptionHoverBlocked: isOptionHoverBlocked.current,
     isAppleDevice,
-    focusInput: focusInput,
-    blurInput: blurInput,
-    getFocusableOptions: getFocusableOptions,
-    getCategorizedOptions: getCategorizedOptions,
-    getElementId: getElementId,
-    removeValue,
-    onOptionHover: onOptionHover,
-    formatOptionLabel: formatOptionLabel,
+    focusInput,
+    blurInput,
+    getFocusableOptions,
+    getCategorizedOptions,
+    getElementId,
+    formatOptionLabel,
+    clearValue,
+    onOptionHover,
+    components: getComponents(),
     focusedOptionRef,
     controlRef,
     menuListRef,
-    onMenuMouseDown: onMenuMouseDown,
-    onMenuMouseMove: onMenuMouseMove,
-    userIsDragging: userIsDragging,
-    openAfterFocus: openAfterFocus,
-  } as SelectContextValue<Option, IsMulti, Group>;
+    onMenuMouseDown,
+    onMenuMouseMove,
+    userIsDragging,
+    openAfterFocus,
+    selectOption,
+  } as InternalContextValue<Option, IsMulti, Group>;
+
+  const classNamesContext = useMemo(
+    () => ({
+      getClassNames,
+      classNamePrefix: props.classNamePrefix,
+      isClearable: props.isClearable,
+      isDisabled: props.isDisabled,
+      isFocused: state.isFocused,
+      isLoading: props.isLoading,
+      isMulti: props.isMulti,
+      isRtl: props.isRtl,
+      isSearchable: props.isSearchable,
+      required: props.required,
+      unstyled: props.unstyled,
+    }),
+    [
+      getClassNames,
+      props.classNamePrefix,
+      props.isClearable,
+      props.isDisabled,
+      props.isLoading,
+      props.isMulti,
+      props.isRtl,
+      props.isSearchable,
+      props.required,
+      props.unstyled,
+      state.isFocused,
+    ]
+  );
 
   return (
-    <SelectContextProvider<Option, IsMulti, Group> value={context}>
-      <SelectContainer
-        innerProps={{
-          id: props.id,
-          onKeyDown,
-          className: prependCn(props.classNamePrefix!, '', props.className),
-        }}
+    <InternalContextProvider<Option, IsMulti, Group> value={context}>
+      <ClassNamesContextProvider<Option, IsMulti, Group>
+        value={classNamesContext}
       >
-        <LiveRegion id={getElementId('live-region')} />
-        <Control
-          innerRef={controlRef}
+        <SelectContainer
           innerProps={{
-            onMouseDown: onControlMouseDown,
-            onTouchEnd: onControlTouchEnd,
+            id: props.id,
+            onKeyDown,
+            className: prependCn(props.classNamePrefix!, '', props.className),
           }}
         >
-          <ValueContainer>
-            {PlaceholderOrValue(context)}
-            <InternalInput
-              inputRef={inputRef}
-              onInputBlur={onInputBlur}
-              onInputFocus={onInputFocus}
-              handleInputChange={handleInputChange}
-            />
-          </ValueContainer>
-          <IndicatorsContainer>
-            <InternalClearIndicator />
-            <InternalLoadingIndicator />
-            <InternalIndicatorSeparator />
-            <InternalDropdownIndicator
-              onMouseDown={onDropdownIndicatorMouseDown}
-              onTouchEnd={onDropdownIndicatorTouchEnd}
-            />
-          </IndicatorsContainer>
-        </Control>
-        {props.menuIsOpen && <InternalMenu />}
-        <FormField />
-      </SelectContainer>
-    </SelectContextProvider>
+          <LiveRegion id={getElementId('live-region')} />
+          <Control
+            innerRef={controlRef}
+            innerProps={{
+              onMouseDown: onControlMouseDown,
+              onTouchEnd: onControlTouchEnd,
+            }}
+          >
+            <ValueContainer>
+              {PlaceholderOrValue(context, removeValue)}
+              <InternalInput
+                inputRef={inputRef}
+                onInputBlur={onInputBlur}
+                onInputFocus={onInputFocus}
+                handleInputChange={handleInputChange}
+              />
+            </ValueContainer>
+            <IndicatorsContainer>
+              <InternalClearIndicator />
+              <InternalLoadingIndicator />
+              <InternalIndicatorSeparator />
+              <InternalDropdownIndicator
+                onMouseDown={onDropdownIndicatorMouseDown}
+                onTouchEnd={onDropdownIndicatorTouchEnd}
+              />
+            </IndicatorsContainer>
+          </Control>
+          {props.menuIsOpen && <InternalMenu />}
+          <FormField />
+        </SelectContainer>
+      </ClassNamesContextProvider>
+    </InternalContextProvider>
   );
 }

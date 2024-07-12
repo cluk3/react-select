@@ -1,11 +1,11 @@
-import { useSelectContext } from '../SelectContext';
+import { useInternalContext } from '../SelectContext';
 import { prependCn } from '../utils';
 
 // Assistive text to describe visual elements. Hidden for sighted users.
 const A11yText = (props: JSX.IntrinsicElements['span']) => {
   const {
     selectProps: { classNamePrefix },
-  } = useSelectContext();
+  } = useInternalContext();
   return (
     <span
       {...props}

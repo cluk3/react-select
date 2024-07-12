@@ -1,6 +1,6 @@
 import type { Ref } from 'react';
 import { prependCn } from '../utils';
-import { useSelectContext } from '../SelectContext';
+import { useInternalContext } from '../SelectContext';
 
 export default function DummyInput({
   innerRef,
@@ -10,7 +10,7 @@ export default function DummyInput({
 }) {
   const {
     selectProps: { classNamePrefix },
-  } = useSelectContext();
+  } = useInternalContext();
 
   return (
     <input

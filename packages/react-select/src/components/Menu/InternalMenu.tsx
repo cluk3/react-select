@@ -1,8 +1,10 @@
 import type { ReactNode } from 'react';
 import { MenuPlacer } from './index';
 import { ScrollManager } from '../../internal';
-import { useSelectContext } from '../../SelectContext';
-import type { CategorizedOption } from '../../types';
+import { useInternalContext } from '../../SelectContext';
+import type { CategorizedOption, FormatOptionLabelContext } from '../../types';
+import React from 'react';
+import type { OptionProps } from '../Option';
 
 export function InternalMenu() {
   const {
@@ -31,7 +33,7 @@ export function InternalMenu() {
       onMenuScrollToBottom,
       isMulti,
     },
-  } = useSelectContext();
+  } = useInternalContext();
 
   let menuUI: ReactNode;
   const hasOptions = !!getFocusableOptions().length;
@@ -97,67 +99,110 @@ export function InternalMenu() {
   );
 }
 
-function InternalOption<Option>({
-  option,
-  id,
-}: {
-  option: CategorizedOption<Option>;
-  id: string;
-}) {
-  const { type, data, isDisabled, isSelected, label } = option;
-  const {
-    getElementId,
-    onOptionHover,
-    selectOption,
-    formatOptionLabel,
-    focusedOptionRef,
-    isAppleDevice,
-    state: { focusedOption },
-    components: { Option },
-  } = useSelectContext();
+const InternalOption = React.memo(
+  function <Option>(props: {
+    option: CategorizedOption<Option>;
+    optionId: string;
+    focusedOptionRef: React.MutableRefObject<HTMLDivElement | null>;
+    isAppleDevice: boolean;
+    methods: React.MutableRefObject<{
+      onOptionHover: (focusedOption: Option) => void;
+      selectOption: (focusedOption: Option) => void;
+      formatOptionLabel: (
+        data: Option,
+        context: FormatOptionLabelContext
+      ) => React.ReactNode;
+    }>;
+    isFocused: boolean;
+    OptionComponent: React.ComponentType<OptionProps<Option>>;
+  }) {
+    const {
+      option,
+      optionId,
+      methods,
+      focusedOptionRef,
+      isAppleDevice,
+      isFocused,
+      OptionComponent,
+    } = props;
 
-  const isFocused = focusedOption === data;
-  const onHover = isDisabled
-    ? undefined
-    : () => {
-        onOptionHover(data);
-      };
-  const onSelect = () => selectOption(data);
-  const optionId = `${getElementId('option')}-${id}`;
-  const innerProps = {
-    id: optionId,
-    onClick: onSelect,
-    onMouseMove: onHover,
-    onMouseOver: onHover,
-    tabIndex: -1,
-    role: 'option',
-    'aria-selected': isAppleDevice ? undefined : isSelected, // is not supported on Apple devices
-  };
+    const { onOptionHover, formatOptionLabel, selectOption } = methods.current;
+    const { type, data, isDisabled, isSelected, label } = option;
 
-  return (
-    <Option
-      innerProps={innerProps}
-      data={data}
-      isOptionSelected={isSelected}
-      isOptionDisabled={isDisabled}
-      isOptionFocused={isFocused}
-      key={optionId}
-      label={label}
-      type={type}
-      innerRef={isFocused ? focusedOptionRef : undefined}
-    >
-      {formatOptionLabel(data, 'menu')}
-    </Option>
-  );
-}
+    const onHover = () => {
+      if (!isFocused) onOptionHover(data);
+    };
+    const onSelect = () => selectOption(data);
+    const innerProps = {
+      id: optionId,
+      onClick: onSelect,
+      onMouseMove: onHover,
+      onMouseOver: onHover,
+      tabIndex: -1,
+      role: 'option',
+      'aria-selected': isAppleDevice ? undefined : isSelected, // is not supported on Apple devices
+    };
+
+    return (
+      <OptionComponent
+        innerProps={innerProps}
+        data={data}
+        isOptionSelected={isSelected}
+        isOptionDisabled={isDisabled}
+        isOptionFocused={isFocused}
+        key={optionId}
+        label={label}
+        type={type}
+        innerRef={isFocused ? focusedOptionRef : undefined}
+      >
+        {formatOptionLabel(data, 'menu')}
+      </OptionComponent>
+    );
+  },
+  (prev, next) => {
+    return Object.keys(prev).every((key) => {
+      if (key === 'option') {
+        return JSON.stringify(prev.option) === JSON.stringify(next.option);
+      }
+      return Object.is(
+        prev[key as keyof typeof prev],
+        next[key as keyof typeof next]
+      );
+    });
+  }
+);
 
 function OptionsList() {
   const {
     getCategorizedOptions,
     getElementId,
-    components: { Group, GroupHeading },
+    selectOption,
+    formatOptionLabel,
+    focusedOptionRef,
+    isAppleDevice,
+    onOptionHover,
+    components: { Group, GroupHeading, Option },
     selectProps: { formatGroupLabel },
-  } = useSelectContext();
+    state: { focusedOption },
+  } = useInternalContext();
+
+  const methods = React.useRef({
+    onOptionHover,
+    formatOptionLabel,
+    selectOption,
+  });
+
+  methods.current = {
+    onOptionHover,
+    formatOptionLabel,
+    selectOption,
+  };
+
+  const internalOptionProps = {
+    focusedOptionRef,
+    isAppleDevice,
+    methods,
+  };
   return getCategorizedOptions().map((item) => {
     if (item.type === 'group') {
       const { data, options, index: groupIndex } = item;
@@ -179,15 +224,25 @@ function OptionsList() {
           {item.options.map((option) => (
             <InternalOption
               option={option}
-              id={`${groupIndex}-${option.index}`}
+              optionId={`${getElementId('option')}-${groupIndex}-${option.index}`}
               key={`${groupIndex}-${option.index}`}
+              isFocused={focusedOption === item.data}
+              OptionComponent={Option}
+              {...internalOptionProps}
             />
           ))}
         </Group>
       );
     } else if (item.type === 'option') {
       return (
-        <InternalOption option={item} id={`${item.index}`} key={item.index} />
+        <InternalOption
+          option={item}
+          optionId={`${getElementId('option')}-${item.index}`}
+          key={item.index}
+          isFocused={focusedOption === item.data}
+          OptionComponent={Option}
+          {...internalOptionProps}
+        />
       );
     }
   });

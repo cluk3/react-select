@@ -21,7 +21,7 @@ import type { FilterOptionOption } from '../filters';
 import type { AriaLiveMessages } from '../accessibility';
 import { noop } from '../utils';
 import type { GroupBase, FormatOptionLabelMeta } from '../types';
-import { useSelectContext } from '../SelectContext';
+import { useInternalContext } from '../SelectContext';
 
 interface BasicProps {
   readonly className: string;
@@ -442,7 +442,7 @@ cases(
         components={{
           // @ts-expect-error
           Control: () => {
-            const { getValue } = useSelectContext();
+            const { getValue } = useInternalContext();
             value = getValue();
             return null;
           },
