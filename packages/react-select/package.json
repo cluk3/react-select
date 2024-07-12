@@ -29,7 +29,7 @@
     "test:cypress:watch": "node ./node_modules/.bin/cypress open",
     "type-check": "pnpm type-check:src && pnpm type-check:test",
     "type-check:src": "tsc -b ./tsconfig.json",
-    "type-check:test": "tsc -b .src/__tests__/tsconfig.json"
+    "type-check:test": "tsc -b ./src/__tests__/tsconfig.json"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.0.1",
