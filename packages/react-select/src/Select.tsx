@@ -634,6 +634,8 @@ function SelectInstance<
         event.type === 'mousedown' &&
         (event as React.MouseEvent<HTMLDivElement>).button !== 0
       ) {
+        event.preventDefault();
+
         return;
       }
       if (props.isDisabled) return;
@@ -648,7 +650,6 @@ function SelectInstance<
       } else {
         openMenu('first');
       }
-      // TODO: move to the top of the function
       event.preventDefault();
     },
     [props, focusInput, onMenuClose, openMenu]
