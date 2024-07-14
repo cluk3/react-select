@@ -1,5 +1,5 @@
 import { useInternalContext } from '../SelectContext';
-import { prependCn } from '../utils';
+import { buildClassNames } from '../utils';
 
 // Assistive text to describe visual elements. Hidden for sighted users.
 const A11yText = (props: JSX.IntrinsicElements['span']) => {
@@ -9,7 +9,7 @@ const A11yText = (props: JSX.IntrinsicElements['span']) => {
   return (
     <span
       {...props}
-      className={prependCn(classNamePrefix, 'a11y-text', props.className)}
+      className={buildClassNames('a11y-text', classNamePrefix, props.className)}
     />
   );
 };

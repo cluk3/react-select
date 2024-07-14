@@ -31,7 +31,7 @@ export interface ClassNamesContextValue<
   Group extends GroupBase<Option>,
 > {
   getClassNames: getClassNames<Option, IsMulti, Group>;
-  classNamePrefix: string;
+  classNamePrefix?: string;
   isClearable: boolean;
   isDisabled: boolean;
   isFocused: boolean;

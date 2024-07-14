@@ -48,8 +48,6 @@ export type CamelToKebab<S extends string> = S extends `${infer T}${infer U}`
 
 export type ComponentClassNames = CamelToKebab<ComponentNames>;
 
-export type ClassNamesState = { [key: string]: boolean };
-
 export interface ActionMetaBase<Option> {
   option?: Option | undefined;
   removedValue?: Option;
@@ -72,12 +70,6 @@ export interface DeselectOptionActionMeta<Option>
 
 export interface RemoveValueActionMeta<Option> extends ActionMetaBase<Option> {
   action: 'remove-value';
-  removedValue: Option;
-  name?: string;
-}
-
-export interface PopValueActionMeta<Option> extends ActionMetaBase<Option> {
-  action: 'pop-value';
   removedValue: Option;
   name?: string;
 }
@@ -105,7 +97,6 @@ export type ActionMeta<Option> =
   | SelectOptionActionMeta<Option>
   | DeselectOptionActionMeta<Option>
   | RemoveValueActionMeta<Option>
-  | PopValueActionMeta<Option>
   | ClearActionMeta<Option>
   | CreateOptionActionMeta<Option>;
 
@@ -427,7 +418,6 @@ export type DefaultSelectProps<
   | 'tabIndex'
   | 'tabSelectsValue'
   | 'unstyled'
-  | 'classNamePrefix'
 > & { isMulti: IsMulti };
 
 export type ClassNamesConfigComponentProps<

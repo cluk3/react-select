@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { prependCn, useGetClassNames } from '../utils';
+import { buildClassNames, useGetClassNames } from '../utils';
 import { useInternalContext } from '../SelectContext';
 
 // ==============================
@@ -22,7 +22,7 @@ const Svg = ({
       viewBox="0 0 20 20"
       aria-hidden="true"
       focusable="false"
-      className={prependCn(classNamePrefix, 'svg', className)}
+      className={buildClassNames('svg', classNamePrefix, className)}
       {...props}
     />
   );

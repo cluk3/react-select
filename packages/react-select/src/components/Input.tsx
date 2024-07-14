@@ -1,5 +1,5 @@
 import { useInternalContext } from '../SelectContext';
-import { prependCn, useGetClassNames } from '../utils';
+import { buildClassNames, useGetClassNames } from '../utils';
 
 export interface InputSpecificProps {
   /** Reference to the internal element */
@@ -33,9 +33,9 @@ const Input = (props: InputProps) => {
         }}
         disabled={isDisabled}
         {...innerProps}
-        className={prependCn(
-          classNamePrefix,
+        className={buildClassNames(
           'hidden-input',
+          classNamePrefix,
           innerProps.className
         )}
       />

@@ -1,5 +1,5 @@
 import type { Ref } from 'react';
-import { prependCn } from '../utils';
+import { buildClassNames } from '../utils';
 import { useInternalContext } from '../SelectContext';
 
 export default function DummyInput({
@@ -16,7 +16,11 @@ export default function DummyInput({
     <input
       ref={innerRef}
       {...props}
-      className={prependCn(classNamePrefix, 'dummy-input', props.className)}
+      className={buildClassNames(
+        'dummy-input',
+        classNamePrefix,
+        props.className
+      )}
     />
   );
 }

@@ -1,7 +1,7 @@
 import type { FocusEventHandler, FunctionComponent } from 'react';
 import { useCallback } from 'react';
 import { useInternalContext } from '../SelectContext';
-import { prependCn } from '../utils';
+import { buildClassNames } from '../utils';
 
 const RequiredInput: FunctionComponent<{
   readonly name?: string;
@@ -27,7 +27,7 @@ const RequiredInput: FunctionComponent<{
       tabIndex={-1}
       aria-hidden="true"
       onFocus={onFocus}
-      className={prependCn(classNamePrefix, 'required-input')}
+      className={buildClassNames('required-input', classNamePrefix)}
       value=""
       onChange={() => {}}
     />

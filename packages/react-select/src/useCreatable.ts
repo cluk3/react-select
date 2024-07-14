@@ -116,7 +116,7 @@ export default function useCreatable<
   createOptionPosition = 'last',
   formatCreateLabel = builtins.formatCreateLabel,
   isValidNewOption = builtins.isValidNewOption,
-  // @ts-ignore
+  // @ts-expect-error
   getNewOptionData = builtins.getNewOptionData,
   onCreateOption,
   options: propsOptions = [],

@@ -1,5 +1,4 @@
 import type {
-  ClassNamesState,
   GroupBase,
   InputActionMeta,
   MultiValue,
@@ -29,31 +28,18 @@ function applyPrefixToName(prefix: string, name: string) {
     return `${prefix}__${name}`;
   }
 }
-
-export function prependCn(
-  prefix: string,
-  className: string,
-  otherClassNames?: string
-) {
-  const prefixedClassName = applyPrefixToName(prefix, className);
-  return otherClassNames
-    ? `${prefixedClassName} ${otherClassNames}`
-    : prefixedClassName;
-}
-
-function buildClassNames(
-  prefix?: string | null,
-  state?: ClassNamesState,
+const DEFAULT_PREFIX = 'react-select';
+const STYLED_SUFFIX = '--styled';
+export function buildClassNames(
+  componentName: string,
+  prefix?: string,
   ...classNameList: Array<string | undefined>
 ) {
   const arr = classNameList.filter((i) => i);
-
-  if (state && prefix) {
-    for (let key in state) {
-      if (state.hasOwnProperty(key) && state[key]) {
-        arr.push(applyPrefixToName(prefix, key));
-      }
-    }
+  const classNameBase = applyPrefixToName(DEFAULT_PREFIX, componentName);
+  arr.push(classNameBase, applyPrefixToName(classNameBase, STYLED_SUFFIX));
+  if (prefix) {
+    arr.push(applyPrefixToName(prefix, componentName));
   }
 
   return arr.map((i) => String(i).trim()).join(' ');
@@ -98,11 +84,8 @@ export const useGetClassNames = <
   const kebabName = kebabize(name);
   const { getClassNames, unstyled, classNamePrefix, ...restContext } = context;
   return buildClassNames(
+    kebabName,
     classNamePrefix,
-    {
-      [kebabName]: true,
-      [`${kebabName}--styled`]: !unstyled,
-    },
     getClassNames(name, {
       ...restContext,
       ...cleanComponentProps<Option, ComponentNames>(props),

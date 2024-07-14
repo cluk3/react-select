@@ -56,7 +56,7 @@ import {
   valueTernary,
   multiValueAsValue,
   singleValueAsValue,
-  prependCn,
+  buildClassNames,
   useOnMountEffect,
 } from './utils';
 
@@ -125,7 +125,6 @@ const defaultProps = {
   tabIndex: 0,
   tabSelectsValue: true,
   unstyled: false,
-  classNamePrefix: 'react-select',
 };
 
 const isAppleDevice = detectAppleDevice();
@@ -1149,7 +1148,7 @@ function SelectInstance<
           innerProps={{
             id: props.id,
             onKeyDown,
-            className: prependCn(props.classNamePrefix!, '', props.className),
+            className: buildClassNames('', props.classNamePrefix!, props.className),
           }}
         >
           <LiveRegion id={getElementId('live-region')} />

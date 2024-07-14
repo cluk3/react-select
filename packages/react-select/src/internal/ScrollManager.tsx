@@ -2,7 +2,7 @@ import type { ReactElement, RefCallback, MouseEvent } from 'react';
 import useScrollCapture from './useScrollCapture';
 import useScrollLock from './useScrollLock';
 import { useInternalContext } from '../SelectContext';
-import { prependCn } from '../utils';
+import { buildClassNames } from '../utils';
 
 interface Props {
   readonly children: (ref: RefCallback<HTMLElement>) => ReactElement;
@@ -53,7 +53,7 @@ export default function ScrollManager({
       {lockEnabled && (
         <div
           onClick={blurSelectInput}
-          className={prependCn(classNamePrefix, 'scroll-manager')}
+          className={buildClassNames('scroll-manager', classNamePrefix)}
         />
       )}
       {children(targetRef)}

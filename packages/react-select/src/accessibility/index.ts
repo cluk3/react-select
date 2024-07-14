@@ -132,7 +132,6 @@ export const defaultAriaLiveMessages = {
     const { action, label = '', labels, isDisabled } = props;
     switch (action) {
       case 'deselect-option':
-      case 'pop-value':
       case 'remove-value':
         return `option ${label}, deselected.`;
       case 'clear':
