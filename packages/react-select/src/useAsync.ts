@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { handleInputChange } from './utils';
+import { handleInputChange, useOnMountEffect } from './utils';
 import type { StateManagerProps } from './useStateManager';
 import type { GroupBase, InputActionMeta, OptionsOrGroups } from './types';
 
@@ -19,7 +19,7 @@ export interface AsyncAdditionalProps<Option, Group extends GroupBase<Option>> {
    * If cacheOptions is truthy, then the loaded data will be cached. The cache
    * will remain until `cacheOptions` changes value.
    */
-  cacheOptions?: any;
+  cacheOptions?: boolean;
   /**
    * Function that returns a promise, which is the set of options to be used
    * once the promise resolves.
@@ -74,7 +74,7 @@ export default function useAsync<
     OptionsOrGroups<Option, Group> | boolean | undefined
   >(Array.isArray(propsDefaultOptions) ? propsDefaultOptions : undefined);
   const [stateInputValue, setStateInputValue] = useState<string>(
-    typeof propsInputValue !== 'undefined' ? (propsInputValue as string) : ''
+    propsInputValue ?? ''
   );
   const [isLoading, setIsLoading] = useState(propsDefaultOptions === true);
   const [loadedInputValue, setLoadedInputValue] = useState<string | undefined>(
@@ -84,32 +84,21 @@ export default function useAsync<
     OptionsOrGroups<Option, Group>
   >([]);
   const [passEmptyOptions, setPassEmptyOptions] = useState(false);
-  const [optionsCache, setOptionsCache] = useState<
-    Record<string, OptionsOrGroups<Option, Group>>
-  >({});
-  const [prevDefaultOptions, setPrevDefaultOptions] = useState<
-    OptionsOrGroups<Option, Group> | boolean | undefined
-  >(undefined);
-  const [prevCacheOptions, setPrevCacheOptions] = useState(undefined);
+  const optionsCache = useRef<Map<string, OptionsOrGroups<Option, Group>>>(
+    new Map()
+  );
 
-  if (cacheOptions !== prevCacheOptions) {
-    setOptionsCache({});
-    setPrevCacheOptions(cacheOptions);
-  }
+  // reset cache when cacheOptions changes
+  useEffect(() => {
+    optionsCache.current = new Map();
+  }, [cacheOptions]);
 
-  if (propsDefaultOptions !== prevDefaultOptions) {
+  // reset defaultOptions when propsDefaultOptions changes
+  useEffect(() => {
     setDefaultOptions(
       Array.isArray(propsDefaultOptions) ? propsDefaultOptions : undefined
     );
-    setPrevDefaultOptions(propsDefaultOptions);
-  }
-
-  useEffect(() => {
-    mounted.current = true;
-    return () => {
-      mounted.current = false;
-    };
-  }, []);
+  }, [propsDefaultOptions]);
 
   const loadOptions = useCallback(
     (
@@ -125,7 +114,8 @@ export default function useAsync<
     [propsLoadOptions]
   );
 
-  useEffect(() => {
+  useOnMountEffect(() => {
+    mounted.current = true;
     if (propsDefaultOptions === true) {
       loadOptions(stateInputValue, (options) => {
         if (!mounted.current) return;
@@ -133,10 +123,11 @@ export default function useAsync<
         setIsLoading(!!lastRequest.current);
       });
     }
-    // NOTE: this effect is designed to only run when the component mounts,
-    // so we don't want to include any hook dependencies
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
+    return () => {
+      mounted.current = false;
+    };
+  });
 
   const onInputChange = useCallback(
     (newValue: string, actionMeta: InputActionMeta) => {
@@ -154,10 +145,10 @@ export default function useAsync<
         setPassEmptyOptions(false);
         return;
       }
-      if (cacheOptions && optionsCache[inputValue]) {
+      if (cacheOptions && optionsCache.current.has(inputValue)) {
         setStateInputValue(inputValue);
         setLoadedInputValue(inputValue);
-        setLoadedOptions(optionsCache[inputValue]);
+        setLoadedOptions(optionsCache.current.get(inputValue)!);
         setIsLoading(false);
         setPassEmptyOptions(false);
       } else {
@@ -166,16 +157,14 @@ export default function useAsync<
         setIsLoading(true);
         setPassEmptyOptions(!loadedInputValue);
         loadOptions(inputValue, (options) => {
-          if (!mounted) return;
+          if (!mounted.current) return;
           if (request !== lastRequest.current) return;
           lastRequest.current = undefined;
           setIsLoading(false);
           setLoadedInputValue(inputValue);
           setLoadedOptions(options || []);
           setPassEmptyOptions(false);
-          setOptionsCache(
-            options ? { ...optionsCache, [inputValue]: options } : optionsCache
-          );
+          if (options) optionsCache.current.set(inputValue, options);
         });
       }
     },
