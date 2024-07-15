@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "Preserve",
+    "module": "esnext",
     "jsx": "react",
     "noEmit": true,
     "strict": true,
