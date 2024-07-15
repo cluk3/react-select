@@ -1,7 +1,7 @@
 .react-select__input {
   flex: 1 1 auto;
-  display: inline-grid;
   grid-area: 1 / 1 / 2 / 3;
+  display: inline-grid;
   grid-template-columns: 0 min-content;
   visibility: visible;
 

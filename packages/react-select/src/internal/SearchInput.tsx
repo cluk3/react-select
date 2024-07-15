@@ -4,10 +4,9 @@ import type {
   MutableRefObject,
 } from 'react';
 import { useInternalContext } from '../SelectContext';
-import { noop } from '../utils';
 import DummyInput from './DummyInput';
 
-export default function InternalInput({
+export default function InternalSearchInput({
   inputRef,
   onInputBlur,
   onInputFocus,
@@ -77,7 +76,6 @@ export default function InternalInput({
         id={id}
         innerRef={inputRef}
         onBlur={onInputBlur}
-        onChange={noop}
         onFocus={onInputFocus}
         disabled={isDisabled}
         tabIndex={tabIndex}
@@ -95,6 +93,7 @@ export default function InternalInput({
         autoCapitalize: 'none',
         autoComplete: 'off',
         autoCorrect: 'off',
+        disabled: isDisabled,
         id: id,
         onBlur: onInputBlur,
         onChange: handleInputChange,

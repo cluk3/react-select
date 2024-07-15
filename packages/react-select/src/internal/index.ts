@@ -10,4 +10,4 @@ export {
   InternalDropdownIndicator,
   InternalIndicatorSeparator,
 } from './indicators';
-export { default as InternalInput } from './Input';
+export { default as InternalInput } from './SearchInput';
