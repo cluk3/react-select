@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { useGetClassNames } from '../utils';
-import { useInternalContext } from '../SelectContext';
+import { useInternalSelectContext } from '../SelectContext';
 
 // ==============================
 // Dropdown & Clear Icons
@@ -57,7 +57,7 @@ export const DropdownIndicator = (props: DropdownIndicatorProps) => {
   const { children, innerProps } = props;
   const {
     state: { isFocused },
-  } = useInternalContext();
+  } = useInternalSelectContext();
   const className = useGetClassNames(
     'dropdownIndicator',
     props,
@@ -80,7 +80,7 @@ export const ClearIndicator = (props: ClearIndicatorProps) => {
   const { children, innerProps } = props;
   const {
     state: { isFocused },
-  } = useInternalContext();
+  } = useInternalSelectContext();
   const className = useGetClassNames(
     'clearIndicator',
     props,
@@ -105,7 +105,7 @@ export const IndicatorSeparator = (props: IndicatorSeparatorProps) => {
   const { innerProps } = props;
   const {
     selectProps: { isDisabled },
-  } = useInternalContext();
+  } = useInternalSelectContext();
   const className = useGetClassNames(
     'indicatorSeparator',
     props,
@@ -147,7 +147,7 @@ export const LoadingIndicator = (props: LoadingIndicatorProps) => {
   const {
     state: { isFocused },
     selectProps: { isRtl },
-  } = useInternalContext();
+  } = useInternalSelectContext();
   const className = useGetClassNames(
     'loadingIndicator',
     props,

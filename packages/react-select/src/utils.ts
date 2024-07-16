@@ -7,7 +7,7 @@ import type {
   SingleValue,
   ComponentNames,
 } from './types';
-import { useClassNamesContext } from './SelectContext';
+import { useSelectContext } from './SelectContext';
 import type { SelectComponentsProps } from './components';
 import { type EffectCallback, useEffect } from 'react';
 
@@ -88,7 +88,7 @@ export const useGetClassNames = <
   props: SelectComponentsProps<Option>[Capitalize<ComponentNames>],
   className?: string
 ) => {
-  const context = useClassNamesContext<Option, IsMulti, Group>();
+  const context = useSelectContext<Option, IsMulti, Group>();
   const kebabName = kebabize(name);
   const { getClassNames, unstyled, classNamePrefix, ...restContext } = context;
   return buildClassNames(

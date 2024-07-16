@@ -1,13 +1,8 @@
 {
+  "extends": "../../tsconfig.json",
+  "include": ["./**/*.ts", "./**/*.tsx"],
+  "exclude": [],
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
-    "jsx": "react",
-    "noEmit": true,
-    "strict": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
-  },
-  "types": ["node", "jest", "@testing-library/jest-dom"]
+    "types": ["node", "jest", "@testing-library/jest-dom"]
+  }
 }

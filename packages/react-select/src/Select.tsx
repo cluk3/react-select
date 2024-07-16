@@ -31,10 +31,10 @@ import {
 } from './internal/index';
 import { isAppleDevice as detectAppleDevice } from './accessibility/helpers';
 import {
-  ClassNamesContextProvider,
-  InternalContextProvider,
+  SelectContextProvider,
+  InternalSelectContextProvider,
   type getClassNames,
-  type InternalContextValue,
+  type InternalSelectContextValue,
 } from './SelectContext';
 
 import {
@@ -1107,7 +1107,7 @@ function SelectInstance<
     userIsDragging,
     openAfterFocus,
     selectOption,
-  } as InternalContextValue<Option, IsMulti, Group>;
+  } as InternalSelectContextValue<Option, IsMulti, Group>;
 
   const classNamesContext = useMemo(
     () => ({
@@ -1120,6 +1120,7 @@ function SelectInstance<
       isMulti: props.isMulti,
       isRtl: props.isRtl,
       isSearchable: props.isSearchable,
+      hasValue: selectValue.length > 0,
       required: props.required,
       unstyled: props.unstyled,
     }),
@@ -1134,15 +1135,14 @@ function SelectInstance<
       props.isSearchable,
       props.required,
       props.unstyled,
+      selectValue.length,
       state.isFocused,
     ]
   );
 
   return (
-    <InternalContextProvider<Option, IsMulti, Group> value={context}>
-      <ClassNamesContextProvider<Option, IsMulti, Group>
-        value={classNamesContext}
-      >
+    <InternalSelectContextProvider<Option, IsMulti, Group> value={context}>
+      <SelectContextProvider<Option, IsMulti, Group> value={classNamesContext}>
         <SelectContainer
           innerProps={{
             id: props.id,
@@ -1180,7 +1180,7 @@ function SelectInstance<
           {props.menuIsOpen && <InternalMenu />}
           <FormField />
         </SelectContainer>
-      </ClassNamesContextProvider>
-    </InternalContextProvider>
+      </SelectContextProvider>
+    </InternalSelectContextProvider>
   );
 }

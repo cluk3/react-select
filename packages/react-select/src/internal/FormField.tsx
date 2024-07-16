@@ -1,4 +1,4 @@
-import { useInternalContext } from '../SelectContext';
+import { useInternalSelectContext } from '../SelectContext';
 import RequiredInput from './RequiredInput';
 
 export default function FormField() {
@@ -13,7 +13,7 @@ export default function FormField() {
       required,
       getOptionValue,
     },
-  } = useInternalContext();
+  } = useInternalSelectContext();
 
   const selectValue = getValue();
 

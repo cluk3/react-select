@@ -1,7 +1,7 @@
 import type { ReactElement, RefCallback, MouseEvent } from 'react';
 import useScrollCapture from './useScrollCapture';
 import useScrollLock from './useScrollLock';
-import { useInternalContext } from '../SelectContext';
+import { useInternalSelectContext } from '../SelectContext';
 import { buildClassNames } from '../utils';
 
 interface Props {
@@ -41,7 +41,7 @@ export default function ScrollManager({
   const setScrollLockTarget = useScrollLock({ isEnabled: lockEnabled });
   const {
     selectProps: { classNamePrefix },
-  } = useInternalContext();
+  } = useInternalSelectContext();
 
   const targetRef: RefCallback<HTMLElement> = (element) => {
     setScrollCaptureTarget(element);

@@ -3,7 +3,7 @@ import {
   type TouchEventHandler,
   useCallback,
 } from 'react';
-import { useInternalContext } from '../SelectContext';
+import { useInternalSelectContext } from '../SelectContext';
 
 export function InternalClearIndicator() {
   const {
@@ -14,7 +14,7 @@ export function InternalClearIndicator() {
     clearValue,
     focusInput,
     openAfterFocus,
-  } = useInternalContext();
+  } = useInternalSelectContext();
 
   const onClearIndicatorMouseDown = useCallback(
     (
@@ -67,7 +67,7 @@ export function InternalLoadingIndicator() {
   const {
     selectProps: { isLoading },
     components: { LoadingIndicator },
-  } = useInternalContext();
+  } = useInternalSelectContext();
 
   if (!LoadingIndicator || !isLoading) return null;
 
@@ -77,7 +77,7 @@ export function InternalLoadingIndicator() {
 export function InternalIndicatorSeparator() {
   const {
     components: { DropdownIndicator, IndicatorSeparator },
-  } = useInternalContext();
+  } = useInternalSelectContext();
 
   // separator doesn't make sense without the dropdown indicator
   if (!DropdownIndicator || !IndicatorSeparator) return null;
@@ -93,7 +93,7 @@ export function InternalDropdownIndicator({
 }) {
   const {
     components: { DropdownIndicator },
-  } = useInternalContext();
+  } = useInternalSelectContext();
 
   if (!DropdownIndicator) return null;
 

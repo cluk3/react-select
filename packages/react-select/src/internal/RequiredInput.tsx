@@ -1,12 +1,12 @@
 import type { FocusEventHandler, FunctionComponent } from 'react';
 import { useCallback } from 'react';
-import { useInternalContext } from '../SelectContext';
+import { useInternalSelectContext } from '../SelectContext';
 import { buildClassNames } from '../utils';
 
 const RequiredInput: FunctionComponent<{
   readonly name?: string;
 }> = ({ name }) => {
-  const { focusInput } = useInternalContext();
+  const { focusInput } = useInternalSelectContext();
   const onFocus: FocusEventHandler = useCallback(
     (e) => {
       e.preventDefault();
@@ -18,7 +18,7 @@ const RequiredInput: FunctionComponent<{
   );
   const {
     selectProps: { classNamePrefix },
-  } = useInternalContext();
+  } = useInternalSelectContext();
 
   return (
     <input

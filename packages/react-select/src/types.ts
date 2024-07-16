@@ -12,7 +12,7 @@ import type {
   SelectComponents,
   SelectComponentsProps,
 } from './components/index';
-import type { ClassNamesContextValue } from './SelectContext';
+import type { SelectContextValue } from './SelectContext';
 
 export interface GroupBase<Option> {
   readonly options: readonly Option[];
@@ -437,7 +437,7 @@ export type ClassNamesConfig<
     | string
     | ((
         context: Omit<
-          ClassNamesContextValue<Option, IsMulti, Group>,
+          SelectContextValue<Option, IsMulti, Group>,
           'classNamePrefix' | 'getClassNames' | 'unstyled'
         > &
           ClassNamesConfigComponentProps<Option, K>

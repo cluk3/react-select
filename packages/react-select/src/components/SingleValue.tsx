@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { useGetClassNames } from '../utils';
-import { useInternalContext } from '../SelectContext';
+import { useInternalSelectContext } from '../SelectContext';
 
 export interface SingleValueProps<Option = unknown> {
   /** The children to be rendered. */
@@ -21,7 +21,7 @@ const SingleValue = <Option,>(props: SingleValueProps<Option>) => {
   );
   const {
     selectProps: { isDisabled },
-  } = useInternalContext();
+  } = useInternalSelectContext();
   return (
     <div data-is-disabled={isDisabled} {...innerProps} className={className}>
       {children}

@@ -1,4 +1,4 @@
-import { useClassNamesContext } from '../SelectContext';
+import { useSelectContext } from '../SelectContext';
 import { buildClassNames, useGetClassNames } from '../utils';
 
 export interface InputSpecificProps {
@@ -13,7 +13,7 @@ export interface InputSpecificProps {
 export type InputProps = InputSpecificProps;
 
 const Input = (props: InputProps) => {
-  const { classNamePrefix } = useClassNamesContext();
+  const { classNamePrefix } = useSelectContext();
   const { innerProps, innerRef, isHidden } = props;
   const className = useGetClassNames('input', props, innerProps?.className);
   return (

@@ -11,7 +11,7 @@ import type {
 import { alignToControl, getMenuPlacement, coercePlacement } from './utils';
 
 import { PortalPlacementContext } from './MenuPortal';
-import { useInternalContext } from '../../SelectContext';
+import { useInternalSelectContext } from '../../SelectContext';
 
 export { InternalMenu } from './InternalMenu';
 export { MenuPortal, type MenuPortalProps, menuPortalCSS } from './MenuPortal';
@@ -38,7 +38,7 @@ export interface MenuProps {
 }
 
 const Menu = (props: MenuProps) => {
-  const { onMenuMouseDown, onMenuMouseMove } = useInternalContext();
+  const { onMenuMouseDown, onMenuMouseMove } = useInternalSelectContext();
   const { children, innerRef, placement, innerProps } = props;
   const className = useGetClassNames('menu', props, innerProps?.className);
   return (
@@ -156,7 +156,7 @@ export const MenuPlacer = (props: MenuPlacerProps) => {
       menuShouldScrollIntoView,
     },
     controlRef,
-  } = useInternalContext();
+  } = useInternalSelectContext();
 
   const { setPortalPlacement } = useContext(PortalPlacementContext) || {};
   const ref = useRef<HTMLDivElement | null>(null);

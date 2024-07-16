@@ -3,7 +3,7 @@ import type { ReactElement } from 'react';
 import { useEffect, useState } from 'react';
 import { TransitionGroup } from 'react-transition-group';
 import type { ValueContainerProps } from '../components/containers';
-import { useInternalContext } from '../SelectContext';
+import { useInternalSelectContext } from '../SelectContext';
 import { AnimatedContextProvider, type AnimatedContextValue } from './context';
 
 export type ValueContainerComponent = (
@@ -21,7 +21,7 @@ const AnimatedValueContainer =
     const {
       selectProps: { isMulti },
       // eslint-disable-next-line react-hooks/rules-of-hooks
-    } = useInternalContext();
+    } = useInternalSelectContext();
     return isMulti ? (
       <IsMultiValueContainer component={WrappedComponent} {...(props as any)} />
     ) : (
@@ -49,7 +49,7 @@ const useIsMultiValueContainer = (
   const {
     hasValue,
     selectProps: { isMulti, controlShouldRenderValue },
-  } = useInternalContext();
+  } = useInternalSelectContext();
 
   const [cssDisplayFlex, setCssDisplayFlex] = useState(
     isMulti && controlShouldRenderValue && hasValue

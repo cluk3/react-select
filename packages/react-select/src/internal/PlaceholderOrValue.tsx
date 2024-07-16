@@ -1,4 +1,4 @@
-import { type InternalContextValue } from '../SelectContext';
+import { type InternalSelectContextValue } from '../SelectContext';
 import { type GroupBase } from '../types';
 
 // we are using a render function instead of a regular component in order to
@@ -8,7 +8,7 @@ export default function PlaceholderOrValue<
   IsMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>,
 >(
-  context: InternalContextValue<Option, IsMulti, Group>,
+  context: InternalSelectContextValue<Option, IsMulti, Group>,
   removeValue: (removedOption: Option) => void
 ) {
   const {

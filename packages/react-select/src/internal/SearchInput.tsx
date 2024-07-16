@@ -3,7 +3,7 @@ import type {
   FormEventHandler,
   MutableRefObject,
 } from 'react';
-import { useInternalContext } from '../SelectContext';
+import { useInternalSelectContext } from '../SelectContext';
 import DummyInput from './DummyInput';
 
 export default function InternalSearchInput({
@@ -24,7 +24,7 @@ export default function InternalSearchInput({
     getElementId,
     isAppleDevice,
     hasValue,
-  } = useInternalContext();
+  } = useInternalSelectContext();
 
   const {
     isDisabled,

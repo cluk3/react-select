@@ -2,7 +2,7 @@
 import type { ReactElement } from 'react';
 import type { PlaceholderProps } from '../components/Placeholder';
 import { Fade, collapseDuration } from './transitions';
-import { useInternalContext } from '../SelectContext';
+import { useInternalSelectContext } from '../SelectContext';
 import { useAnimatedContext } from './context';
 
 export type PlaceholderComponent = (props: PlaceholderProps) => ReactElement;
@@ -12,7 +12,7 @@ const AnimatedPlaceholder =
   (WrappedComponent: PlaceholderComponent) => (props: PlaceholderProps) => {
     const {
       selectProps: { isMulti },
-    } = useInternalContext();
+    } = useInternalSelectContext();
 
     const { shouldHidePlaceholder } = useAnimatedContext();
 

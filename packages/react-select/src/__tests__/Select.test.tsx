@@ -22,7 +22,7 @@ import type { FilterOptionOption } from '../filters';
 import type { AriaLiveMessages } from '../accessibility';
 import { noop } from '../utils';
 import type { GroupBase, FormatOptionLabelMeta } from '../types';
-import { useInternalContext } from '../SelectContext';
+import { useInternalSelectContext } from '../SelectContext';
 
 interface BasicProps {
   readonly className: string;
@@ -443,7 +443,7 @@ cases(
         components={{
           // @ts-expect-error
           Control: () => {
-            const { getValue } = useInternalContext();
+            const { getValue } = useInternalSelectContext();
             value = getValue();
             return null;
           },

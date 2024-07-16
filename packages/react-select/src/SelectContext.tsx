@@ -19,13 +19,13 @@ export type getClassNames<
 > = <Key extends ComponentNames>(
   key: Key,
   context: Omit<
-    ClassNamesContextValue<Option, IsMulti, Group>,
+    SelectContextValue<Option, IsMulti, Group>,
     'classNamePrefix' | 'getClassNames' | 'unstyled'
   > &
     ClassNamesConfigComponentProps<Option, Key>
 ) => string;
 
-export interface ClassNamesContextValue<
+export interface SelectContextValue<
   Option,
   IsMulti extends boolean,
   Group extends GroupBase<Option>,
@@ -39,11 +39,12 @@ export interface ClassNamesContextValue<
   isMulti: IsMulti;
   isRtl: boolean;
   isSearchable: boolean;
+  hasValue: boolean;
   required?: boolean;
   unstyled: boolean;
 }
 
-export interface InternalContextValue<
+export interface InternalSelectContextValue<
   Option,
   IsMulti extends boolean,
   Group extends GroupBase<Option>,
@@ -87,9 +88,9 @@ export interface InternalContextValue<
   openAfterFocus: React.MutableRefObject<boolean>;
 }
 
-const InternalContext = createContext<unknown | undefined>(undefined);
+const InternalSelectContext = createContext<unknown | undefined>(undefined);
 
-const InternalContextProvider = <
+const InternalSelectContextProvider = <
   Option,
   IsMulti extends boolean,
   Group extends GroupBase<Option>,
@@ -98,32 +99,32 @@ const InternalContextProvider = <
   value,
 }: {
   children: React.ReactNode;
-  value: InternalContextValue<Option, IsMulti, Group>;
+  value: InternalSelectContextValue<Option, IsMulti, Group>;
 }) => {
   return (
-    <InternalContext.Provider value={value}>
+    <InternalSelectContext.Provider value={value}>
       {children}
-    </InternalContext.Provider>
+    </InternalSelectContext.Provider>
   );
 };
 
-function useInternalContext<
+function useInternalSelectContext<
   Option,
   IsMulti extends boolean,
   Group extends GroupBase<Option>,
->(): InternalContextValue<Option, IsMulti, Group> {
-  const context = useContext(InternalContext);
+>(): InternalSelectContextValue<Option, IsMulti, Group> {
+  const context = useContext(InternalSelectContext);
   if (!context) {
     throw new Error(
-      'useInternalContext must be used within a InternalContextProvider'
+      'useInternalSelectContext must be used within a InternalSelectContextProvider'
     );
   }
-  return context as InternalContextValue<Option, IsMulti, Group>;
+  return context as InternalSelectContextValue<Option, IsMulti, Group>;
 }
 
-const ClassNamesContext = createContext<unknown | undefined>(undefined);
+const SelectContext = createContext<unknown | undefined>(undefined);
 
-const ClassNamesContextProvider = <
+const SelectContextProvider = <
   Option,
   IsMulti extends boolean,
   Group extends GroupBase<Option>,
@@ -132,32 +133,30 @@ const ClassNamesContextProvider = <
   value,
 }: {
   children: React.ReactNode;
-  value: ClassNamesContextValue<Option, IsMulti, Group>;
+  value: SelectContextValue<Option, IsMulti, Group>;
 }) => {
   return (
-    <ClassNamesContext.Provider value={value}>
-      {children}
-    </ClassNamesContext.Provider>
+    <SelectContext.Provider value={value}>{children}</SelectContext.Provider>
   );
 };
 
-function useClassNamesContext<
+function useSelectContext<
   Option,
   IsMulti extends boolean,
   Group extends GroupBase<Option>,
->(): ClassNamesContextValue<Option, IsMulti, Group> {
-  const context = useContext(ClassNamesContext);
+>(): SelectContextValue<Option, IsMulti, Group> {
+  const context = useContext(SelectContext);
   if (!context) {
     throw new Error(
-      'useClassNamesContext must be used within a ClassNamesContextProvider'
+      'useSelectContext must be used within a SelectContextProvider'
     );
   }
-  return context as ClassNamesContextValue<Option, IsMulti, Group>;
+  return context as SelectContextValue<Option, IsMulti, Group>;
 }
 
 export {
-  InternalContextProvider,
-  useInternalContext,
-  ClassNamesContextProvider,
-  useClassNamesContext,
+  InternalSelectContextProvider,
+  useInternalSelectContext,
+  SelectContextProvider,
+  useSelectContext,
 };

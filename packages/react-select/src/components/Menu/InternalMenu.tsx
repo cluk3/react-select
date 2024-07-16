@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { MenuPlacer } from './index';
 import { ScrollManager } from '../../internal';
-import { useInternalContext } from '../../SelectContext';
+import { useInternalSelectContext } from '../../SelectContext';
 import type { CategorizedOption, FormatOptionLabelContext } from '../../types';
 import React from 'react';
 import type { OptionProps } from '../Option';
@@ -33,7 +33,7 @@ export function InternalMenu() {
       onMenuScrollToBottom,
       isMulti,
     },
-  } = useInternalContext();
+  } = useInternalSelectContext();
 
   let menuUI: ReactNode;
   const hasOptions = !!getFocusableOptions().length;
@@ -187,7 +187,7 @@ function OptionsList() {
     components: { Group, GroupHeading, Option },
     selectProps: { formatGroupLabel, isClearable },
     state: { focusedOption },
-  } = useInternalContext();
+  } = useInternalSelectContext();
 
   const methods = React.useRef({
     onOptionHover,

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useGetClassNames } from '../utils';
-import { useInternalContext } from '../SelectContext';
+import { useInternalSelectContext } from '../SelectContext';
 
 // ==============================
 // Root Container
@@ -15,7 +15,7 @@ export interface ContainerProps {
 export const SelectContainer = (props: ContainerProps) => {
   const {
     selectProps: { isDisabled, isRtl },
-  } = useInternalContext();
+  } = useInternalSelectContext();
   const { children, innerProps } = props;
   const className = useGetClassNames(
     'selectContainer',
@@ -49,7 +49,7 @@ export const ValueContainer = (props: ValueContainerProps) => {
   const {
     hasValue,
     selectProps: { controlShouldRenderValue, isMulti },
-  } = useInternalContext();
+  } = useInternalSelectContext();
   const { children, innerProps } = props;
   const className = useGetClassNames(
     'valueContainer',

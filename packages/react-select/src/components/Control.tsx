@@ -1,7 +1,7 @@
 import type { ReactNode, Ref } from 'react';
 
 import { useGetClassNames } from '../utils';
-import { useInternalContext } from '../SelectContext';
+import { useInternalSelectContext } from '../SelectContext';
 
 export interface ControlProps {
   /** Children to render. */
@@ -15,7 +15,7 @@ const Control = (props: ControlProps) => {
   const {
     selectProps: { isDisabled },
     state: { isFocused },
-  } = useInternalContext();
+  } = useInternalSelectContext();
   const { children, innerRef, innerProps } = props;
   const className = useGetClassNames('control', props, innerProps?.className);
   return (
