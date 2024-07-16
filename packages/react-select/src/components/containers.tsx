@@ -20,7 +20,7 @@ export const SelectContainer = (props: ContainerProps) => {
   const className = useGetClassNames(
     'selectContainer',
     props,
-    innerProps?.className
+    innerProps.className
   );
   return (
     <div

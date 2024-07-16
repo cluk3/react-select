@@ -53,7 +53,10 @@ export default function ScrollManager({
       {lockEnabled && (
         <div
           onClick={blurSelectInput}
-          className={buildClassNames('scroll-manager', classNamePrefix)}
+          className={buildClassNames({
+            componentName: 'scroll-manager',
+            classNamePrefix,
+          })}
         />
       )}
       {children(targetRef)}

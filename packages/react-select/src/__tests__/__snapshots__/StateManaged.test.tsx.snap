@@ -3,7 +3,7 @@
 exports[`defaults > snapshot 1`] = `
 <div>
   <div
-    class="react-select react-select__select-container react-select__select-container--styled"
+    class="react-select__select-container react-select__select-container--styled"
     data-is-disabled="false"
     data-is-rtl="false"
   >
@@ -70,7 +70,7 @@ exports[`defaults > snapshot 1`] = `
         >
           <svg
             aria-hidden="true"
-            class="react-select__svg"
+            class="react-select__down-chevron react-select__down-chevron--styled"
             focusable="false"
             height="20"
             viewBox="0 0 20 20"

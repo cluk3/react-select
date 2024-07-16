@@ -2,7 +2,7 @@ import type { DefaultSelectProps as SelectProps } from './types';
 import type { Options, GroupBase } from './types';
 import type { CategorizedOption, CategorizedGroupOrOption } from './types';
 import type { State } from './types';
-import { notNullish, useOnMountEffect, isDocumentElement } from './utils';
+import { useOnMountEffect, isDocumentElement, scrollTo } from './utils';
 import type { FilterOptionOption } from './filters';
 import { useCallback, useRef } from 'react';
 
@@ -30,6 +30,10 @@ export function toCategorizedOption<
     value,
     index,
   };
+}
+
+function notNullish<T>(item: T | null | undefined): item is T {
+  return item != null;
 }
 
 export function buildCategorizedOptions<
@@ -228,6 +232,30 @@ export function filterOption<
   inputValue: string
 ) {
   return props.filterOption ? props.filterOption(option, inputValue) : true;
+}
+
+export function scrollIntoView(
+  menuEl: HTMLElement,
+  focusedEl: HTMLElement
+): void {
+  const menuRect = menuEl.getBoundingClientRect();
+  const focusedRect = focusedEl.getBoundingClientRect();
+  const overScroll = focusedEl.offsetHeight / 3;
+
+  if (focusedRect.bottom + overScroll > menuRect.bottom) {
+    scrollTo(
+      menuEl,
+      Math.min(
+        focusedEl.offsetTop +
+          focusedEl.clientHeight -
+          menuEl.offsetHeight +
+          overScroll,
+        menuEl.scrollHeight
+      )
+    );
+  } else if (focusedRect.top - overScroll < menuRect.top) {
+    scrollTo(menuEl, Math.max(focusedEl.offsetTop - overScroll, 0));
+  }
 }
 
 export function useEventListeners<

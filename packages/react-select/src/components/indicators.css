@@ -1,4 +1,5 @@
-.react-select__svg {
+.react-select__cross-icon,
+.react-select__down-chevron {
   display: inline-block;
   fill: currentcolor;
   line-height: 1;

@@ -25,8 +25,7 @@ const Input = (props: InputProps) => {
         }}
         {...innerProps}
         className={buildClassNames(
-          'hidden-input',
-          classNamePrefix,
+          { componentName: 'hidden-input', classNamePrefix },
           innerProps.className
         )}
       />

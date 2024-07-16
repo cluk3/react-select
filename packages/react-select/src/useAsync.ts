@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { handleInputChange, useOnMountEffect } from './utils';
+import { useOnMountEffect } from './utils';
 import type { StateManagerProps } from './useStateManager';
 import type { GroupBase, InputActionMeta, OptionsOrGroups } from './types';
 
@@ -190,4 +190,19 @@ export default function useAsync<
     onInputChange,
     filterOption,
   };
+}
+
+function handleInputChange(
+  inputValue: string,
+  actionMeta: InputActionMeta,
+  onInputChange?: (
+    newValue: string,
+    actionMeta: InputActionMeta
+  ) => string | void
+) {
+  if (onInputChange) {
+    const newValue = onInputChange(inputValue, actionMeta);
+    if (typeof newValue === 'string') return newValue;
+  }
+  return inputValue;
 }

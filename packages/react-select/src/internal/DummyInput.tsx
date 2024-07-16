@@ -17,8 +17,7 @@ export default function DummyInput({
       ref={innerRef}
       {...props}
       className={buildClassNames(
-        'dummy-input',
-        classNamePrefix,
+        { componentName: 'dummy-input', classNamePrefix },
         props.className
       )}
     />

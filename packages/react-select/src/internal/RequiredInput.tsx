@@ -27,7 +27,10 @@ const RequiredInput: FunctionComponent<{
       tabIndex={-1}
       aria-hidden="true"
       onFocus={onFocus}
-      className={buildClassNames('required-input', classNamePrefix)}
+      className={buildClassNames({
+        componentName: 'required-input',
+        classNamePrefix,
+      })}
       value=""
       onChange={() => {}}
     />

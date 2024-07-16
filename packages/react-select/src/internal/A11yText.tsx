@@ -9,7 +9,10 @@ const A11yText = (props: JSX.IntrinsicElements['span']) => {
   return (
     <span
       {...props}
-      className={buildClassNames('a11y-text', classNamePrefix, props.className)}
+      className={buildClassNames(
+        { componentName: 'a11y-text', classNamePrefix },
+        props.className
+      )}
     />
   );
 };

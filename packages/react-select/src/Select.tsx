@@ -46,17 +46,16 @@ import {
   getNextFocusedOption,
   getNextFocusedValue,
   useEventListeners,
+  scrollIntoView,
 } from './select-utils';
 
 import {
   cleanValue,
   isTouchCapable,
   isMobileDevice,
-  scrollIntoView,
   valueTernary,
   multiValueAsValue,
   singleValueAsValue,
-  buildClassNames,
   useOnMountEffect,
 } from './utils';
 
@@ -1148,7 +1147,7 @@ function SelectInstance<
           innerProps={{
             id: props.id,
             onKeyDown,
-            className: buildClassNames('', props.classNamePrefix!, props.className),
+            className: props.className,
           }}
         >
           <LiveRegion id={getElementId('live-region')} />

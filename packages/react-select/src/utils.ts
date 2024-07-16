@@ -1,6 +1,5 @@
 import type {
   GroupBase,
-  InputActionMeta,
   MultiValue,
   OnChangeValue,
   Options,
@@ -13,7 +12,6 @@ import type { SelectComponentsProps } from './components';
 import { type EffectCallback, useEffect } from 'react';
 
 export const noop = () => {};
-export const emptyString = () => '';
 
 // ==============================
 // Class Name Prefixer
@@ -28,32 +26,42 @@ function applyPrefixToName(prefix: string, name: string) {
     return `${prefix}__${name}`;
   }
 }
+
 const DEFAULT_PREFIX = 'react-select';
 const STYLED_SUFFIX = '--styled';
+
 export function buildClassNames(
-  componentName: string,
-  prefix?: string,
-  ...classNameList: Array<string | undefined>
+  {
+    componentName,
+    classNamePrefix,
+    withStyledSuffix = false,
+  }: {
+    componentName: string;
+    classNamePrefix?: string;
+    withStyledSuffix?: boolean;
+  },
+  ...additionalClassNames: Array<string | undefined>
 ) {
-  const arr = classNameList.filter((i) => i);
-  const classNameBase = applyPrefixToName(DEFAULT_PREFIX, componentName);
-  arr.push(classNameBase, applyPrefixToName(classNameBase, STYLED_SUFFIX));
-  if (prefix) {
-    arr.push(applyPrefixToName(prefix, componentName));
+  const classNames = additionalClassNames.filter((i) => i);
+  const classNameBase = applyPrefixToName(DEFAULT_PREFIX, componentName!);
+  classNames.push(classNameBase);
+
+  if (withStyledSuffix) {
+    classNames.push(applyPrefixToName(classNameBase, STYLED_SUFFIX));
   }
 
-  return arr.map((i) => String(i).trim()).join(' ');
-}
+  if (classNamePrefix) {
+    classNames.push(applyPrefixToName(classNamePrefix, componentName));
+  }
 
-// ==============================
-// Clean Value
-// ==============================
+  return classNames.map((i) => String(i).trim()).join(' ');
+}
 
 export const cleanValue = <Option>(
   value: PropsValue<Option>
 ): Options<Option> => {
-  if (isArray(value)) return value.filter(Boolean);
-  if (typeof value === 'object' && value !== null) return [value];
+  if (Array.isArray(value)) return value.filter(Boolean);
+  if (typeof value === 'object' && value !== null) return [value as Option];
   return [];
 };
 
@@ -84,8 +92,7 @@ export const useGetClassNames = <
   const kebabName = kebabize(name);
   const { getClassNames, unstyled, classNamePrefix, ...restContext } = context;
   return buildClassNames(
-    kebabName,
-    classNamePrefix,
+    { componentName: kebabName, classNamePrefix, withStyledSuffix: true },
     getClassNames(name, {
       ...restContext,
       ...cleanComponentProps<Option, ComponentNames>(props),
@@ -93,25 +100,6 @@ export const useGetClassNames = <
     className
   );
 };
-
-// ==============================
-// Handle Input Change
-// ==============================
-
-export function handleInputChange(
-  inputValue: string,
-  actionMeta: InputActionMeta,
-  onInputChange?: (
-    newValue: string,
-    actionMeta: InputActionMeta
-  ) => string | void
-) {
-  if (onInputChange) {
-    const newValue = onInputChange(inputValue, actionMeta);
-    if (typeof newValue === 'string') return newValue;
-  }
-  return inputValue;
-}
 
 export function isDocumentElement(
   el: HTMLElement | typeof window
@@ -129,34 +117,6 @@ export function scrollTo(el: HTMLElement | typeof window, top: number): void {
   el.scrollTop = top;
 }
 
-export function scrollIntoView(
-  menuEl: HTMLElement,
-  focusedEl: HTMLElement
-): void {
-  const menuRect = menuEl.getBoundingClientRect();
-  const focusedRect = focusedEl.getBoundingClientRect();
-  const overScroll = focusedEl.offsetHeight / 3;
-
-  if (focusedRect.bottom + overScroll > menuRect.bottom) {
-    scrollTo(
-      menuEl,
-      Math.min(
-        focusedEl.offsetTop +
-          focusedEl.clientHeight -
-          menuEl.offsetHeight +
-          overScroll,
-        menuEl.scrollHeight
-      )
-    );
-  } else if (focusedRect.top - overScroll < menuRect.top) {
-    scrollTo(menuEl, Math.max(focusedEl.offsetTop - overScroll, 0));
-  }
-}
-
-// ==============================
-// Get bounding client object
-// ==============================
-
 // cannot get keys using array notation with DOMRect
 export function getBoundingClientObj(element: HTMLElement) {
   const rect = element.getBoundingClientRect();
@@ -169,25 +129,6 @@ export function getBoundingClientObj(element: HTMLElement) {
     width: rect.width,
   };
 }
-export interface RectType {
-  left: number;
-  right: number;
-  bottom: number;
-  height: number;
-  width: number;
-}
-
-// ==============================
-// String to Key (kebabify)
-// ==============================
-
-export function toKey(str: string) {
-  return str.replace(/\W/g, '-');
-}
-
-// ==============================
-// Touch Capability Detector
-// ==============================
 
 export function isTouchCapable() {
   try {
@@ -197,10 +138,6 @@ export function isTouchCapable() {
     return false;
   }
 }
-
-// ==============================
-// Mobile Device Detector
-// ==============================
 
 export function isMobileDevice() {
   try {
@@ -234,14 +171,6 @@ if (w.addEventListener && w.removeEventListener) {
 }
 
 export const supportsPassiveEvents: boolean = passiveOptionAccessed;
-
-export function notNullish<T>(item: T | null | undefined): item is T {
-  return item != null;
-}
-
-export function isArray<T>(arg: unknown): arg is readonly T[] {
-  return Array.isArray(arg);
-}
 
 export function valueTernary<Option, IsMulti extends boolean>(
   isMulti: IsMulti | undefined,

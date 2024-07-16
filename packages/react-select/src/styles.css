@@ -45,7 +45,7 @@
   --rs-menu-z-index: 9999;
 }
 
-.react-select * {
+.react-select__select-container * {
   box-sizing: border-box;
 }
 
