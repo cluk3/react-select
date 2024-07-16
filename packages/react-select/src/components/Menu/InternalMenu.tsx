@@ -230,7 +230,7 @@ function OptionsList() {
               optionId={`${getElementId('option')}-${groupIndex}-${option.index}`}
               key={`${groupIndex}-${option.index}`}
               isClearable={isClearable}
-              isFocused={focusedOption === item.data}
+              isFocused={focusedOption === option.data}
               OptionComponent={Option}
               {...internalOptionProps}
             />
