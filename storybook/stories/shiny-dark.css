@@ -11,15 +11,39 @@
   --x: -100%;
 }
 
-.radial-gradient {
-  @apply rounded-md relative p-1;
-
+.react-select__menu-list--styled {
   background: radial-gradient(
       circle at 50% 0%,
-      rgba(var(--radial-gradient-background), 0.05) 0%,
+      rgba(var(--radial-gradient-background), 0.1) 0%,
       transparent 60%
     ),
     rgba(var(--solid-color-background), 1);
+  border-radius-bottom-left: var(--rs-border-radius);
+  border-radius-bottom-right: var(--rs-border-radius);
+}
+.react-select__menu--styled {
+  box-shadow: 0 0 0 4px var(--rs-primary);
+  margin: 0;
+}
+
+.radial-gradient {
+  @apply relative;
+
+  background: radial-gradient(
+      circle at 50% 0%,
+      rgba(var(--radial-gradient-background), 0.1) 0%,
+      transparent 60%
+    ),
+    rgba(var(--solid-color-background), 1);
+
+  &:hover {
+    border-color: var(--rs-neutral30);
+    box-shadow: 0 0 0 1px var(--rs-neutral30);
+  }
+
+  &[data-is-focused='true'] {
+    box-shadow: 0 0 0 4px var(--rs-primary);
+  }
 }
 
 .linear-mask {
@@ -59,4 +83,25 @@
   100% {
     --x: -100%;
   }
+}
+
+.shiny-dark-select {
+  --rs-primary: #4338ca;
+  --rs-primary25: #4f46e5;
+  --rs-primary50: #818cf8;
+  --rs-primary75: #a5b4fc;
+  --rs-danger: #e11d48;
+  --rs-danger-light: #fda4af;
+  --rs-neutral90: #f8fafc;
+  --rs-neutral80: #f1f5f9;
+  --rs-neutral60: #e2e8f0;
+  --rs-neutral50: #cbd5e1;
+  --rs-neutral40: #94a3b8;
+  --rs-neutral30: #64748b;
+  --rs-neutral20: #475569;
+  --rs-neutral10: #334155;
+  --rs-neutral5: #1e293b;
+  --rs-neutral0: #000;
+  --rs-base-unit: 8px;
+  --rs-control-height: 64px;
 }
