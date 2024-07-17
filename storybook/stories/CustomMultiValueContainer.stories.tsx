@@ -1,7 +1,7 @@
 import type { Meta } from '@storybook/react';
 import * as React from 'react';
 import Tooltip from '@atlaskit/tooltip';
-import type { MultiValueGenericProps, StylesConfig } from 'react-select';
+import type { ClassNamesConfig, MultiValueGenericProps } from 'react-select';
 import Select, { components } from 'react-select';
 
 import { Field } from '../components';
@@ -20,14 +20,14 @@ export function CustomMultiValueContainer() {
       label="CustomMultiValueContainer"
       htmlFor="custom-multi-value-container-id"
     >
-      <Select
+      <Select<ColourOption, true>
         inputId="custom-multi-value-container-id"
         closeMenuOnSelect={false}
         components={{ MultiValueContainer }}
         defaultValue={[colourOptions[4], colourOptions[5]]}
         isMulti
         options={colourOptions}
-        styles={styles}
+        classNames={classNames}
       />
     </Field>
   );
@@ -37,11 +37,8 @@ export function CustomMultiValueContainer() {
 // Styles
 // =============================================================================
 
-const styles: StylesConfig<ColourOption> = {
-  multiValue: (base) => ({
-    ...base,
-    border: `2px dotted ${colourOptions[2].color}`,
-  }),
+const classNames: ClassNamesConfig<ColourOption, true> = {
+  multiValue: 'border-2 border-dotted border-purple-500',
 };
 
 // =============================================================================

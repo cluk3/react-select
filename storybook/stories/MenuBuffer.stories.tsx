@@ -1,6 +1,6 @@
 import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import type { StylesConfig } from 'react-select';
+import type { ClassNamesConfig } from 'react-select';
 import Select from 'react-select';
 import { Field } from '../components';
 
@@ -23,12 +23,12 @@ export function MenuBuffer() {
       <Select
         defaultValue={colourOptions[0]}
         options={colourOptions}
-        styles={selectStyles}
+        classNames={classNames}
       />
     </Field>
   );
 }
 
-const selectStyles: StylesConfig<StateOption, false> = {
-  menu: (base) => ({ ...base, marginBottom: 76 }),
+const classNames: ClassNamesConfig<StateOption, false> = {
+  menu: 'mb-[76px]',
 };

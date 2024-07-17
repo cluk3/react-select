@@ -1,7 +1,6 @@
 import Tooltip from '@atlaskit/tooltip';
 import type { Meta } from '@storybook/react';
-import * as React from 'react';
-import type { NoticeProps, StylesConfig } from 'react-select';
+import { useGetClassNames, type NoticeProps } from 'react-select';
 import AsyncSelect from 'react-select/async';
 import { Field } from '../components';
 
@@ -23,44 +22,29 @@ export function CustomLoadingMessage() {
         components={{ LoadingMessage }}
         defaultOptions
         loadOptions={promiseOptions}
-        styles={styles}
+        loadingMessage={({ inputValue }) => <>Loading {inputValue}</>}
+        classNames={{
+          loadingMessage: 'text-white bg-purple-500',
+        }}
       />
     </Field>
   );
 }
 
-// =============================================================================
-// Styles
-// =============================================================================
-
-const styles: StylesConfig<ColourOption> = {
-  loadingMessage: (base) => ({
-    ...base,
-    backgroundColor: colourOptions[2].color,
-    color: 'white',
-  }),
-};
-
-// =============================================================================
-// Components
-// =============================================================================
-
-function LoadingMessage(props: NoticeProps<ColourOption, false>) {
+function LoadingMessage(props: NoticeProps) {
+  const className = useGetClassNames(
+    'loadingMessage',
+    props,
+    props.innerProps?.className
+  );
   return (
     <Tooltip content={'Custom Loading Message'}>
-      <div
-        {...props.innerProps}
-        style={props.getStyles('loadingMessage', props) as React.CSSProperties}
-      >
+      <div {...props.innerProps} className={className}>
         {props.children}
       </div>
     </Tooltip>
   );
 }
-
-// =============================================================================
-// Utils
-// =============================================================================
 
 function filterColors(inputValue: string) {
   return colourOptions.filter((i) =>

@@ -1,6 +1,6 @@
 import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import type { ActionMeta, OnChangeValue, StylesConfig } from 'react-select';
+import type { ActionMeta, ClassNamesConfig, OnChangeValue } from 'react-select';
 import Select from 'react-select';
 import { Field } from '../components';
 
@@ -24,7 +24,6 @@ export function FixedOptions() {
   ) {
     switch (actionMeta.action) {
       case 'remove-value':
-      case 'pop-value':
         if (actionMeta.removedValue.isFixed) {
           return;
         }
@@ -45,7 +44,7 @@ export function FixedOptions() {
         isMulti
         onChange={handleChange}
         options={colourOptions}
-        styles={styles}
+        classNames={classNames}
         value={value}
       />
     </Field>
@@ -56,18 +55,11 @@ export function FixedOptions() {
 // Styles
 // =============================================================================
 
-const styles: StylesConfig<ColourOption, true> = {
-  multiValue: (base, state) => {
-    return state.data.isFixed ? { ...base, backgroundColor: 'gray' } : base;
-  },
-  multiValueLabel: (base, state) => {
-    return state.data.isFixed
-      ? { ...base, fontWeight: 'bold', color: 'white', paddingRight: 6 }
-      : base;
-  },
-  multiValueRemove: (base, state) => {
-    return state.data.isFixed ? { ...base, display: 'none' } : base;
-  },
+const classNames: ClassNamesConfig<ColourOption, true> = {
+  multiValue: ({ data }) => (data.isFixed ? 'bg-gray-300' : ''),
+  multiValueLabel: ({ data }) =>
+    data.isFixed ? 'font-bold text-white pr-1.5' : '',
+  multiValueRemove: ({ data }) => (data.isFixed ? 'hidden' : ''),
 };
 
 // =============================================================================

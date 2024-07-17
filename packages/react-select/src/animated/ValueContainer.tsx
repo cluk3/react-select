@@ -51,7 +51,7 @@ const useIsMultiValueContainer = (
     selectProps: { isMulti, controlShouldRenderValue },
   } = useInternalSelectContext();
 
-  const [cssDisplayFlex, setCssDisplayFlex] = useState(
+  const [cssDisplayFlex, setCssDisplayFlex] = useState<boolean>(
     isMulti && controlShouldRenderValue && hasValue
   );
   const [removingValue, setRemovingValue] = useState(false);

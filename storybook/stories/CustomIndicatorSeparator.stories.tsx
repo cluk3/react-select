@@ -1,5 +1,4 @@
 import type { Meta } from '@storybook/react';
-import * as React from 'react';
 import type { IndicatorSeparatorProps } from 'react-select';
 import Select from 'react-select';
 
@@ -28,10 +27,6 @@ export function CustomIndicatorSeparator() {
     </Field>
   );
 }
-
-// =============================================================================
-// Components
-// =============================================================================
 
 function IndicatorSeparator({ innerProps }: IndicatorSeparatorProps) {
   return (

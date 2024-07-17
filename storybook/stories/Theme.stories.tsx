@@ -1,7 +1,6 @@
 import type { Meta } from '@storybook/react';
-import * as React from 'react';
 import Select from 'react-select';
-
+import './theme.css';
 import { Field } from '../components';
 import { flavourOptions } from '../data';
 
@@ -18,15 +17,7 @@ export function Theme() {
         inputId="themed-select-id"
         defaultValue={flavourOptions[2]}
         options={flavourOptions}
-        theme={(theme) => ({
-          ...theme,
-          borderRadius: 0,
-          colors: {
-            ...theme.colors,
-            primary25: 'hotpink',
-            primary: 'black',
-          },
-        })}
+        className="themed-select"
       />
     </Field>
   );

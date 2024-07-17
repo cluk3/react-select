@@ -458,7 +458,7 @@ cases(
         ...BASIC_PROPS,
         value: OPTIONS[2],
       },
-      expectedValue: [{ label: '2', value: 'two' }],
+      expectedValue: [OPTIONS[2]],
     },
     'single select > with option values as number > should set it as initial value':
       {
@@ -466,15 +466,23 @@ cases(
           ...BASIC_PROPS,
           value: OPTIONS_NUMBER_VALUE[2],
         },
-        expectedValue: [{ label: '2', value: 2 }],
+        expectedValue: [OPTIONS_NUMBER_VALUE[2]],
       },
+    'single select > with grouped options > should set it as initial value': {
+      props: {
+        ...BASIC_PROPS,
+        options: OPTIONS_GROUPED,
+        value: OPTIONS_GROUPED[0].options[2],
+      },
+      expectedValue: [OPTIONS_GROUPED[0].options[2]],
+    },
     'multi select > should set it as initial value': {
       props: {
         ...BASIC_PROPS,
         isMulti: true,
         value: OPTIONS[1],
       },
-      expectedValue: [{ label: '1', value: 'one' }],
+      expectedValue: [OPTIONS[1]],
     },
     'multi select > with option values as number > should set it as initial value':
       {
@@ -483,7 +491,7 @@ cases(
           isMulti: true,
           value: OPTIONS_NUMBER_VALUE[1],
         },
-        expectedValue: [{ label: '1', value: 1 }],
+        expectedValue: [OPTIONS_NUMBER_VALUE[1]],
       },
   }
 );
@@ -941,6 +949,34 @@ cases(
     },
   }
 );
+
+test('should focus first grouped option when menu is opened', async () => {
+  const props = {
+    ...BASIC_PROPS,
+    options: OPTIONS_GROUPED,
+  };
+  const expectedToFocus = OPTIONS_GROUPED[0].options[0];
+
+  const user = userEvent.setup();
+
+  let { container, rerender } = render(
+    <Select
+      {...props}
+      onMenuOpen={() => {
+        rerender(<Select {...props} menuIsOpen onMenuOpen={noop} />);
+      }}
+    />
+  );
+
+  await user.click(
+    container.querySelector('.react-select__dropdown-indicator')!
+  );
+
+  expect(
+    container.querySelector('.react-select__option[data-is-focused="true"]')
+      ?.textContent
+  ).toEqual(expectedToFocus.label);
+});
 
 cases(
   'click to open select',

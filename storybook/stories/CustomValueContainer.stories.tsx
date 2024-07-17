@@ -1,5 +1,5 @@
 import type { Meta } from '@storybook/react';
-import type { StylesConfig, ValueContainerProps } from 'react-select';
+import type { ClassNamesConfig, ValueContainerProps } from 'react-select';
 import Select, { components } from 'react-select';
 
 import { Field } from '../components';
@@ -22,34 +22,18 @@ export function CustomValueContainer() {
         isClearable
         isSearchable
         options={colourOptions}
-        styles={styles}
+        classNames={classNames}
       />
     </Field>
   );
 }
 
-// =============================================================================
-// Styles
-// =============================================================================
-
-const styles: StylesConfig<ColourOption> = {
-  singleValue: (base) => ({ ...base, color: 'white' }),
-  valueContainer: (base) => ({
-    ...base,
-    background: colourOptions[2].color,
-    color: 'white',
-    width: '100%',
-  }),
+const classNames: ClassNamesConfig<ColourOption> = {
+  singleValue: 'text-white',
+  valueContainer: 'bg-purple-500 text-white w-full',
 };
 
-// =============================================================================
-// Components
-// =============================================================================
-
-function ValueContainer({
-  children,
-  ...props
-}: ValueContainerProps<ColourOption>) {
+function ValueContainer({ children, ...props }: ValueContainerProps) {
   return (
     <components.ValueContainer {...props}>{children}</components.ValueContainer>
   );

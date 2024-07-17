@@ -4,3 +4,5 @@
 @import 'react-select/styles';
 
 @import 'tailwindcss/utilities';
+
+@import './shiny-dark.css';

@@ -15,7 +15,7 @@ export default {
 export function CustomClearIndicator() {
   return (
     <Field label="Custom Clear Indicator" htmlFor="custom-clear-indicator-id">
-      <Select
+      <Select<ColourOption, true>
         id="custom-clear-indicator-id"
         components={{ ClearIndicator }}
         defaultValue={[colourOptions[4], colourOptions[5]]}
@@ -31,8 +31,8 @@ export function CustomClearIndicator() {
 // Styles
 // =============================================================================
 
-const classNames: ClassNamesConfig<ColourOption> = {
-  clearIndicator: ({ state: { isFocused } }) =>
+const classNames: ClassNamesConfig<ColourOption, true> = {
+  clearIndicator: ({ isFocused }) =>
     cn({
       'cursor-pointer': true,
       'text-blue-400': isFocused,

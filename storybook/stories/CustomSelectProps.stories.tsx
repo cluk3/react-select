@@ -1,7 +1,7 @@
 import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import type { ControlProps, Props, StylesConfig } from 'react-select';
-import Select, { components } from 'react-select';
+import type { ClassNamesConfig, ControlProps, Props } from 'react-select';
+import Select, { components, useInternalSelectContext } from 'react-select';
 import { Field } from '../components';
 import type { ColourOption } from '../data';
 import { colourOptions, EMOJIS } from '../data';
@@ -31,7 +31,7 @@ export function CustomSelectProps(props: Props<ColourOption>) {
         inputId="custom-select-props-id"
         isSearchable
         options={colourOptions}
-        styles={styles}
+        classNames={classNames}
         // @ts-ignore
         emoji={emoji}
         onEmojiClick={onClick}
@@ -40,21 +40,15 @@ export function CustomSelectProps(props: Props<ColourOption>) {
   );
 }
 
-// =============================================================================
-// Styles
-// =============================================================================
-
-const styles: StylesConfig<ColourOption> = {
-  control: (css) => ({ ...css, paddingLeft: '1rem' }),
+const classNames: ClassNamesConfig<ColourOption> = {
+  control: 'pl-1',
 };
 
-// =============================================================================
-// Components
-// =============================================================================
-
-function Control({ children, ...props }: ControlProps<ColourOption>) {
-  // @ts-ignore
-  const { emoji, onEmojiClick } = props.selectProps;
+function Control({ children, ...props }: ControlProps) {
+  const {
+    // @ts-expect-error
+    selectProps: { emoji, onEmojiClick },
+  } = useInternalSelectContext();
   const style = { cursor: 'pointer' };
 
   return (

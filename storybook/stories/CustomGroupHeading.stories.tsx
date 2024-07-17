@@ -1,7 +1,6 @@
 import EditorPanelIcon from '@atlaskit/icon/glyph/editor/panel';
 import Tooltip from '@atlaskit/tooltip';
 import type { Meta } from '@storybook/react';
-import * as React from 'react';
 import type { ClassNamesConfig, GroupHeadingProps } from 'react-select';
 import Select, { components } from 'react-select';
 import { Field } from '../components';
@@ -28,17 +27,9 @@ export function CustomGroupHeading() {
   );
 }
 
-// =============================================================================
-// Styles
-// =============================================================================
-
 const classNames: ClassNamesConfig<ColourOption | FlavourOption> = {
   groupHeading: 'flex-1 text-violet-700 text-lg m-0',
 };
-
-// =============================================================================
-// Components
-// =============================================================================
 
 function GroupHeading(props: GroupHeadingProps<ColourOption | FlavourOption>) {
   return (

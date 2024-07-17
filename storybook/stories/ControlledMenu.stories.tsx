@@ -49,10 +49,6 @@ export function ControlledMenu() {
   );
 }
 
-// =============================================================================
-// Styles
-// =============================================================================
-
 const classNames: ClassNamesConfig<ColourOption, false> = {
   menu: () => 'relative',
 };

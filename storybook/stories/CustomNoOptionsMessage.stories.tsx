@@ -1,11 +1,9 @@
 import Tooltip from '@atlaskit/tooltip';
 import type { Meta } from '@storybook/react';
-import * as React from 'react';
-import type { NoticeProps, StylesConfig } from 'react-select';
+import type { ClassNamesConfig, NoticeProps } from 'react-select';
 import Select, { components } from 'react-select';
 
 import { Field } from '../components';
-import { colourOptions } from '../data';
 
 export default {
   title: 'Select/CustomNoOptionsMessage',
@@ -22,28 +20,16 @@ export function CustomNoOptionsMessage() {
       <Select
         inputId="custom-no-options-message-id"
         components={{ NoOptionsMessage }}
-        styles={styles}
         options={[]}
+        classNames={classNames}
       />
     </Field>
   );
 }
 
-// =============================================================================
-// Styles
-// =============================================================================
-
-const styles: StylesConfig = {
-  noOptionsMessage: (base) => ({
-    ...base,
-    background: colourOptions[2].color,
-    color: 'white',
-  }),
+const classNames: ClassNamesConfig = {
+  noOptionsMessage: 'bg-purple-500 text-white',
 };
-
-// =============================================================================
-// Components
-// =============================================================================
 
 function NoOptionsMessage(props: NoticeProps) {
   return (

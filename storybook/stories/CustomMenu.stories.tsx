@@ -1,6 +1,6 @@
 import type { Meta } from '@storybook/react';
 import type { MenuProps } from 'react-select';
-import Select, { components, useSelectContext } from 'react-select';
+import Select, { components, useInternalSelectContext } from 'react-select';
 
 import { Field } from '../components';
 import type { ColourOption, FlavourOption, GroupedOption } from '../data';
@@ -25,12 +25,8 @@ export function CustomMenu() {
   );
 }
 
-// =============================================================================
-// Components
-// =============================================================================
-
 function Menu(props: MenuProps) {
-  const { getFocusableOptions } = useSelectContext();
+  const { getFocusableOptions } = useInternalSelectContext();
   const optionsLength = getFocusableOptions().length;
   return (
     <>
@@ -41,20 +37,7 @@ function Menu(props: MenuProps) {
       >
         Custom Menu with {optionsLength} options
       </div>
-      <components.Menu {...props}>{props.children}</components.Menu>
+      <components.Menu {...props} />
     </>
   );
-}
-
-// =============================================================================
-// Utils
-// =============================================================================
-
-function getLength(
-  options: readonly (GroupedOption | ColourOption | FlavourOption)[]
-): number {
-  return options.reduce((acc, curr) => {
-    if ('options' in curr) return acc + getLength(curr.options);
-    return acc + 1;
-  }, 0);
 }

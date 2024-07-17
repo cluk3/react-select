@@ -1,5 +1,4 @@
 import type { Meta } from '@storybook/react';
-import * as React from 'react';
 import AsyncSelect from 'react-select/async';
 
 import { Field } from '../components';
@@ -23,10 +22,6 @@ export function AsyncCallbacks() {
     </Field>
   );
 }
-
-// =============================================================================
-// Utils
-// =============================================================================
 
 function filterColors(inputValue: string) {
   return colourOptions.filter((i) =>

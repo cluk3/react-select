@@ -1,5 +1,7 @@
 .react-select__placeholder {
   grid-area: 1 / 1 / 2 / 3;
+  pointer-events: none;
+  user-select: none;
 }
 
 .react-select__placeholder--styled {

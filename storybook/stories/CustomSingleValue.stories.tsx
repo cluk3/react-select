@@ -1,6 +1,5 @@
 import type { Meta } from '@storybook/react';
-import * as React from 'react';
-import type { SingleValueProps, StylesConfig } from 'react-select';
+import type { ClassNamesConfig, SingleValueProps } from 'react-select';
 import Select, { components } from 'react-select';
 import { Field } from '../components';
 import type { ColourOption } from '../data';
@@ -22,7 +21,7 @@ export function CustomSingleValue() {
         isClearable
         isSearchable
         options={colourOptions}
-        styles={styles}
+        classNames={classNames}
       />
     </Field>
   );
@@ -32,15 +31,8 @@ export function CustomSingleValue() {
 // Styles
 // =============================================================================
 
-const styles: StylesConfig<ColourOption> = {
-  singleValue: (base) => ({
-    ...base,
-    padding: 5,
-    borderRadius: 5,
-    background: colourOptions[2].color,
-    color: 'white',
-    display: 'flex',
-  }),
+const classNames: ClassNamesConfig<ColourOption> = {
+  singleValue: 'p-1 flex text-white rounded-md bg-purple-500',
 };
 
 // =============================================================================

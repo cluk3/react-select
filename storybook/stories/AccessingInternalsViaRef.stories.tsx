@@ -45,7 +45,12 @@ export function AccessingInternalsViaRef() {
     <Stack gap="large">
       <Stack>
         <Field label="Select" htmlFor="select-id">
-          <Select ref={selectRef} inputId="select-id" options={colourOptions} />
+          <Select
+            ref={selectRef}
+            inputId="select-id"
+            isDisabled
+            options={colourOptions}
+          />
         </Field>
         <Inline>
           <Button onClick={focus}>Focus</Button>
@@ -88,10 +93,6 @@ export function AccessingInternalsViaRef() {
     </Stack>
   );
 }
-
-// =============================================================================
-// Utils
-// =============================================================================
 
 function filterColors(inputValue: string) {
   return colourOptions.filter((i) =>

@@ -68,7 +68,7 @@ export interface SelectComponents<Opt> {
   MenuPortal: typeof MenuPortal;
   LoadingMessage: typeof LoadingMessage;
   NoOptionsMessage: typeof NoOptionsMessage;
-  MultiValue: typeof MultiValue;
+  MultiValue: typeof MultiValue<Opt>;
   MultiValueContainer: typeof MultiValueContainer<Opt>;
   MultiValueLabel: typeof MultiValueLabel<Opt>;
   MultiValueRemove: typeof MultiValueRemove<Opt>;
@@ -86,7 +86,7 @@ export interface SelectComponentsProps<Option> {
   DownChevron: DownChevronProps;
   CrossIcon: CrossIconProps;
   Group: GroupProps<Option>;
-  GroupHeading: GroupHeadingProps;
+  GroupHeading: GroupHeadingProps<Option>;
   IndicatorsContainer: IndicatorsContainerProps;
   IndicatorSeparator: IndicatorSeparatorProps;
   Input: InputProps;
@@ -96,14 +96,14 @@ export interface SelectComponentsProps<Option> {
   MenuPortal: MenuPortalProps;
   LoadingMessage: NoticeProps;
   NoOptionsMessage: NoticeProps;
-  MultiValue: MultiValueProps;
+  MultiValue: MultiValueProps<Option>;
   MultiValueContainer: MultiValueGenericProps<Option>;
   MultiValueLabel: MultiValueLabelProps<Option>;
   MultiValueRemove: MultiValueRemoveProps<Option>;
   Option: OptionProps<Option>;
   Placeholder: PlaceholderProps;
   SelectContainer: ContainerProps;
-  SingleValue: SingleValueProps;
+  SingleValue: SingleValueProps<Option>;
   ValueContainer: ValueContainerProps;
 }
 

@@ -14,8 +14,8 @@ import type { SelectComponents } from './components/index';
 
 export type getClassNames<
   Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
+  IsMulti extends boolean = false,
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > = <Key extends ComponentNames>(
   key: Key,
   context: Omit<
@@ -27,8 +27,8 @@ export type getClassNames<
 
 export interface SelectContextValue<
   Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
+  IsMulti extends boolean = false,
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > {
   getClassNames: getClassNames<Option, IsMulti, Group>;
   classNamePrefix?: string;
@@ -46,8 +46,8 @@ export interface SelectContextValue<
 
 export interface InternalSelectContextValue<
   Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
+  IsMulti extends boolean = false,
+  Group extends GroupBase<Option> = GroupBase<Option>,
 > {
   selectProps: DefaultSelectProps<Option, IsMulti, Group>;
   components: SelectComponents<Option>;
@@ -92,8 +92,8 @@ const InternalSelectContext = createContext<unknown | undefined>(undefined);
 
 const InternalSelectContextProvider = <
   Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
+  IsMulti extends boolean = false,
+  Group extends GroupBase<Option> = GroupBase<Option>,
 >({
   children,
   value,
@@ -110,8 +110,8 @@ const InternalSelectContextProvider = <
 
 function useInternalSelectContext<
   Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
+  IsMulti extends boolean = false,
+  Group extends GroupBase<Option> = GroupBase<Option>,
 >(): InternalSelectContextValue<Option, IsMulti, Group> {
   const context = useContext(InternalSelectContext);
   if (!context) {
@@ -126,8 +126,8 @@ const SelectContext = createContext<unknown | undefined>(undefined);
 
 const SelectContextProvider = <
   Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
+  IsMulti extends boolean = false,
+  Group extends GroupBase<Option> = GroupBase<Option>,
 >({
   children,
   value,
@@ -142,8 +142,8 @@ const SelectContextProvider = <
 
 function useSelectContext<
   Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
+  IsMulti extends boolean = false,
+  Group extends GroupBase<Option> = GroupBase<Option>,
 >(): SelectContextValue<Option, IsMulti, Group> {
   const context = useContext(SelectContext);
   if (!context) {

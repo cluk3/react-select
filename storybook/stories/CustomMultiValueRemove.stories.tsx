@@ -2,7 +2,7 @@ import EmojiIcon from '@atlaskit/icon/glyph/emoji';
 import Tooltip from '@atlaskit/tooltip';
 import type { Meta } from '@storybook/react';
 import * as React from 'react';
-import type { MultiValueRemoveProps, StylesConfig } from 'react-select';
+import type { ClassNamesConfig, MultiValueRemoveProps } from 'react-select';
 import Select, { components } from 'react-select';
 import type { ColourOption } from '../data';
 import { colourOptions } from '../data';
@@ -20,13 +20,13 @@ export function CustomMultiValueRemove() {
       label="Custom Multi Value Remove"
       htmlFor="custom-multi-value-remove-id"
     >
-      <Select
+      <Select<ColourOption, true>
         inputId="custom-multi-value-remove-id"
         components={{ MultiValueRemove }}
         defaultValue={[colourOptions[4], colourOptions[5]]}
         isMulti
         options={colourOptions}
-        styles={styles}
+        classNames={classNames}
       />
     </Field>
   );
@@ -36,17 +36,9 @@ export function CustomMultiValueRemove() {
 // Styles
 // =============================================================================
 
-const styles: StylesConfig<ColourOption> = {
-  multiValueRemove: (base) => ({
-    ...base,
-    border: `1px dotted ${colourOptions[2].color}`,
-    height: '100%',
-  }),
+const classNames: ClassNamesConfig<ColourOption, true> = {
+  multiValueRemove: 'border border-dotted border-purple-500 h-full',
 };
-
-// =============================================================================
-// Components
-// =============================================================================
 
 function MultiValueRemove(props: MultiValueRemoveProps<ColourOption>) {
   return (

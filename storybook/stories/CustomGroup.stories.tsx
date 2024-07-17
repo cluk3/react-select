@@ -26,10 +26,6 @@ export function CustomGroup() {
   );
 }
 
-// =============================================================================
-// Components
-// =============================================================================
-
 function Group(props: GroupProps<ColourOption | FlavourOption>) {
   return (
     <div

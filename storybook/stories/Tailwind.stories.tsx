@@ -3,8 +3,8 @@ import '../styles/tailwind.css';
 import type { Meta } from '@storybook/react';
 import classNames from 'classnames';
 import * as React from 'react';
-import type { GroupBase, OptionProps, ValueContainerProps } from 'react-select';
-import Select, { components } from 'react-select';
+import type { OptionProps, ValueContainerProps } from 'react-select';
+import Select, { components, useInternalSelectContext } from 'react-select';
 import { omit } from 'remeda';
 
 import { Field } from '../components';
@@ -46,35 +46,37 @@ function CheckIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-function ValueContainer<
-  IsMulti extends boolean = false,
-  Group extends GroupBase<PersonOption> = GroupBase<PersonOption>,
->({ children, ...props }: ValueContainerProps<PersonOption, IsMulti, Group>) {
-  const { value, isMulti } = props.selectProps;
-  // @ts-expect-error selectProps can't infer `online` here.
-  const online: boolean = value?.online;
+function ValueContainer({ children, ...props }: ValueContainerProps) {
+  const {
+    selectProps: { isMulti },
+    state: { selectValue },
+  } = useInternalSelectContext<PersonOption>();
+
+  const online = selectValue[0]?.online;
 
   return (
     <components.ValueContainer {...props}>
       <span className="flex flex-1 items-center gap-2 text-left">
-        {isMulti ? null : <StatusCircle online={online} />}
+        {!selectValue.length || isMulti ? null : (
+          <StatusCircle online={online} />
+        )}
         <span className="flex w-full items-center">{children}</span>
       </span>
     </components.ValueContainer>
   );
 }
 
-function Option<
-  IsMulti extends boolean = false,
-  Group extends GroupBase<PersonOption> = GroupBase<PersonOption>,
->({ children, ...props }: OptionProps<PersonOption, IsMulti, Group>) {
+function Option({ children, ...props }: OptionProps<PersonOption>) {
+  const {
+    state: { selectValue },
+  } = useInternalSelectContext<PersonOption>();
   return (
     <components.Option {...props}>
       <span className="flex flex-1 items-center gap-2 text-left">
         <StatusCircle online={Boolean(props.data?.online)} />
         <span className="flex w-full items-center">{children}</span>
-        {/* @ts-expect-error selectProps can't infer `value` here. */}
-        {props.selectProps.value?.id === props.data.id && (
+
+        {selectValue.some((v) => v.id === props.data.id) && (
           <CheckIcon className="h-5 w-5" aria-hidden="true" />
         )}
       </span>
@@ -107,7 +109,7 @@ const Template = ({ inputId = 'react-select', ...props }) => {
   );
 };
 
-export const Tailwind = Template.bind({});
-Tailwind.args = {
-  ...omit(defaultArgs, ['defaultValue', 'isMulti', 'options']),
+export const Tailwind = {
+  render: Template,
+  args: { ...omit(defaultArgs, ['defaultValue', 'isMulti', 'options']) },
 };

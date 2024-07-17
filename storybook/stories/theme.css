@@ -1,0 +1,21 @@
+.themed-select {
+  --rs-primary: #4338ca;
+  --rs-primary25: #4f46e5;
+  --rs-primary50: #818cf8;
+  --rs-primary75: #eef2ff;
+  --rs-danger: #e11d48;
+  --rs-danger-light: #fda4af;
+  --rs-neutral90: #f8fafc;
+  --rs-neutral80: #f1f5f9;
+  --rs-neutral60: #e2e8f0;
+  --rs-neutral50: #cbd5e1;
+  --rs-neutral40: #94a3b8;
+  --rs-neutral30: #64748b;
+  --rs-neutral20: #475569;
+  --rs-neutral10: #334155;
+  --rs-neutral5: #1e293b;
+  --rs-neutral0: #0f172a;
+  --rs-base-unit: 8px;
+  --rs-control-height: 64px;
+  --rs-border-radius: 0px;
+}

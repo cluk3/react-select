@@ -6,10 +6,9 @@ import {
   SheetHeader,
   SheetTitle,
 } from '../components/ui/sheet';
-import Select from 'react-select';
-import LegacySelect from 'legacy-react-select';
+import Select, { type GroupBase, type SelectProps } from 'react-select';
 import Button from '@atlaskit/button/standard-button';
-import { defaultArgs, groupedOptions } from '../data';
+import { type ColourOption, defaultArgs, groupedOptions } from '../data';
 import { Field, Stack } from '../components';
 import { Input } from '../components/ui/input';
 
@@ -19,7 +18,9 @@ export default {
   argTypes: {},
 } as Meta<typeof Select>;
 
-const Template = (props) => {
+const Template = (
+  props: SelectProps<ColourOption, false, GroupBase<ColourOption>>
+) => {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <Sheet>
@@ -38,9 +39,6 @@ const Template = (props) => {
               <Field label="Select" htmlFor="select-id">
                 <Select {...props} inputId="select-id" />
               </Field>
-              {/* <Field label="Legacy Select" htmlFor="select-id4">
-                <LegacySelect {...props} inputId="select-id4" />
-              </Field> */}
               <Field label="Select" htmlFor="select-id2">
                 <Select {...props} inputId="select-id2" />
               </Field>

@@ -21,22 +21,19 @@ const Template = ({ inputId = 'react-select', ...props }) => {
         inputId={inputId}
         {...props}
         classNames={{
-          control: ({ selectProps: { isDisabled }, state: { isFocused } }) =>
+          control: ({ isDisabled, isFocused }) =>
             classNames(
               !isDisabled && isFocused && 'border-purple-800',
               isFocused && 'shadow-[0_0_0_1px] shadow-purple-800',
               isFocused && 'hover:border-purple-800'
             ),
-          option: ({
-            selectProps: { isDisabled },
-            state: { isFocused },
-            componentProps: { isOptionSelected: isSelected },
-          }) =>
+          downChevron: () => 'text-purple-800',
+          option: ({ isDisabled, isFocused, isOptionSelected }) =>
             classNames(
-              isSelected && 'bg-purple-800',
-              !isSelected && isFocused && 'bg-purple-300',
-              !isDisabled && isSelected && 'active:bg-purple-800',
-              !isDisabled && !isSelected && 'active:bg-purple-500'
+              isOptionSelected && 'bg-purple-800',
+              !isOptionSelected && isFocused && 'bg-purple-300',
+              !isDisabled && isOptionSelected && 'active:bg-purple-800',
+              !isDisabled && !isOptionSelected && 'active:bg-purple-500'
             ),
         }}
       />

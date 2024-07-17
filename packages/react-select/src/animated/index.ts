@@ -1,8 +1,5 @@
 import memoize from 'memoize-one';
-import {
-  defaultComponents,
-  type SelectComponents,
-} from '../components/index';
+import { defaultComponents, type SelectComponents } from '../components/index';
 import { default as AnimatedMultiValue } from './MultiValue';
 import { default as AnimatedPlaceholder } from './Placeholder';
 import { default as AnimatedValueContainer } from './ValueContainer';

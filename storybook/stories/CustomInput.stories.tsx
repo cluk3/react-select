@@ -1,6 +1,5 @@
 import Tooltip from '@atlaskit/tooltip';
 import type { Meta } from '@storybook/react';
-import * as React from 'react';
 import type { InputProps } from 'react-select';
 import Select, { components } from 'react-select';
 
@@ -26,10 +25,6 @@ export function CustomInput() {
     </Field>
   );
 }
-
-// =============================================================================
-// Components
-// =============================================================================
 
 function Input(props: InputProps) {
   const component = <components.Input {...props} />;

@@ -24,10 +24,6 @@ export function AsyncPromises() {
   );
 }
 
-// =============================================================================
-// Utils
-// =============================================================================
-
 function filterColors(inputValue: string) {
   return colourOptions.filter((i) =>
     i.label.toLowerCase().includes(inputValue.toLowerCase())

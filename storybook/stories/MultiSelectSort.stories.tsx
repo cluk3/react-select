@@ -66,10 +66,6 @@ export function MultiSelectSort() {
   );
 }
 
-// =============================================================================
-// Utils
-// =============================================================================
-
 function arrayMove<T>(array: readonly T[], from: number, to: number) {
   const slicedArray = array.slice();
   slicedArray.splice(
@@ -79,10 +75,6 @@ function arrayMove<T>(array: readonly T[], from: number, to: number) {
   );
   return slicedArray;
 }
-
-// =============================================================================
-// Styled components
-// =============================================================================
 
 const SortableMultiValue = SortableElement(
   (props: MultiValueProps<ColourOption>) => {

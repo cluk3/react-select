@@ -100,22 +100,24 @@ const Template = ({ inputId = 'react-select', ...props }) => {
             ),
           noOptionsMessage: () =>
             classNames('text-neutral-400', 'py-2', 'px-3'),
-          option: ({ isDisabled, isFocused, isSelected }) =>
+          option: ({ isOptionDisabled, isOptionFocused, isOptionSelected }) =>
             classNames(
-              isSelected
+              isOptionSelected
                 ? 'bg-purple-800'
-                : isFocused
+                : isOptionFocused
                   ? 'bg-purple-300'
                   : 'bg-transparent',
-              isDisabled
+              isOptionDisabled
                 ? 'text-neutral-200'
-                : isSelected
+                : isOptionSelected
                   ? 'text-white'
                   : 'text-inherit',
               'py-2',
               'px-3',
-              !isDisabled &&
-                (isSelected ? 'active:bg-purple-800' : 'active:bg-purple-500')
+              !isOptionDisabled &&
+                (isOptionSelected
+                  ? 'active:bg-purple-800'
+                  : 'active:bg-purple-500')
             ),
           placeholder: () => classNames('text-neutral-500', 'mx-0.5'),
           singleValue: ({ isDisabled }) =>
@@ -130,7 +132,9 @@ const Template = ({ inputId = 'react-select', ...props }) => {
   );
 };
 
-export const UnstyledWithTailwind = Template.bind({});
-UnstyledWithTailwind.args = {
-  ...defaultArgs,
+export const UnstyledWithTailwind = {
+  render: Template,
+  args: {
+    ...defaultArgs,
+  },
 };

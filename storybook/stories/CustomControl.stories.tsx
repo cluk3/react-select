@@ -1,5 +1,4 @@
 import type { Meta } from '@storybook/react';
-import * as React from 'react';
 import type { ControlProps } from 'react-select';
 import Select, { components } from 'react-select';
 

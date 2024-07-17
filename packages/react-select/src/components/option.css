@@ -24,11 +24,6 @@
     &[data-is-selected='true'] {
       background-color: var(--rs-primary);
     }
-
-    &[data-is-selected='true'][data-is-deselectable='true'] {
-      color: var(--rs-danger);
-      background-color: var(--rs-danger-light);
-    }
   }
 
   &[data-is-selected='true'] {

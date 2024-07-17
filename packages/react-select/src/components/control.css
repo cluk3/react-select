@@ -19,18 +19,14 @@
 
   &:hover {
     border-color: var(--rs-neutral30);
+    box-shadow: 0 0 0 1px var(--rs-neutral30);
   }
 
   &[data-is-focused='true'] {
-    &:hover {
-      border-color: var(--rs-primary);
-    }
-
     &:not(&[data-is-disabled='true']) {
       border-color: var(--rs-primary);
+      box-shadow: 0 0 0 1px var(--rs-primary);
     }
-
-    box-shadow: 0 0 0 1px var(--rs-primary);
   }
 
   &[data-is-disabled='true'] {

@@ -105,7 +105,7 @@ function Option(props: OptionProps<DateOption>) {
 // Utils
 // =============================================================================
 
-function createOptionForDate(d: Moment | Date) {
+function createOptionForDate(d: Moment | Date | null) {
   const date = moment.isMoment(d) ? d : moment(d);
   return {
     date,

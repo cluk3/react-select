@@ -1,5 +1,4 @@
 import type { Meta } from '@storybook/react';
-import * as React from 'react';
 import type { MenuListProps } from 'react-select';
 import Select, { components } from 'react-select';
 
@@ -26,13 +25,7 @@ export function CustomMenuList() {
   );
 }
 
-// =============================================================================
-// Components
-// =============================================================================
-
-function MenuList(
-  props: MenuListProps<ColourOption | FlavourOption, false, GroupedOption>
-) {
+function MenuList(props: MenuListProps) {
   return (
     <components.MenuList {...props}>
       <div

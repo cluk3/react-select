@@ -1,5 +1,4 @@
 import type { Meta } from '@storybook/react';
-import * as React from 'react';
 import type { IndicatorsContainerProps } from 'react-select';
 import Select, { components } from 'react-select';
 
@@ -29,10 +28,6 @@ export function CustomIndicatorsContainer() {
     </Field>
   );
 }
-
-// =============================================================================
-// Components
-// =============================================================================
 
 function IndicatorsContainer(props: IndicatorsContainerProps) {
   return (

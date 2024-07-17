@@ -1,7 +1,6 @@
 import Tooltip from '@atlaskit/tooltip';
 import type { Meta } from '@storybook/react';
-import * as React from 'react';
-import type { OptionProps, StylesConfig } from 'react-select';
+import type { ClassNamesConfig, OptionProps } from 'react-select';
 import Select, { components } from 'react-select';
 
 import { Field } from '../components';
@@ -21,27 +20,15 @@ export function CustomOption() {
         inputId="custom-option-id"
         components={{ Option }}
         options={colourOptions}
-        styles={styles}
+        classNames={classNames}
       />
     </Field>
   );
 }
 
-// =============================================================================
-// Styles
-// =============================================================================
-
-const styles: StylesConfig<ColourOption> = {
-  option: (base) => ({
-    ...base,
-    border: `1px dotted ${colourOptions[2].color}`,
-    height: '100%',
-  }),
+const classNames: ClassNamesConfig<ColourOption> = {
+  option: 'border border-dotted border-purple-500 h-full',
 };
-
-// =============================================================================
-// Components
-// =============================================================================
 
 function Option(props: OptionProps<ColourOption>) {
   return (

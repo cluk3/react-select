@@ -297,7 +297,7 @@ export interface SelectProps<
   /** Whether to enable search functionality */
   isSearchable?: boolean;
   /** Async: Text to display when loading options */
-  loadingMessage?: (obj: { inputValue: string }) => ReactNode;
+  loadingMessage?: (props: { inputValue: string }) => ReactNode;
   /** Minimum height of the menu before flipping */
   minMenuHeight?: number;
   /** Maximum height of the menu before scrolling */
