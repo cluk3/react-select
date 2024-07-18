@@ -32,9 +32,7 @@ import Menu, {
   LoadingMessage,
   MenuList,
   NoOptionsMessage,
-  MenuPortal,
   type MenuListProps,
-  type MenuPortalProps,
   type MenuProps,
   type NoticeProps,
 } from './Menu';
@@ -65,7 +63,6 @@ export interface SelectComponents<Opt> {
   LoadingIndicator: typeof LoadingIndicator;
   Menu: typeof Menu;
   MenuList: typeof MenuList;
-  MenuPortal: typeof MenuPortal;
   LoadingMessage: typeof LoadingMessage;
   NoOptionsMessage: typeof NoOptionsMessage;
   MultiValue: typeof MultiValue<Opt>;
@@ -93,7 +90,6 @@ export interface SelectComponentsProps<Option> {
   LoadingIndicator: LoadingIndicatorProps;
   Menu: MenuProps;
   MenuList: MenuListProps;
-  MenuPortal: MenuPortalProps;
   LoadingMessage: NoticeProps;
   NoOptionsMessage: NoticeProps;
   MultiValue: MultiValueProps<Option>;
@@ -123,7 +119,6 @@ export const components = {
   LoadingIndicator: LoadingIndicator,
   Menu: Menu,
   MenuList: MenuList,
-  MenuPortal: MenuPortal,
   LoadingMessage: LoadingMessage,
   NoOptionsMessage: NoOptionsMessage,
   MultiValue: MultiValue,

@@ -1,7 +1,7 @@
 .react-select__menu {
-  position: absolute;
   width: 100%;
   z-index: 9999;
+  overflow: auto;
 }
 
 .react-select__menu--styled {
@@ -10,16 +10,13 @@
   box-shadow:
     0 0 0 1px hsl(0deg 0% 0% / 10%),
     0 4px 11px hsl(0deg 0% 0% / 10%);
-  margin-top: var(--rs-menu-gutter);
-  margin-bottom: var(--rs-menu-gutter);
 }
 
 .react-select__menu-list {
-  overflow-y: auto;
   position: relative;
   -webkit-overflow-scrolling: touch;
-  /* stylelint-disable-next-line csstools/value-no-unknown-custom-properties */
-  max-height: var(--rs-menu-list-max-height);
+  height: 100%;
+  overflow: auto;
 }
 
 .react-select__menu-list--styled {

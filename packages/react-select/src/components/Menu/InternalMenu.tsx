@@ -1,10 +1,17 @@
 import type { ReactNode } from 'react';
-import { MenuPlacer } from './index';
 import { ScrollManager } from '../../internal';
 import { useInternalSelectContext } from '../../SelectContext';
 import type { CategorizedOption, FormatOptionLabelContext } from '../../types';
-import React from 'react';
 import type { OptionProps } from '../Option';
+import React from 'react';
+import {
+  autoUpdate,
+  flip,
+  offset,
+  size,
+  useFloating,
+} from '@floating-ui/react-dom';
+import { createPortal } from 'react-dom';
 
 export function InternalMenu() {
   const {
@@ -12,13 +19,7 @@ export function InternalMenu() {
     getElementId,
     menuListRef,
     controlRef,
-    components: {
-      Menu,
-      MenuList,
-      MenuPortal,
-      LoadingMessage,
-      NoOptionsMessage,
-    },
+    components: { Menu, MenuList, LoadingMessage, NoOptionsMessage },
     selectProps: {
       captureMenuScroll,
       inputValue,
@@ -32,8 +33,35 @@ export function InternalMenu() {
       onMenuScrollToTop,
       onMenuScrollToBottom,
       isMulti,
+      maxMenuHeight,
     },
   } = useInternalSelectContext();
+
+  const { refs, floatingStyles } = useFloating({
+    whileElementsMounted: autoUpdate,
+    elements: {
+      reference: controlRef.current,
+    },
+    placement: menuPlacement,
+    strategy: menuPosition,
+    middleware: [
+      offset(8),
+      size((state) => ({
+        apply({ availableHeight, elements }) {
+          Object.assign(elements.floating.style, {
+            // Minimum acceptable height is 50px.
+            // `flip` will then take over.
+            maxHeight: `${Math.min(Math.max(168, availableHeight), maxMenuHeight) - 8}px`,
+            height: `${Math.min(Math.max(168, availableHeight), maxMenuHeight) - 8}px`,
+            maxWidth: `${state.rects.reference.width}px`,
+          });
+        },
+      })),
+      flip({
+        fallbackStrategy: 'initialPlacement',
+      }),
+    ],
+  });
 
   let menuUI: ReactNode;
   const hasOptions = !!getFocusableOptions().length;
@@ -51,52 +79,40 @@ export function InternalMenu() {
   }
 
   const menuElement = (
-    <MenuPlacer>
-      {({ ref, placerProps: { placement, maxHeight } }) => (
-        <Menu innerRef={ref} placement={placement}>
-          <ScrollManager
-            captureEnabled={captureMenuScroll}
-            onTopArrive={onMenuScrollToTop}
-            onBottomArrive={onMenuScrollToBottom}
-            lockEnabled={menuShouldBlockScroll}
+    <Menu
+      innerRef={refs.setFloating}
+      innerProps={{
+        style: floatingStyles,
+      }}
+    >
+      <ScrollManager
+        captureEnabled={captureMenuScroll}
+        onTopArrive={onMenuScrollToTop}
+        onBottomArrive={onMenuScrollToBottom}
+        lockEnabled={menuShouldBlockScroll}
+      >
+        {(scrollTargetRef) => (
+          <MenuList
+            innerRef={(instance) => {
+              menuListRef.current = instance;
+              scrollTargetRef(instance);
+            }}
+            innerProps={{
+              role: 'listbox',
+              'aria-multiselectable': isMulti,
+              id: getElementId('listbox'),
+            }}
           >
-            {(scrollTargetRef) => (
-              <MenuList
-                innerRef={(instance) => {
-                  menuListRef.current = instance;
-                  scrollTargetRef(instance);
-                }}
-                innerProps={{
-                  role: 'listbox',
-                  'aria-multiselectable': isMulti,
-                  id: getElementId('listbox'),
-                }}
-                maxHeight={maxHeight}
-              >
-                {menuUI}
-              </MenuList>
-            )}
-          </ScrollManager>
-        </Menu>
-      )}
-    </MenuPlacer>
+            {menuUI}
+          </MenuList>
+        )}
+      </ScrollManager>
+    </Menu>
   );
 
-  // positioning behaviour is almost identical for portalled and fixed,
-  // so we use the same component. the actual portalling logic is forked
-  // within the component based on `menuPosition`
-  return menuPortalTarget || menuPosition === 'fixed' ? (
-    <MenuPortal
-      appendTo={menuPortalTarget}
-      controlElement={controlRef.current}
-      menuPlacement={menuPlacement}
-      menuPosition={menuPosition}
-    >
-      {menuElement}
-    </MenuPortal>
-  ) : (
-    menuElement
-  );
+  return menuPortalTarget
+    ? createPortal(menuElement, menuPortalTarget)
+    : menuElement;
 }
 
 const InternalOption = React.memo(

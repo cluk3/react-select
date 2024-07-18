@@ -114,8 +114,7 @@ export interface InputActionMeta {
   prevInputValue: string;
 }
 
-export type MenuPlacement = 'auto' | 'bottom' | 'top';
-export type CoercedMenuPlacement = 'bottom' | 'top';
+export type MenuPlacement = 'bottom' | 'top';
 export type MenuPosition = 'absolute' | 'fixed';
 
 export type FocusDirection =
