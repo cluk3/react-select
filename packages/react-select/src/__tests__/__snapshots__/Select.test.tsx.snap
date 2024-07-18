@@ -173,14 +173,13 @@ exports[`snapshot with menu open 1`] = `
     </div>
     <div
       class="react-select__menu react-select__menu--styled"
-      style="top: 100%;"
+      style="position: absolute; left: 0px; top: 0px; transform: translate(0px, 0px);"
     >
       <div
         aria-multiselectable="false"
         class="react-select__menu-list react-select__menu-list--styled"
         id="react-select-:r1:-listbox"
         role="listbox"
-        style="--rs-menu-list-max-height: 300px;"
       >
         <div
           aria-disabled="false"

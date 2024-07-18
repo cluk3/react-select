@@ -6,7 +6,7 @@ import { useOnMountEffect, isDocumentElement, scrollTo } from './utils';
 import type { FilterOptionOption } from './filters';
 import { useCallback, useRef } from 'react';
 
-export function toCategorizedOption<
+function toCategorizedOption<
   Option,
   IsMulti extends boolean,
   Group extends GroupBase<Option>,
@@ -125,7 +125,7 @@ export function buildFocusableOptionsIdsMap<
   );
 }
 
-export const shouldHideSelectedOptions = <
+const shouldHideSelectedOptions = <
   Option,
   IsMulti extends boolean,
   Group extends GroupBase<Option>,
@@ -141,7 +141,7 @@ export const shouldHideSelectedOptions = <
   return hideSelectedOptions;
 };
 
-export function isFocusable<
+function isFocusable<
   Option,
   IsMulti extends boolean,
   Group extends GroupBase<Option>,
@@ -194,17 +194,6 @@ export const getFocusedOptionId = <Option>(
   return focusableOptionsIdsMap.get(focusedOption) || null;
 };
 
-export const getOptionLabel = <
-  Option,
-  IsMulti extends boolean,
-  Group extends GroupBase<Option>,
->(
-  props: SelectProps<Option, IsMulti, Group>,
-  data: Option
-): string => {
-  return props.getOptionLabel(data);
-};
-
 export function isOptionSelected<
   Option,
   IsMulti extends boolean,
@@ -222,7 +211,7 @@ export function isOptionSelected<
   return selectValue.some((i) => props.getOptionValue(i) === candidate);
 }
 
-export function filterOption<
+function filterOption<
   Option,
   IsMulti extends boolean,
   Group extends GroupBase<Option>,

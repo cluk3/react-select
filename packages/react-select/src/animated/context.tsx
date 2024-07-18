@@ -9,8 +9,6 @@ const AnimatedContext = React.createContext<AnimatedContextValue>({
   shouldHidePlaceholder: false,
 });
 
-export default AnimatedContext;
-
 export function useAnimatedContext() {
   return React.useContext(AnimatedContext);
 }

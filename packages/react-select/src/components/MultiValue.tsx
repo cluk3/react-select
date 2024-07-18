@@ -25,7 +25,7 @@ export interface MultiValueGenericProps<Option> {
   data: Option;
   innerProps: { className?: string };
 }
-export const MultiValueGeneric = <Option,>({
+export const MultiValueContainer = <Option,>({
   children,
   innerProps,
 }: MultiValueGenericProps<Option>) => <div {...innerProps}>{children}</div>;
@@ -54,8 +54,6 @@ export const MultiValueLabel = <Option,>({
     {children}
   </div>
 );
-
-export const MultiValueContainer = MultiValueGeneric;
 
 export interface MultiValueRemoveProps<Option> {
   children?: ReactNode;

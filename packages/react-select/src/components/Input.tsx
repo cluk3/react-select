@@ -1,7 +1,7 @@
 import { useSelectContext } from '../SelectContext';
 import { buildClassNames, useGetClassNames } from '../utils';
 
-export interface InputSpecificProps {
+export interface InputProps {
   /** Reference to the internal element */
   innerRef?: React.MutableRefObject<HTMLInputElement | null>;
   /** Set whether the input should be visible. Does not affect input size. */
@@ -9,8 +9,6 @@ export interface InputSpecificProps {
   /** Props that will be passed on to the input element. */
   innerProps: JSX.IntrinsicElements['input'];
 }
-
-export type InputProps = InputSpecificProps;
 
 const Input = (props: InputProps) => {
   const { classNamePrefix } = useSelectContext();

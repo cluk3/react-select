@@ -117,19 +117,6 @@ export function scrollTo(el: HTMLElement | typeof window, top: number): void {
   el.scrollTop = top;
 }
 
-// cannot get keys using array notation with DOMRect
-export function getBoundingClientObj(element: HTMLElement) {
-  const rect = element.getBoundingClientRect();
-  return {
-    bottom: rect.bottom,
-    height: rect.height,
-    left: rect.left,
-    right: rect.right,
-    top: rect.top,
-    width: rect.width,
-  };
-}
-
 export function isTouchCapable() {
   try {
     document.createEvent('TouchEvent');

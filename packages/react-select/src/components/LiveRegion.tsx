@@ -6,11 +6,7 @@ import { defaultAriaLiveMessages } from '../accessibility';
 import type { GroupBase, OnChangeValue } from '../types';
 import { useInternalSelectContext } from '../SelectContext';
 
-// ==============================
-// Root Container
-// ==============================
-
-export interface LiveRegionProps {
+interface LiveRegionProps {
   id: string;
 }
 

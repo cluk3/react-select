@@ -3,10 +3,7 @@ import { useGetClassNames } from '../utils';
 
 import type { GroupBase, CategorizedOption } from '../types';
 
-export interface ForwardedHeadingProps<
-  Option,
-  Group extends GroupBase<Option>,
-> {
+interface ForwardedHeadingProps<Option, Group extends GroupBase<Option>> {
   id: string;
   data: Group;
 }

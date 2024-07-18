@@ -4,10 +4,9 @@ import type { MultiValueProps } from '../components/MultiValue';
 import { Collapse } from './transitions';
 import { useAnimatedContext } from './context';
 
-export type MultiValueComponent = (props: MultiValueProps) => ReactElement;
+type MultiValueComponent = (props: MultiValueProps) => ReactElement;
 
-export type AnimatedMultiValueProps = MultiValueProps &
-  Partial<TransitionProps>;
+type AnimatedMultiValueProps = MultiValueProps & Partial<TransitionProps>;
 
 // strip transition props off before spreading onto actual component
 

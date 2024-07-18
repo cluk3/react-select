@@ -5,7 +5,7 @@ import { Fade, collapseDuration } from './transitions';
 import { useInternalSelectContext } from '../SelectContext';
 import { useAnimatedContext } from './context';
 
-export type PlaceholderComponent = (props: PlaceholderProps) => ReactElement;
+type PlaceholderComponent = (props: PlaceholderProps) => ReactElement;
 
 // fade in when last multi-value removed, otherwise instant
 const AnimatedPlaceholder =

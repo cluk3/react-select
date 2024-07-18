@@ -16,7 +16,7 @@ import {
   getOptionLabel as baseGetOptionLabel,
 } from './builtins';
 
-export interface Accessors<Option> {
+interface Accessors<Option> {
   getOptionValue: GetOptionValue<Option>;
   getOptionLabel: GetOptionLabel<Option>;
 }

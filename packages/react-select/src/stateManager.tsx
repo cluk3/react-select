@@ -5,7 +5,6 @@ import type { GroupBase } from './types';
 import Select, { type SelectRef } from './Select';
 import useStateManager from './useStateManager';
 import type { StateManagerProps } from './useStateManager';
-export type { StateManagerProps };
 
 type StateManagedSelect = <
   Option = unknown,

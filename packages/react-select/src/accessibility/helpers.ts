@@ -8,15 +8,15 @@ function testPlatform(re: RegExp) {
     : false;
 }
 
-export function isIPhone() {
+function isIPhone() {
   return testPlatform(/^iPhone/i);
 }
 
-export function isMac() {
+function isMac() {
   return testPlatform(/^Mac/i);
 }
 
-export function isIPad() {
+function isIPad() {
   return (
     testPlatform(/^iPad/i) ||
     // iPadOS 13 lies and says it's a Mac, but we can distinguish by detecting touch support.
@@ -24,7 +24,7 @@ export function isIPad() {
   );
 }
 
-export function isIOS() {
+function isIOS() {
   return isIPhone() || isIPad();
 }
 
