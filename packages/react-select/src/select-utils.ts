@@ -259,7 +259,7 @@ export function scrollIntoView(
 }
 
 export function useEventListeners<
-  Option extends unknown,
+  Option,
   IsMulti extends boolean,
   Group extends GroupBase<Option>,
 >(

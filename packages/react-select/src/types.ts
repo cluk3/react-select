@@ -15,7 +15,7 @@ import type {
 import type { SelectContextValue } from './SelectContext';
 
 export interface GroupBase<Option> {
-  readonly options: readonly Option[];
+  readonly options: Options<Option>;
   readonly label?: string;
 }
 
