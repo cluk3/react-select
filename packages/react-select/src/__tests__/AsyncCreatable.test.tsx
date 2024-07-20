@@ -46,7 +46,7 @@ test('to show the create option in menu', async () => {
 });
 
 test('to show loading and then create option in menu', async () => {
-  let loadOptionsSpy = jest.fn(
+  let loadOptionsSpy = vi.fn(
     (inputValue: string, callback: (options: readonly Option[]) => void) => {
       setTimeout(() => callback(OPTIONS), 200);
     }

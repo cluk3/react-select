@@ -40,10 +40,10 @@ interface BasicProps {
 const BASIC_PROPS: BasicProps = {
   className: 'react-select',
   classNamePrefix: 'react-select',
-  onChange: jest.fn(),
-  onInputChange: jest.fn(),
-  onMenuClose: jest.fn(),
-  onMenuOpen: jest.fn(),
+  onChange: vi.fn(),
+  onInputChange: vi.fn(),
+  onMenuClose: vi.fn(),
+  onMenuOpen: vi.fn(),
   name: 'test-input-name',
   options: OPTIONS,
   inputValue: '',
@@ -141,7 +141,7 @@ test('isRtl boolean prop sets direction: rtl on container', () => {
 
 test('isOptionSelected() prop > single select > mark value as isSelected if isOptionSelected returns true for the option', () => {
   // Select all but option with label '1'
-  let isOptionSelected = jest.fn((option) => option.label !== '1');
+  let isOptionSelected = vi.fn((option) => option.label !== '1');
   let { container } = render(
     <Select {...BASIC_PROPS} isOptionSelected={isOptionSelected} menuIsOpen />
   );
@@ -155,7 +155,7 @@ test('isOptionSelected() prop > single select > mark value as isSelected if isOp
 
 test('isOptionSelected() prop > multi select > to not show the selected options in Menu for multiSelect', () => {
   // Select all but option with label '1'
-  let isOptionSelected = jest.fn((option) => option.label !== '1');
+  let isOptionSelected = vi.fn((option) => option.label !== '1');
   let { container } = render(
     <Select
       {...BASIC_PROPS}
@@ -443,8 +443,10 @@ cases(
         components={{
           // @ts-expect-error
           Control: () => {
-            const { getValue } = useInternalSelectContext();
-            value = getValue();
+            const {
+              state: { selectValue },
+            } = useInternalSelectContext();
+            value = selectValue;
             return null;
           },
         }}
@@ -575,7 +577,7 @@ cases(
     focusedOption,
     expectedActionMetaOption,
   }) => {
-    let onChangeSpy = jest.fn();
+    let onChangeSpy = vi.fn();
     props = { ...props, onChange: onChangeSpy };
     let { container } = render(
       <Select<Option | OptionNumberValue | OptionBooleanValue, boolean>
@@ -773,7 +775,7 @@ cases<CallsOnOnDeselectChangeOpts>(
     optionsSelected,
     focusedOption,
   }) => {
-    let onChangeSpy = jest.fn();
+    let onChangeSpy = vi.fn();
     props = {
       ...props,
       onChange: onChangeSpy,
@@ -909,13 +911,13 @@ cases(
     focusedOption,
     optionsSelected,
   }) => {
-    let onChangeSpy = jest.fn();
+    let onChangeSpy = vi.fn();
     let { container } = render(
       <Select
         {...props}
         onChange={onChangeSpy}
-        onInputChange={jest.fn()}
-        onMenuClose={jest.fn()}
+        onInputChange={vi.fn()}
+        onMenuClose={vi.fn()}
       />
     );
 
@@ -1014,7 +1016,7 @@ cases(
 );
 
 test('clicking when focused does not open select when openMenuOnClick=false', async () => {
-  let spy = jest.fn();
+  let spy = vi.fn();
   const user = userEvent.setup();
   let { container } = render(
     <Select {...BASIC_PROPS} openMenuOnClick={false} onMenuOpen={spy} />
@@ -1343,9 +1345,9 @@ cases(
 cases(
   'hitting escape with inputValue in select',
   ({ props }) => {
-    let spy = jest.fn();
+    let spy = vi.fn();
     let { container } = render(
-      <Select {...props} onInputChange={spy} onMenuClose={jest.fn()} />
+      <Select {...props} onInputChange={spy} onMenuClose={vi.fn()} />
     );
 
     fireEvent.keyDown(container.querySelector('.react-select')!, {
@@ -1383,7 +1385,7 @@ cases(
 cases(
   'Clicking dropdown indicator on select with closed menu with primary button on mouse',
   ({ props = BASIC_PROPS }) => {
-    let onMenuOpenSpy = jest.fn();
+    let onMenuOpenSpy = vi.fn();
     props = { ...props, onMenuOpen: onMenuOpenSpy };
     let { container } = render(<Select {...props} />);
     // Menu is closed
@@ -1412,7 +1414,7 @@ cases(
 cases(
   'Clicking dropdown indicator on select with open menu with primary button on mouse',
   ({ props = BASIC_PROPS }) => {
-    let onMenuCloseSpy = jest.fn();
+    let onMenuCloseSpy = vi.fn();
     props = { ...props, onMenuClose: onMenuCloseSpy };
     let { container } = render(<Select {...props} menuIsOpen />);
     // Menu is open
@@ -1498,7 +1500,7 @@ interface RequiredOnInputOpts {
 cases<RequiredOnInputOpts>(
   'required on input is not there by default',
   ({ props = BASIC_PROPS }) => {
-    let { container } = render(<Select {...props} onInputChange={jest.fn()} />);
+    let { container } = render(<Select {...props} onInputChange={vi.fn()} />);
     let input = container.querySelector<HTMLInputElement>(
       'input.react-select__hidden-input'
     );
@@ -1695,16 +1697,16 @@ cases(
 );
 
 test('hitting Enter on option should not call onChange if the event comes from IME', () => {
-  let spy = jest.fn();
+  let spy = vi.fn();
   let { container } = render(
     <Select
       className="react-select"
       classNamePrefix="react-select"
       menuIsOpen
       onChange={spy}
-      onInputChange={jest.fn()}
-      onMenuClose={jest.fn()}
-      onMenuOpen={jest.fn()}
+      onInputChange={vi.fn()}
+      onMenuClose={vi.fn()}
+      onMenuOpen={vi.fn()}
       options={OPTIONS}
       tabSelectsValue={false}
       inputValue=""
@@ -1723,16 +1725,16 @@ test('hitting Enter on option should not call onChange if the event comes from I
 });
 
 test('hitting tab on option should not call onChange if tabSelectsValue is false', () => {
-  let spy = jest.fn();
+  let spy = vi.fn();
   let { container } = render(
     <Select
       className="react-select"
       classNamePrefix="react-select"
       menuIsOpen
       onChange={spy}
-      onInputChange={jest.fn()}
-      onMenuClose={jest.fn()}
-      onMenuOpen={jest.fn()}
+      onInputChange={vi.fn()}
+      onMenuClose={vi.fn()}
+      onMenuOpen={vi.fn()}
       options={OPTIONS}
       tabSelectsValue={false}
       inputValue=""
@@ -1750,8 +1752,8 @@ test('hitting tab on option should not call onChange if tabSelectsValue is false
 });
 
 test('multi select > to not show selected value in options', () => {
-  let onInputChangeSpy = jest.fn();
-  let onMenuCloseSpy = jest.fn();
+  let onInputChangeSpy = vi.fn();
+  let onMenuCloseSpy = vi.fn();
   let { container, rerender } = render(
     <Select
       {...BASIC_PROPS}
@@ -1802,10 +1804,10 @@ test('multi select > to not hide the selected options from the menu if hideSelec
       hideSelectedOptions={false}
       isMulti
       menuIsOpen
-      onChange={jest.fn()}
-      onInputChange={jest.fn()}
-      onMenuClose={jest.fn()}
-      onMenuOpen={jest.fn()}
+      onChange={vi.fn()}
+      onInputChange={vi.fn()}
+      onMenuClose={vi.fn()}
+      onMenuOpen={vi.fn()}
       options={OPTIONS}
       inputValue=""
       value={null}
@@ -1823,7 +1825,7 @@ test('multi select > to not hide the selected options from the menu if hideSelec
 });
 
 test('multi select > call onChange with all values but last selected value and remove event on hitting backspace', () => {
-  let onChangeSpy = jest.fn();
+  let onChangeSpy = vi.fn();
   let { container } = render(
     <Select
       {...BASIC_PROPS}
@@ -1854,7 +1856,7 @@ test('multi select > call onChange with all values but last selected value and r
 });
 
 test('should not call onChange on hitting backspace when backspaceRemovesValue is false', () => {
-  let onChangeSpy = jest.fn();
+  let onChangeSpy = vi.fn();
   let { container } = render(
     <Select
       {...BASIC_PROPS}
@@ -1870,7 +1872,7 @@ test('should not call onChange on hitting backspace when backspaceRemovesValue i
 });
 
 test('should not call onChange on hitting backspace even when backspaceRemovesValue is true if isClearable is false', () => {
-  let onChangeSpy = jest.fn();
+  let onChangeSpy = vi.fn();
   let { container } = render(
     <Select
       {...BASIC_PROPS}
@@ -1887,7 +1889,7 @@ test('should not call onChange on hitting backspace even when backspaceRemovesVa
 });
 
 test('should call onChange with `null` on hitting backspace when isClearable and backspaceRemovesValue are true and isMulti is false', () => {
-  let onChangeSpy = jest.fn();
+  let onChangeSpy = vi.fn();
   const value = [OPTIONS[0]];
   let { container } = render(
     <Select
@@ -1911,7 +1913,7 @@ test('should call onChange with `null` on hitting backspace when isClearable and
 });
 
 test('should call onChange on hitting backspace when backspaceRemovesValue is true and isMulti is true', () => {
-  let onChangeSpy = jest.fn();
+  let onChangeSpy = vi.fn();
   const value = OPTIONS.slice(0, 2);
   let { container } = render(
     <Select
@@ -1935,7 +1937,7 @@ test('should call onChange on hitting backspace when backspaceRemovesValue is tr
 });
 
 test('should NOT call onChange when hitting backspace when backspaceRemovesValue is true but no value is selected', () => {
-  let onChangeSpy = jest.fn();
+  let onChangeSpy = vi.fn();
   let { container, rerender } = render(
     <Select
       {...BASIC_PROPS}
@@ -1968,7 +1970,7 @@ test('should NOT call onChange when hitting backspace when backspaceRemovesValue
 });
 
 test('multi select > clicking on X next to option will call onChange with all options other that the clicked option', async () => {
-  let onChangeSpy = jest.fn();
+  let onChangeSpy = vi.fn();
   const user = userEvent.setup();
 
   let { container } = render(
@@ -2585,7 +2587,7 @@ test('accessibility > announces cleared values', () => {
 });
 
 test('closeMenuOnSelect prop > when passed as false it should not call onMenuClose on selecting option', async () => {
-  let onMenuCloseSpy = jest.fn();
+  let onMenuCloseSpy = vi.fn();
   const user = userEvent.setup();
 
   let { container } = render(
@@ -2624,7 +2626,7 @@ cases(
 cases(
   'onFocus prop with autoFocus',
   ({ props = { ...BASIC_PROPS, autoFocus: true } }) => {
-    let onFocusSpy = jest.fn();
+    let onFocusSpy = vi.fn();
     let { container } = render(<Select {...props} onFocus={onFocusSpy} />);
     expect(container.querySelector('input.react-select__hidden-input')).toBe(
       document.activeElement
@@ -2653,7 +2655,7 @@ cases(
 cases(
   'onFocus prop is called on on focus of input',
   ({ props = { ...BASIC_PROPS } }) => {
-    let onFocusSpy = jest.fn();
+    let onFocusSpy = vi.fn();
     let { container } = render(<Select {...props} onFocus={onFocusSpy} />);
     fireEvent.focus(
       container.querySelector('input.react-select__hidden-input')!
@@ -2674,13 +2676,13 @@ cases(
 cases(
   'onBlur prop',
   ({ props = { ...BASIC_PROPS } }) => {
-    let onBlurSpy = jest.fn();
+    let onBlurSpy = vi.fn();
     let { container } = render(
       <Select
         {...props}
         onBlur={onBlurSpy}
-        onInputChange={jest.fn()}
-        onMenuClose={jest.fn()}
+        onInputChange={vi.fn()}
+        onMenuClose={vi.fn()}
       />
     );
     fireEvent.blur(
@@ -2700,13 +2702,13 @@ cases(
 );
 
 test('onInputChange() function prop to be called on blur', () => {
-  let onInputChangeSpy = jest.fn();
+  let onInputChangeSpy = vi.fn();
   let { container } = render(
     <Select
       {...BASIC_PROPS}
-      onBlur={jest.fn()}
+      onBlur={vi.fn()}
       onInputChange={onInputChangeSpy}
-      onMenuClose={jest.fn()}
+      onMenuClose={vi.fn()}
     />
   );
   fireEvent.blur(container.querySelector('input.react-select__hidden-input')!);
@@ -2715,12 +2717,12 @@ test('onInputChange() function prop to be called on blur', () => {
 });
 
 test('onMenuClose() function prop to be called on blur', () => {
-  let onMenuCloseSpy = jest.fn();
+  let onMenuCloseSpy = vi.fn();
   let { container } = render(
     <Select
       {...BASIC_PROPS}
-      onBlur={jest.fn()}
-      onInputChange={jest.fn()}
+      onBlur={vi.fn()}
+      onInputChange={vi.fn()}
       onMenuClose={onMenuCloseSpy}
     />
   );
@@ -2818,13 +2820,15 @@ test('sets inputMode="none" when isSearchable is false', () => {
   let input = container.querySelector<HTMLInputElement>(
     '.react-select__value-container input'
   );
-  expect(input!.inputMode).toBe('none');
+  // @ts-expect-error inputMode is not supported in happy-dom
+  // https://github.com/capricorn86/happy-dom/issues/1487
+  expect(input!.inputmode).toBe('none');
 });
 
 cases(
   'clicking on disabled option',
   async ({ props = BASIC_PROPS, optionsSelected }) => {
-    let onChangeSpy = jest.fn();
+    let onChangeSpy = vi.fn();
     props = { ...props, onChange: onChangeSpy };
     const user = userEvent.setup();
 
@@ -2862,7 +2866,7 @@ cases(
 cases(
   'pressing enter on disabled option',
   ({ props = BASIC_PROPS, optionsSelected }) => {
-    let onChangeSpy = jest.fn();
+    let onChangeSpy = vi.fn();
     props = { ...props, onChange: onChangeSpy };
     let { container } = render(<Select {...props} menuIsOpen />);
     let selectOption = [
@@ -2896,7 +2900,7 @@ cases(
 );
 
 test('does not select anything when a disabled option is the only item in the list after a search', () => {
-  let onChangeSpy = jest.fn();
+  let onChangeSpy = vi.fn();
   const options = [
     { label: 'opt', value: 'opt1', isDisabled: true },
     ...OPTIONS,
@@ -2960,7 +2964,7 @@ test('render custom Option Component', () => {
 });
 
 test('clear select by clicking on clear button > should not call onMenuOpen', () => {
-  let onChangeSpy = jest.fn();
+  let onChangeSpy = vi.fn();
   let props = { ...BASIC_PROPS, onChange: onChangeSpy };
   let { container } = render(
     <Select {...props} isMulti value={[OPTIONS[0]]} />
@@ -2981,8 +2985,8 @@ test('clear select by clicking on clear button > should not call onMenuOpen', ()
 });
 
 test('clearing select using clear button to not call onMenuOpen or onMenuClose', () => {
-  let onMenuCloseSpy = jest.fn();
-  let onMenuOpenSpy = jest.fn();
+  let onMenuCloseSpy = vi.fn();
+  let onMenuOpenSpy = vi.fn();
   let props = {
     ...BASIC_PROPS,
     onMenuClose: onMenuCloseSpy,
@@ -3003,7 +3007,7 @@ test('clearing select using clear button to not call onMenuOpen or onMenuClose',
 });
 
 test('multi select >  calls onChange when option is selected and isSearchable is false', async () => {
-  let onChangeSpy = jest.fn();
+  let onChangeSpy = vi.fn();
   let props = { ...BASIC_PROPS, onChange: onChangeSpy };
   const user = userEvent.setup();
 
@@ -3171,7 +3175,7 @@ test('multi select > with multi character delimiter', () => {
 });
 
 test('hitting spacebar should select option if isSearchable is false', () => {
-  let onChangeSpy = jest.fn();
+  let onChangeSpy = vi.fn();
   let props = { ...BASIC_PROPS, onChange: onChangeSpy };
   let { container } = render(
     <Select {...props} isSearchable={false} menuIsOpen />
@@ -3192,7 +3196,7 @@ test('hitting spacebar should select option if isSearchable is false', () => {
 });
 
 test('hitting escape does not call onChange if menu is Open', () => {
-  let onChangeSpy = jest.fn();
+  let onChangeSpy = vi.fn();
   let props = { ...BASIC_PROPS, onChange: onChangeSpy };
   let { container } = render(
     <Select {...props} menuIsOpen escapeClearsValue isClearable />
@@ -3249,8 +3253,8 @@ test('hitting ArrowUp key on closed select should focus last element', () => {
 });
 
 test('should close menu on hitting escape and clear input value if menu is open even if escapeClearsValue and isClearable are true', () => {
-  let onMenuCloseSpy = jest.fn();
-  let onInputChangeSpy = jest.fn();
+  let onMenuCloseSpy = vi.fn();
+  let onInputChangeSpy = vi.fn();
   let props = {
     ...BASIC_PROPS,
     onInputChange: onInputChangeSpy,
@@ -3282,7 +3286,7 @@ test('should close menu on hitting escape and clear input value if menu is open 
 });
 
 test('hitting spacebar should not select option if isSearchable is true (default)', () => {
-  let onChangeSpy = jest.fn();
+  let onChangeSpy = vi.fn();
   let props = { ...BASIC_PROPS, onChange: onChangeSpy };
   let { container } = render(<Select {...props} menuIsOpen />);
   // Open Menu
@@ -3349,7 +3353,7 @@ describe('isClearable', () => {
   });
 
   test('to not clear value when hitting escape if escapeClearsValue is false (default) and isClearable is false', () => {
-    let onChangeSpy = jest.fn();
+    let onChangeSpy = vi.fn();
     let props = { ...BASIC_PROPS, onChange: onChangeSpy, value: OPTIONS[0] };
     let { container } = render(<Select {...props} isClearable={false} />);
 
@@ -3361,7 +3365,7 @@ describe('isClearable', () => {
   });
 
   test('to not clear value when hitting escape if escapeClearsValue is true and isClearable is false', () => {
-    let onChangeSpy = jest.fn();
+    let onChangeSpy = vi.fn();
     let props = { ...BASIC_PROPS, onChange: onChangeSpy, value: OPTIONS[0] };
     let { container } = render(
       <Select {...props} escapeClearsValue isClearable={false} />
@@ -3375,7 +3379,7 @@ describe('isClearable', () => {
   });
 
   test('to not clear value when hitting escape if escapeClearsValue is false (default) and isClearable is true', () => {
-    let onChangeSpy = jest.fn();
+    let onChangeSpy = vi.fn();
     let props = { ...BASIC_PROPS, onChange: onChangeSpy, value: OPTIONS[0] };
     let { container } = render(<Select {...props} isClearable />);
 
@@ -3387,7 +3391,7 @@ describe('isClearable', () => {
   });
 
   test('to clear value when hitting escape if escapeClearsValue and isClearable are true', () => {
-    let onInputChangeSpy = jest.fn();
+    let onInputChangeSpy = vi.fn();
     let props = {
       ...BASIC_PROPS,
       onChange: onInputChangeSpy,
@@ -3444,7 +3448,7 @@ describe('isClearable', () => {
   ];
 
   test('should deselect an option when clicking on it in the menu if isClearable is true', async () => {
-    let onChangeSpy = jest.fn();
+    let onChangeSpy = vi.fn();
 
     let props = {
       ...BASIC_PROPS,
@@ -3474,7 +3478,7 @@ describe('isClearable', () => {
   });
 
   test('should NOT deselect an option when clicking on it in the menu if isClearable is false', async () => {
-    let onChangeSpy = jest.fn();
+    let onChangeSpy = vi.fn();
 
     let props = {
       ...BASIC_PROPS,

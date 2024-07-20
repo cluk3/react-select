@@ -51,7 +51,7 @@ cases(
 );
 
 test('load options prop with defaultOptions true and inputValue prop', () => {
-  const loadOptionsSpy = jest.fn((value) => value);
+  const loadOptionsSpy = vi.fn((value) => value);
   const searchString = 'hello world';
   render(
     <Async
@@ -105,7 +105,7 @@ cases(
 );
 
 test('to not call loadOptions again for same value when cacheOptions is true', () => {
-  let loadOptionsSpy = jest.fn((_, callback) => callback([]));
+  let loadOptionsSpy = vi.fn((_, callback) => callback([]));
   let { container } = render(
     <Async
       className="react-select"
@@ -141,7 +141,7 @@ test('to not call loadOptions again for same value when cacheOptions is true', (
 });
 
 test('to create new cache for each instance', async () => {
-  let loadOptionsOne = jest.fn();
+  let loadOptionsOne = vi.fn();
   const user = userEvent.setup();
   let { container: containerOne } = render(
     <Async
@@ -156,7 +156,7 @@ test('to create new cache for each instance', async () => {
     'a'
   );
 
-  let loadOptionsTwo = jest.fn();
+  let loadOptionsTwo = vi.fn();
   let { container: containerTwo } = render(
     <Async
       classNamePrefix="react-select"

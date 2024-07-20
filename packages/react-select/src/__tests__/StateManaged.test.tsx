@@ -45,10 +45,10 @@ interface BasicProps {
 const BASIC_PROPS: BasicProps = {
   className: 'react-select',
   classNamePrefix: 'react-select',
-  onChange: jest.fn(),
-  onInputChange: jest.fn(),
-  onMenuClose: jest.fn(),
-  onMenuOpen: jest.fn(),
+  onChange: vi.fn(),
+  onInputChange: vi.fn(),
+  onMenuClose: vi.fn(),
+  onMenuOpen: vi.fn(),
   name: 'test-input-name',
   options: OPTIONS,
 };

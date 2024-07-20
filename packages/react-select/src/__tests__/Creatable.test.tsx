@@ -19,10 +19,10 @@ interface BasicProps {
 const BASIC_PROPS: BasicProps = {
   className: 'react-select',
   classNamePrefix: 'react-select',
-  onChange: jest.fn(),
-  onInputChange: jest.fn(),
-  onMenuClose: jest.fn(),
-  onMenuOpen: jest.fn(),
+  onChange: vi.fn(),
+  onInputChange: vi.fn(),
+  onMenuClose: vi.fn(),
+  onMenuOpen: vi.fn(),
   name: 'test-input-name',
   options: OPTIONS,
 };
@@ -66,7 +66,7 @@ cases<Opts>(
   'filterOptions returns invalid value ( null )',
   ({ props }) => {
     props = { ...BASIC_PROPS, ...props };
-    let filterOptionSpy = jest.fn().mockReturnValue(null);
+    let filterOptionSpy = vi.fn().mockReturnValue(null);
 
     const { container, rerender } = render(
       <Creatable filterOption={filterOptionSpy} menuIsOpen {...props} />
@@ -124,7 +124,7 @@ cases<Opts>(
   'isValidNewOption() prop',
   ({ props }) => {
     props = { ...BASIC_PROPS, ...props };
-    let isValidNewOption = jest.fn((options) => options === 'new Option');
+    let isValidNewOption = vi.fn((options) => options === 'new Option');
 
     const { container, rerender } = render(
       // @ts-expect-error
@@ -212,7 +212,7 @@ cases<Opts>(
   'getNewOptionData() prop',
   ({ props }) => {
     props = { ...BASIC_PROPS, ...props };
-    let getNewOptionDataSpy = jest.fn((label) => ({
+    let getNewOptionDataSpy = vi.fn((label) => ({
       label: `custom text ${label}`,
       value: label,
     }));
@@ -249,7 +249,7 @@ cases<Opts>(
   'formatCreateLabel() prop',
   ({ props = { options: OPTIONS } }) => {
     props = { ...BASIC_PROPS, ...props };
-    let formatCreateLabelSpy = jest.fn((label) => `custom label "${label}"`);
+    let formatCreateLabelSpy = vi.fn((label) => `custom label "${label}"`);
     const { container, rerender } = render(
       <Creatable
         menuIsOpen
