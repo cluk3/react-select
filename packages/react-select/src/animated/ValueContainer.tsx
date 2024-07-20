@@ -6,9 +6,7 @@ import type { ValueContainerProps } from '../components/containers';
 import { useInternalSelectContext } from '../SelectContext';
 import { AnimatedContextProvider, type AnimatedContextValue } from './context';
 
-export type ValueContainerComponent = (
-  props: ValueContainerProps
-) => ReactElement;
+type ValueContainerComponent = (props: ValueContainerProps) => ReactElement;
 
 interface IsMultiValueContainerProps extends ValueContainerProps {
   component: ValueContainerComponent;

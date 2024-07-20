@@ -104,8 +104,8 @@ const defaultProps = {
   isRtl: false,
   isSearchable: true,
   loadingMessage: () => 'Loading...',
-  maxMenuHeight: 300,
-  minMenuHeight: 140,
+  maxMenuHeight: 320,
+  minMenuHeight: 160,
   menuIsOpen: false,
   menuPlacement: 'bottom',
   menuPosition: 'absolute',
@@ -283,9 +283,9 @@ function SelectInstance<
     menuListRef
   );
 
-  const getComponents = useCallback(() => {
-    return defaultComponents(props);
-  }, [props]);
+  const components = useMemo(() => {
+    return defaultComponents(props.components);
+  }, [props.components]);
 
   const getCategorizedOptions = useCallback(() => {
     return props.menuIsOpen ? categorizedOptions : [];
@@ -338,18 +338,13 @@ function SelectInstance<
 
   const focusValue = useCallback(
     (direction: 'previous' | 'next') => {
-      if (!props.isMulti) return;
+      if (!props.isMulti || selectValue.length === 0) return;
 
-      setState((prevState) => ({ ...prevState, focusedOption: null }));
-
-      let focusedIndex = selectValue.indexOf(state.focusedValue!);
-      if (!state.focusedValue) {
-        focusedIndex = -1;
-      }
-
+      const focusedIndex = state.focusedValue
+        ? selectValue.indexOf(state.focusedValue)
+        : -1;
       const lastIndex = selectValue.length - 1;
       let nextFocus = -1;
-      if (!selectValue.length) return;
 
       switch (direction) {
         case 'previous':
@@ -371,6 +366,7 @@ function SelectInstance<
         ...prevState,
         isInputHidden: nextFocus !== -1,
         focusedValue: selectValue[nextFocus],
+        focusedOption: null,
       }));
     },
     [props.isMulti, selectValue, state.focusedValue]
@@ -382,25 +378,25 @@ function SelectInstance<
       const options = getFocusableOptions();
 
       if (!options.length) return;
+
       let nextFocus = 0; // handles 'first'
-      let focusedIndex = options.indexOf(state.focusedOption!);
-      if (!state.focusedOption) {
-        focusedIndex = -1;
-      }
+      const lastIndex = options.length - 1;
+      const focusedIndex = state.focusedOption
+        ? options.indexOf(state.focusedOption!)
+        : -1;
 
       if (direction === 'up') {
-        nextFocus = focusedIndex > 0 ? focusedIndex - 1 : options.length - 1;
+        nextFocus = focusedIndex > 0 ? focusedIndex - 1 : lastIndex;
       } else if (direction === 'down') {
         nextFocus = (focusedIndex + 1) % options.length;
       } else if (direction === 'pageup') {
-        nextFocus = focusedIndex - pageSize;
-        if (nextFocus < 0) nextFocus = 0;
+        nextFocus = Math.max(focusedIndex - pageSize, 0);
       } else if (direction === 'pagedown') {
-        nextFocus = focusedIndex + pageSize;
-        if (nextFocus > options.length - 1) nextFocus = options.length - 1;
+        nextFocus = Math.min(focusedIndex + pageSize, lastIndex);
       } else if (direction === 'last') {
-        nextFocus = options.length - 1;
+        nextFocus = lastIndex;
       }
+
       scrollToFocusedOptionOnUpdate.current = true;
       setState((prevState) => ({
         ...prevState,
@@ -523,8 +519,6 @@ function SelectInstance<
     });
   }, [props.isMulti, selectValue, onChange]);
 
-  const getValue = useCallback(() => selectValue, [selectValue]);
-
   const getClassNames = useCallback<getClassNames<Option, IsMulti, Group>>(
     (key, context) => {
       const componentClassNamesGetter = props.classNames[key];
@@ -543,7 +537,7 @@ function SelectInstance<
         return props.formatOptionLabel(data, {
           context,
           inputValue,
-          selectValue: selectValue,
+          selectValue,
         });
       } else {
         return getOptionLabel(data);
@@ -568,12 +562,9 @@ function SelectInstance<
     [focusInput]
   );
 
-  const onMenuMouseMove = useCallback<MouseEventHandler<HTMLDivElement>>(
-    (event) => {
-      isOptionHoverBlocked.current = false;
-    },
-    []
-  );
+  const onMenuMouseMove = useCallback<MouseEventHandler<HTMLDivElement>>(() => {
+    isOptionHoverBlocked.current = false;
+  }, []);
 
   const onControlMouseDown = useCallback(
     (
@@ -810,8 +801,7 @@ function SelectInstance<
             break;
           }
           if (menuIsOpen) {
-            if (!state.focusedOption) return;
-            if (isComposing.current) return;
+            if (!state.focusedOption || isComposing.current) return;
             selectOption(state.focusedOption);
             break;
           }
@@ -1051,14 +1041,12 @@ function SelectInstance<
     }
   });
 
-  // Render method becomes the main function body
   const { Control, IndicatorsContainer, SelectContainer, ValueContainer } =
-    getComponents();
+    components;
 
   const context = {
     selectProps: props,
     state: { ...state, selectValue },
-    getValue,
     hasValue: selectValue.length > 0,
     isAppleDevice,
     focusInput,
@@ -1069,7 +1057,7 @@ function SelectInstance<
     formatOptionLabel,
     clearValue,
     onOptionHover,
-    components: getComponents(),
+    components,
     focusedOptionRef,
     scrollToFocusedOptionOnUpdate,
     controlRef,

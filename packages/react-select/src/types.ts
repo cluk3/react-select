@@ -321,7 +321,7 @@ export interface SelectProps<
   /** Name of the HTML Input (optional - without this, no input will be rendered) */
   name?: string;
   /** Text to display when there are no options */
-  noOptionsMessage?: (obj: { inputValue: string }) => ReactNode;
+  noOptionsMessage?: (props: { inputValue: string }) => ReactNode;
   /** Handle blur events on the control */
   onBlur?: FocusEventHandler<HTMLInputElement>;
   /** Handle change events on the select */

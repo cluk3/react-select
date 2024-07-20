@@ -7,7 +7,7 @@ import { default as AnimatedValueContainer } from './ValueContainer';
 const makeAnimated = <Option>(
   externalComponents: Partial<SelectComponents<Option>> = {}
 ): Partial<SelectComponents<Option>> => {
-  const components = defaultComponents({ components: externalComponents });
+  const components = defaultComponents(externalComponents);
   const {
     Input,
     MultiValue,

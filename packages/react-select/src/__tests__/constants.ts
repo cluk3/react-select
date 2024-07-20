@@ -23,7 +23,7 @@ export const OPTIONS: readonly Option[] = [
   { label: '16', value: 'sixteen' },
 ];
 
-export interface OptionDisabled {
+interface OptionDisabled {
   readonly label: string;
   readonly value: string;
   readonly isDisabled?: boolean;
@@ -78,7 +78,7 @@ export const OPTIONS_BOOLEAN_VALUE: readonly OptionBooleanValue[] = [
   { label: 'false', value: false },
 ];
 
-export interface OptionAccented {
+interface OptionAccented {
   readonly label: string;
   readonly value: string;
 }

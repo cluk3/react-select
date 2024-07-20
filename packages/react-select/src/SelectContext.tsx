@@ -52,8 +52,6 @@ export interface InternalSelectContextValue<
   selectProps: DefaultSelectProps<Option, IsMulti, Group>;
   components: SelectComponents<Option>;
   state: State<Option, IsMulti> & { selectValue: Options<Option> };
-
-  getValue: () => Options<Option>;
   clearValue: () => void;
   hasValue: boolean;
   isAppleDevice: boolean;

@@ -4,7 +4,7 @@ import RequiredInput from './RequiredInput';
 export default function FormField() {
   const {
     hasValue,
-    getValue,
+    state: { selectValue },
     selectProps: {
       delimiter,
       isDisabled,
@@ -14,8 +14,6 @@ export default function FormField() {
       getOptionValue,
     },
   } = useInternalSelectContext();
-
-  const selectValue = getValue();
 
   // If the hidden input gets focus through form submit,
   // redirect focus to focusable input.

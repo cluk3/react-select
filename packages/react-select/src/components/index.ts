@@ -137,8 +137,8 @@ interface Props<Option> {
 }
 
 export const defaultComponents = <Option>(
-  props: Props<Option>
+  propsComponents: Props<Option>['components']
 ): SelectComponents<Option> => ({
   ...components,
-  ...props.components,
+  ...propsComponents,
 });
