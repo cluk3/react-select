@@ -41,7 +41,7 @@ export default function InternalSearchInput({
 
   // aria attributes makes the JSX "noisy", separated for clarity
   const ariaAttributes = {
-    'aria-autocomplete': 'list' as const,
+    'aria-autocomplete': isSearchable ? ('list' as const) : ('none' as const),
     'aria-expanded': menuIsOpen,
     'aria-haspopup': true,
     'aria-errormessage': selectProps['aria-errormessage'],

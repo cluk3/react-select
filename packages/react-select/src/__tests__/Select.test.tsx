@@ -2803,7 +2803,7 @@ cases(
   }
 );
 
-test('sets inputMode="none" when isSearchable is false', () => {
+test('sets inputMode="none" and aria-autocomplete="none" when isSearchable is false', () => {
   let { container } = render(
     <Select
       classNamePrefix="react-select"
@@ -2823,6 +2823,28 @@ test('sets inputMode="none" when isSearchable is false', () => {
   // @ts-expect-error inputMode is not supported in happy-dom
   // https://github.com/capricorn86/happy-dom/issues/1487
   expect(input!.inputmode).toBe('none');
+  expect(input!.getAttribute('aria-autocomplete')).toBe('none');
+});
+
+test('sets aria-autocomplete="list" when isSearchable is true', () => {
+  let { container } = render(
+    <Select
+      classNamePrefix="react-select"
+      options={OPTIONS}
+      isSearchable
+      onChange={noop}
+      onInputChange={noop}
+      onMenuOpen={noop}
+      onMenuClose={noop}
+      inputValue=""
+      value={null}
+    />
+  );
+  let input = container.querySelector<HTMLInputElement>(
+    '.react-select__value-container input'
+  );
+
+  expect(input!.getAttribute('aria-autocomplete')).toBe('list');
 });
 
 cases(
