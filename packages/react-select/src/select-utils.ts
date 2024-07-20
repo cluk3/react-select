@@ -2,7 +2,7 @@ import type { DefaultSelectProps as SelectProps } from './types';
 import type { Options, GroupBase } from './types';
 import type { CategorizedOption, CategorizedGroupOrOption } from './types';
 import type { State } from './types';
-import { useOnMountEffect, isDocumentElement, scrollTo } from './utils';
+import { useOnMountEffect } from './utils';
 import type { FilterOptionOption } from './filters';
 import { useCallback, useRef } from 'react';
 
@@ -180,11 +180,22 @@ export function getNextFocusedValue<Option, IsMulti extends boolean>(
 
 export function getNextFocusedOption<Option, IsMulti extends boolean>(
   lastFocusedOption: State<Option, IsMulti>['focusedOption'],
-  options: Options<Option>
+  options: Options<Option>,
+  isMulti: boolean,
+  selectValue: Option
 ) {
+  let focusIndex = 0;
+
+  if (!isMulti) {
+    const selectedIndex = options.indexOf(selectValue);
+    if (selectedIndex > -1) {
+      focusIndex = selectedIndex;
+    }
+  }
+
   return lastFocusedOption && options.indexOf(lastFocusedOption) > -1
     ? lastFocusedOption
-    : options[0];
+    : options[focusIndex];
 }
 
 export const getFocusedOptionId = <Option>(
@@ -223,7 +234,23 @@ function filterOption<
   return props.filterOption ? props.filterOption(option, inputValue) : true;
 }
 
-export function scrollIntoView(
+function isDocumentElement(
+  el: HTMLElement | typeof window
+): el is typeof window {
+  return [document.documentElement, document.body, window].indexOf(el) > -1;
+}
+
+function scrollTo(el: HTMLElement | typeof window, top: number): void {
+  // with a scroll distance, we perform scroll on the element
+  if (isDocumentElement(el)) {
+    window.scrollTo(0, top);
+    return;
+  }
+
+  el.scrollTop = top;
+}
+
+export function scrollOptionIntoView(
   menuEl: HTMLElement,
   focusedEl: HTMLElement
 ): void {

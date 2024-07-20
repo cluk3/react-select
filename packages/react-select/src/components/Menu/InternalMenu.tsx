@@ -3,7 +3,7 @@ import { ScrollManager } from '../../internal';
 import { useInternalSelectContext } from '../../SelectContext';
 import type { CategorizedOption, FormatOptionLabelContext } from '../../types';
 import type { OptionProps } from '../Option';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   autoUpdate,
   flip,
@@ -11,14 +11,21 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react-dom';
-import { createPortal } from 'react-dom';
+import { createPortal, flushSync } from 'react-dom';
+import { scrollOptionIntoView } from '../../select-utils';
+import useLayoutEffect from 'use-isomorphic-layout-effect';
 
+// margin between menu and the lower part of the screen
+// without this, the menu lower part will be attached to the bottom of the screen
+const MENU_MARGIN = 8;
 export function InternalMenu() {
   const {
     getFocusableOptions,
     getElementId,
     menuListRef,
     controlRef,
+    scrollToFocusedOptionOnUpdate,
+    focusedOptionRef,
     components: { Menu, MenuList, LoadingMessage, NoOptionsMessage },
     selectProps: {
       captureMenuScroll,
@@ -34,10 +41,13 @@ export function InternalMenu() {
       onMenuScrollToBottom,
       isMulti,
       maxMenuHeight,
+      minMenuHeight,
     },
+    state: { focusedOption },
   } = useInternalSelectContext();
 
-  const { refs, floatingStyles } = useFloating({
+  const [maxHeight, setMaxHeight] = useState<number>(maxMenuHeight);
+  const { refs, floatingStyles, middlewareData } = useFloating({
     whileElementsMounted: autoUpdate,
     elements: {
       reference: controlRef.current,
@@ -49,12 +59,16 @@ export function InternalMenu() {
       size((state) => ({
         apply({ availableHeight, elements }) {
           Object.assign(elements.floating.style, {
-            // Minimum acceptable height is 50px.
-            // `flip` will then take over.
-            maxHeight: `${Math.min(Math.max(168, availableHeight), maxMenuHeight) - 8}px`,
-            height: `${Math.min(Math.max(168, availableHeight), maxMenuHeight) - 8}px`,
             maxWidth: `${state.rects.reference.width}px`,
           });
+          flushSync(() =>
+            setMaxHeight(
+              Math.min(
+                Math.max(minMenuHeight, availableHeight),
+                maxMenuHeight
+              ) - MENU_MARGIN
+            )
+          );
         },
       })),
       flip({
@@ -62,6 +76,28 @@ export function InternalMenu() {
       }),
     ],
   });
+
+  // we want to wait for size middleware to be initialized before scrolling
+  // otherwise the size of the menu is not calculated yet
+  // and the scrollIntoView will not work
+  // this is a workaround for https://github.com/JedWatson/react-select/issues/5926
+  useLayoutEffect(() => {
+    if (
+      menuListRef.current &&
+      focusedOptionRef.current &&
+      scrollToFocusedOptionOnUpdate.current &&
+      middlewareData.size
+    ) {
+      scrollOptionIntoView(menuListRef.current, focusedOptionRef.current);
+      scrollToFocusedOptionOnUpdate.current = false;
+    }
+  }, [
+    focusedOption,
+    focusedOptionRef,
+    menuListRef,
+    scrollToFocusedOptionOnUpdate,
+    middlewareData.size,
+  ]);
 
   let menuUI: ReactNode;
   const hasOptions = !!getFocusableOptions().length;
@@ -101,6 +137,9 @@ export function InternalMenu() {
               role: 'listbox',
               'aria-multiselectable': isMulti,
               id: getElementId('listbox'),
+              style: {
+                maxHeight: `${maxHeight}px`,
+              },
             }}
           >
             {menuUI}

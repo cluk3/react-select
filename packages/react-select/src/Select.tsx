@@ -46,13 +46,11 @@ import {
   getNextFocusedOption,
   getNextFocusedValue,
   useEventListeners,
-  scrollIntoView,
 } from './select-utils';
 
 import {
   cleanValue,
   isTouchCapable,
-  isMobileDevice,
   valueTernary,
   multiValueAsValue,
   singleValueAsValue,
@@ -112,7 +110,6 @@ const defaultProps = {
   menuPlacement: 'bottom',
   menuPosition: 'absolute',
   menuShouldBlockScroll: false,
-  menuShouldScrollIntoView: !isMobileDevice(),
   noOptionsMessage: () => 'No options',
   openMenuOnFocus: false,
   openMenuOnClick: true,
@@ -237,7 +234,7 @@ function SelectInstance<
 
   const isOptionHoverBlocked = useRef(false);
   const openAfterFocus = useRef(false);
-  const scrollToFocusedOptionOnUpdate = useRef(false);
+  const scrollToFocusedOptionOnUpdate = useRef(props.menuIsOpen);
 
   const controlRef = useRef<HTMLDivElement | null>(null);
   const focusedOptionRef = useRef<HTMLDivElement | null>(null);
@@ -320,9 +317,7 @@ function SelectInstance<
         }
       }
 
-      scrollToFocusedOptionOnUpdate.current = !(
-        state.isFocused && menuListRef.current
-      );
+      scrollToFocusedOptionOnUpdate.current = true;
 
       const focusedOption = focusableOptions[openAtIndex];
 
@@ -338,13 +333,7 @@ function SelectInstance<
       }));
       props.onMenuOpen?.();
     },
-    [
-      focusableOptions,
-      props,
-      state.isFocused,
-      selectValue,
-      focusableOptionsIdsMap,
-    ]
+    [focusableOptions, props, selectValue, focusableOptionsIdsMap]
   );
 
   const focusValue = useCallback(
@@ -939,10 +928,16 @@ function SelectInstance<
       const focusedValue = clearFocusValueOnUpdate
         ? getNextFocusedValue(state.focusedValue, selectValue, newSelectValue)
         : null;
+
       const focusedOption = getNextFocusedOption(
         state.focusedOption,
-        newFocusableOptions
+        newFocusableOptions,
+        isMulti,
+        selectValue[0]
       );
+
+      scrollToFocusedOptionOnUpdate.current = true;
+
       const focusedOptionId = getFocusedOptionId(
         newFocusableOptionsIdsMap,
         focusedOption
@@ -1056,30 +1051,6 @@ function SelectInstance<
     }
   });
 
-  // Menu scroll management
-  useEffect(() => {
-    if (
-      menuListRef.current &&
-      focusedOptionRef.current &&
-      scrollToFocusedOptionOnUpdate.current
-    ) {
-      scrollIntoView(menuListRef.current, focusedOptionRef.current);
-      scrollToFocusedOptionOnUpdate.current = false;
-    }
-  }, [state.focusedOption]);
-
-  // Scroll focusedOption into view if menuIsOpen is set on mount (e.g. defaultMenuIsOpen)
-  useOnMountEffect(() => {
-    if (
-      props.menuIsOpen &&
-      state.focusedOption &&
-      menuListRef.current &&
-      focusedOptionRef.current
-    ) {
-      scrollIntoView(menuListRef.current, focusedOptionRef.current);
-    }
-  });
-
   // Render method becomes the main function body
   const { Control, IndicatorsContainer, SelectContainer, ValueContainer } =
     getComponents();
@@ -1100,6 +1071,7 @@ function SelectInstance<
     onOptionHover,
     components: getComponents(),
     focusedOptionRef,
+    scrollToFocusedOptionOnUpdate,
     controlRef,
     menuListRef,
     onMenuMouseDown,

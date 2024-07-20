@@ -101,22 +101,6 @@ export const useGetClassNames = <
   );
 };
 
-export function isDocumentElement(
-  el: HTMLElement | typeof window
-): el is typeof window {
-  return [document.documentElement, document.body, window].indexOf(el) > -1;
-}
-
-export function scrollTo(el: HTMLElement | typeof window, top: number): void {
-  // with a scroll distance, we perform scroll on the element
-  if (isDocumentElement(el)) {
-    window.scrollTo(0, top);
-    return;
-  }
-
-  el.scrollTop = top;
-}
-
 export function isTouchCapable() {
   try {
     document.createEvent('TouchEvent');

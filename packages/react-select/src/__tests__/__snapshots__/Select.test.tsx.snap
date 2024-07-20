@@ -180,6 +180,7 @@ exports[`snapshot with menu open 1`] = `
         class="react-select__menu-list react-select__menu-list--styled"
         id="react-select-:r1:-listbox"
         role="listbox"
+        style="max-height: 300px;"
       >
         <div
           aria-disabled="false"

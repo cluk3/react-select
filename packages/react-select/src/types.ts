@@ -318,8 +318,6 @@ export interface SelectProps<
   menuPortalTarget?: HTMLElement | null;
   /** Whether to block scroll events when the menu is open */
   menuShouldBlockScroll?: boolean;
-  /** Whether the menu should be scrolled into view when it opens */
-  menuShouldScrollIntoView?: boolean;
   /** Name of the HTML Input (optional - without this, no input will be rendered) */
   name?: string;
   /** Text to display when there are no options */
@@ -406,7 +404,6 @@ export type DefaultSelectProps<
   | 'menuPlacement'
   | 'menuPosition'
   | 'menuShouldBlockScroll'
-  | 'menuShouldScrollIntoView'
   | 'noOptionsMessage'
   | 'openMenuOnFocus'
   | 'openMenuOnClick'

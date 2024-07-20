@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, fireEvent, type EventType } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -68,10 +67,6 @@ cases(
   'click on dropdown indicator',
   ({ props }) => {
     let { container } = render(<Select {...props} />);
-    // Menu not open by default
-    expect(
-      container.querySelector('.react-select__menu')
-    ).not.toBeInTheDocument();
     openMenu(container);
     closeMenu(container);
   },

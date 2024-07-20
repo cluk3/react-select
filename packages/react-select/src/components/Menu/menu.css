@@ -1,7 +1,6 @@
 .react-select__menu {
   width: 100%;
   z-index: 9999;
-  overflow: auto;
 }
 
 .react-select__menu--styled {
@@ -15,8 +14,7 @@
 .react-select__menu-list {
   position: relative;
   -webkit-overflow-scrolling: touch;
-  height: 100%;
-  overflow: auto;
+  overflow-y: auto;
 }
 
 .react-select__menu-list--styled {

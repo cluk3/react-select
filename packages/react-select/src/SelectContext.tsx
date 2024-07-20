@@ -83,6 +83,7 @@ export interface InternalSelectContextValue<
   onMenuMouseMove: React.MouseEventHandler<HTMLDivElement>;
   menuListRef: React.MutableRefObject<HTMLDivElement | null>;
   focusedOptionRef: React.MutableRefObject<HTMLDivElement | null>;
+  scrollToFocusedOptionOnUpdate: React.MutableRefObject<boolean>;
   controlRef: React.MutableRefObject<HTMLDivElement | null>;
   userIsDragging: React.MutableRefObject<boolean | undefined>;
   openAfterFocus: React.MutableRefObject<boolean>;
