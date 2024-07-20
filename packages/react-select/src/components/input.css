@@ -2,7 +2,7 @@
   flex: 1 1 auto;
   grid-area: 1 / 1 / 2 / 3;
   display: inline-grid;
-  grid-template-columns: 0 min-content;
+  grid-template-columns: 0fr;
   visibility: visible;
 
   &::after {
