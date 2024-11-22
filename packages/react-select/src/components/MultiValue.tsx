@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode } from 'react';
-import { CrossIcon } from './indicators';
 import { useGetClassNames } from '../utils';
+import { useInternalSelectContext } from '../SelectContext';
 
 interface MultiValueComponents<Option> {
   Container: ComponentType<MultiValueGenericProps<Option>>;
@@ -64,8 +64,10 @@ export function MultiValueRemove<Option>({
   children,
   innerProps,
 }: MultiValueRemoveProps<Option>) {
+  const {
+    components: { CrossIcon },
+  } = useInternalSelectContext();
   return (
-    // TODO we should use a button element here
     <div role="button" {...innerProps}>
       {children || <CrossIcon size={14} />}
     </div>

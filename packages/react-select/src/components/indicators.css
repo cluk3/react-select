@@ -7,6 +7,14 @@
   stroke-width: 0;
 }
 
+.react-select__check-icon {
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .react-select__clear-indicator,
 .react-select__dropdown-indicator {
   display: flex;

@@ -224,7 +224,7 @@ test.skip('in case of callbacks should handle an error by setting options to an 
     inputValue: string,
     callback: (options: readonly Option[]) => void
   ) => {
-    // @ts-ignore
+    // @ts-expect-error
     callback(new Error('error'));
   };
   let { container } = render(

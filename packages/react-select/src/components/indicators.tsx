@@ -23,8 +23,18 @@ const Svg = ({
   );
 };
 
-export type CrossIconProps = JSX.IntrinsicElements['svg'] & { size?: number };
-export const CrossIcon = (props: CrossIconProps) => {
+export type IconProps = JSX.IntrinsicElements['svg'] & { size?: number };
+
+export const CheckIcon = (props: IconProps) => {
+  const className = useGetClassNames('checkIcon', props, props.className);
+  return (
+    <Svg size={16} {...props} className={className}>
+      <path d="M20 6 9 17l-5-5" />
+    </Svg>
+  );
+};
+
+export const CrossIcon = (props: IconProps) => {
   const className = useGetClassNames('crossIcon', props, props.className);
   return (
     <Svg size={20} {...props} className={className}>
@@ -32,8 +42,8 @@ export const CrossIcon = (props: CrossIconProps) => {
     </Svg>
   );
 };
-export type DownChevronProps = JSX.IntrinsicElements['svg'] & { size?: number };
-export const DownChevron = (props: DownChevronProps) => {
+
+export const DownChevron = (props: IconProps) => {
   const className = useGetClassNames('downChevron', props, props.className);
   return (
     <Svg size={20} {...props} className={className}>
@@ -57,6 +67,7 @@ export const DropdownIndicator = (props: DropdownIndicatorProps) => {
   const { children, innerProps } = props;
   const {
     state: { isFocused },
+    components: { DownChevron: DownChevronComponent },
   } = useInternalSelectContext();
   const className = useGetClassNames(
     'dropdownIndicator',
@@ -65,7 +76,7 @@ export const DropdownIndicator = (props: DropdownIndicatorProps) => {
   );
   return (
     <div data-is-focused={isFocused} {...innerProps} className={className}>
-      {children || <DownChevron />}
+      {children || <DownChevronComponent />}
     </div>
   );
 };
@@ -80,6 +91,7 @@ export const ClearIndicator = (props: ClearIndicatorProps) => {
   const { children, innerProps } = props;
   const {
     state: { isFocused },
+    components: { CrossIcon: CrossIconComponent },
   } = useInternalSelectContext();
   const className = useGetClassNames(
     'clearIndicator',
@@ -88,7 +100,7 @@ export const ClearIndicator = (props: ClearIndicatorProps) => {
   );
   return (
     <div data-is-focused={isFocused} {...innerProps} className={className}>
-      {children || <CrossIcon />}
+      {children || <CrossIconComponent />}
     </div>
   );
 };

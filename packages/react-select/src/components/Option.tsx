@@ -1,5 +1,6 @@
 import type { ReactNode, MutableRefObject } from 'react';
 import { useGetClassNames } from '../utils';
+import { type IconProps } from './indicators';
 
 export interface OptionProps<Option = unknown> {
   /** The children to be rendered. */
@@ -23,6 +24,8 @@ export interface OptionProps<Option = unknown> {
   isOptionFocused: boolean;
   /** Whether the option is deselectable (multi-select only). */
   isOptionDeselectable: boolean;
+  /** The component to render the check icon next to the selected option. */
+  CheckIconComponent: React.ComponentType<IconProps>;
 }
 
 const Option = <Option,>(props: OptionProps<Option>) => {
@@ -34,6 +37,7 @@ const Option = <Option,>(props: OptionProps<Option>) => {
     isOptionDeselectable,
     innerRef,
     innerProps,
+    CheckIconComponent,
   } = props;
   const className = useGetClassNames('option', props, innerProps?.className);
 
@@ -49,6 +53,7 @@ const Option = <Option,>(props: OptionProps<Option>) => {
       className={className}
     >
       {children}
+      {isOptionSelected && <CheckIconComponent />}
     </div>
   );
 };

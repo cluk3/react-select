@@ -14,6 +14,7 @@ import {
 import { createPortal, flushSync } from 'react-dom';
 import { scrollOptionIntoView } from '../../select-utils';
 import useLayoutEffect from 'use-isomorphic-layout-effect';
+import { type IconProps } from '../indicators';
 
 // margin between menu and the lower part of the screen
 // without this, the menu lower part will be attached to the bottom of the screen
@@ -171,6 +172,7 @@ const InternalOption = React.memo(
     isFocused: boolean;
     isClearable: boolean;
     OptionComponent: React.ComponentType<OptionProps<Option>>;
+    CheckIconComponent: React.ComponentType<IconProps>;
   }) {
     const {
       option,
@@ -181,6 +183,7 @@ const InternalOption = React.memo(
       isClearable,
       isFocused,
       OptionComponent,
+      CheckIconComponent,
     } = props;
 
     const { onOptionHover, formatOptionLabel, selectOption } = methods.current;
@@ -212,6 +215,7 @@ const InternalOption = React.memo(
         label={label}
         type={type}
         innerRef={isFocused ? focusedOptionRef : undefined}
+        CheckIconComponent={CheckIconComponent}
       >
         {formatOptionLabel(data, 'menu')}
       </OptionComponent>
@@ -239,7 +243,7 @@ function OptionsList() {
     focusedOptionRef,
     isAppleDevice,
     onOptionHover,
-    components: { Group, GroupHeading, Option },
+    components: { Group, GroupHeading, Option, CheckIcon },
     selectProps: { formatGroupLabel, isClearable },
     state: { focusedOption },
   } = useInternalSelectContext();
@@ -287,6 +291,7 @@ function OptionsList() {
               isClearable={isClearable}
               isFocused={focusedOption === option.data}
               OptionComponent={Option}
+              CheckIconComponent={CheckIcon}
               {...internalOptionProps}
             />
           ))}
@@ -301,6 +306,7 @@ function OptionsList() {
           isClearable={isClearable}
           isFocused={focusedOption === item.data}
           OptionComponent={Option}
+          CheckIconComponent={CheckIcon}
           {...internalOptionProps}
         />
       );

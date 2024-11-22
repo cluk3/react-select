@@ -9,10 +9,10 @@ import {
 import {
   ClearIndicator,
   type ClearIndicatorProps,
+  CheckIcon,
   CrossIcon,
-  type CrossIconProps,
+  type IconProps,
   DownChevron,
-  type DownChevronProps,
   DropdownIndicator,
   type DropdownIndicatorProps,
   IndicatorSeparator,
@@ -55,6 +55,7 @@ export interface SelectComponents<Opt> {
   DropdownIndicator: typeof DropdownIndicator | null;
   DownChevron: typeof DownChevron;
   CrossIcon: typeof CrossIcon;
+  CheckIcon: typeof CheckIcon;
   Group: typeof Group<Opt>;
   GroupHeading: typeof GroupHeading<Opt>;
   IndicatorsContainer: typeof IndicatorsContainer;
@@ -80,8 +81,9 @@ export interface SelectComponentsProps<Option> {
   ClearIndicator: ClearIndicatorProps;
   Control: ControlProps;
   DropdownIndicator: DropdownIndicatorProps;
-  DownChevron: DownChevronProps;
-  CrossIcon: CrossIconProps;
+  DownChevron: IconProps;
+  CrossIcon: IconProps;
+  CheckIcon: IconProps;
   Group: GroupProps<Option>;
   GroupHeading: GroupHeadingProps<Option>;
   IndicatorsContainer: IndicatorsContainerProps;
@@ -111,6 +113,7 @@ export const components = {
   DropdownIndicator: DropdownIndicator,
   DownChevron: DownChevron,
   CrossIcon: CrossIcon,
+  CheckIcon: CheckIcon,
   Group: Group,
   GroupHeading: GroupHeading,
   IndicatorsContainer: IndicatorsContainer,
