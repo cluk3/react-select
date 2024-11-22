@@ -201,9 +201,8 @@ function SelectInstance<
       };
     }, [props, selectValue, getElementId]);
 
-  // constructor
   const [state, setState] = useState<State<Option, IsMulti>>(() => {
-    let intState: State<Option, IsMulti> = {
+    let internalState: State<Option, IsMulti> = {
       focusedOption: null,
       isInputHidden: false,
       isFocused: false,
@@ -219,8 +218,8 @@ function SelectInstance<
     if (props.menuIsOpen && selectValue.length) {
       const optionIndex = focusableOptions.indexOf(selectValue[0]);
       const focusedOption = focusableOptions[optionIndex];
-      intState = {
-        ...intState,
+      internalState = {
+        ...internalState,
         focusedOption,
         focusedOptionId: getFocusedOptionId(
           focusableOptionsIdsMap,
@@ -229,7 +228,7 @@ function SelectInstance<
       };
     }
 
-    return intState;
+    return internalState;
   });
 
   const isOptionHoverBlocked = useRef(false);
@@ -821,7 +820,7 @@ function SelectInstance<
             clearValue();
           }
           break;
-        case ' ': // space
+        case ' ':
           if (inputValue) {
             return;
           }
@@ -883,10 +882,6 @@ function SelectInstance<
       openMenu,
     ]
   );
-
-  // ==============================
-  // getDerivedStateFromProps
-  // ==============================
 
   const prevProps = useRef<Props<Option, IsMulti, Group> | void>(undefined);
   useEffect(() => {
@@ -1077,6 +1072,7 @@ function SelectInstance<
       isDisabled: props.isDisabled,
       isFocused: state.isFocused,
       isLoading: props.isLoading,
+      isMenuOpen: props.menuIsOpen,
       isMulti: props.isMulti,
       isRtl: props.isRtl,
       isSearchable: props.isSearchable,
@@ -1090,6 +1086,7 @@ function SelectInstance<
       props.isClearable,
       props.isDisabled,
       props.isLoading,
+      props.menuIsOpen,
       props.isMulti,
       props.isRtl,
       props.isSearchable,

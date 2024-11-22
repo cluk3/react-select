@@ -36,6 +36,7 @@ export interface SelectContextValue<
   isDisabled: boolean;
   isFocused: boolean;
   isLoading?: boolean;
+  isMenuOpen: boolean;
   isMulti: IsMulti;
   isRtl: boolean;
   isSearchable: boolean;
