@@ -1,7 +1,8 @@
 import type { Meta } from '@storybook/react';
 import type { ClassNamesConfig, ClearIndicatorProps } from 'react-select';
 import Select, { useGetClassNames } from 'react-select';
-import cn from 'classnames';
+import { cn } from '@/utils';
+
 import { Field } from '../components';
 import type { ColourOption } from '../data';
 import { colourOptions } from '../data';

@@ -11,24 +11,26 @@
   --x: -100%;
 }
 
-.react-select__menu-list--styled {
+.shiny-dark-select .react-select__menu-list--styled {
   background: radial-gradient(
       circle at 50% 0%,
       rgba(var(--radial-gradient-background), 0.1) 0%,
       transparent 60%
     ),
     rgba(var(--solid-color-background), 1);
-  border-radius-bottom-left: var(--rs-border-radius);
-  border-radius-bottom-right: var(--rs-border-radius);
+  border-bottom-left-radius: var(--rs-border-radius);
+  border-bottom-right-radius: var(--rs-border-radius);
 }
-.react-select__menu--styled {
+
+.shiny-dark-select .react-select__menu--styled {
   box-shadow: 0 0 0 4px var(--rs-primary);
   margin: 0;
+  border-radius: 0;
+  border-bottom-left-radius: var(--rs-border-radius);
+  border-bottom-right-radius: var(--rs-border-radius);
 }
 
 .radial-gradient {
-  @apply relative;
-
   background: radial-gradient(
       circle at 50% 0%,
       rgba(var(--radial-gradient-background), 0.1) 0%,

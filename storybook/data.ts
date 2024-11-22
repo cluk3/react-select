@@ -194,7 +194,7 @@ const defaultProps = {
   tabIndex: 0,
   tabSelectsValue: true,
   unstyled: false,
-  classNamePrefix: 'react-select',
+  classNamePrefix: '',
   required: false,
 };
 

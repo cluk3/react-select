@@ -1,8 +1,7 @@
 import '../styles/tailwind.css';
 
 import type { Meta } from '@storybook/react';
-import classNames from 'classnames';
-import * as React from 'react';
+import { cn } from '@/utils';
 import Select from 'react-select';
 
 import { Field } from '../components/field';
@@ -22,14 +21,14 @@ const Template = ({ inputId = 'react-select', ...props }) => {
         {...props}
         classNames={{
           control: ({ isDisabled, isFocused }) =>
-            classNames(
+            cn(
               !isDisabled && isFocused && 'border-purple-800',
               isFocused && 'shadow-[0_0_0_1px] shadow-purple-800',
               isFocused && 'hover:border-purple-800'
             ),
           downChevron: () => 'text-purple-800',
           option: ({ isDisabled, isFocused, isOptionSelected }) =>
-            classNames(
+            cn(
               isOptionSelected && 'bg-purple-800',
               !isOptionSelected && isFocused && 'bg-purple-300',
               !isDisabled && isOptionSelected && 'active:bg-purple-800',

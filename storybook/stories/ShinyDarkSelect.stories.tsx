@@ -4,7 +4,7 @@ import Select, {
   useSelectContext,
   type ControlProps,
 } from 'react-select';
-import cn from 'classnames';
+import { cn } from '@/utils';
 
 import { Field } from '../components';
 import { flavourOptions } from '../data';
@@ -24,13 +24,6 @@ export function ShinyDark() {
         defaultValue={flavourOptions[2]}
         options={flavourOptions}
         className="shiny-dark-select"
-        classNames={{
-          control: ({ isFocused }) =>
-            cn(
-              'relative bg-transparent border-none',
-              !isFocused && 'linear-mask'
-            ),
-        }}
         components={{
           Control: CustomControl,
         }}
@@ -40,7 +33,7 @@ export function ShinyDark() {
 }
 
 function CustomControl(props: ControlProps) {
-  const { isDisabled, isFocused } = useSelectContext();
+  const { isDisabled, isFocused, isMenuOpen } = useSelectContext();
   const { children, innerRef, innerProps } = props;
   const className = useGetClassNames('control', props, innerProps?.className);
 
@@ -49,7 +42,10 @@ function CustomControl(props: ControlProps) {
       <div
         data-is-disabled={isDisabled}
         data-is-focused={isFocused}
-        className="radial-gradient"
+        className={cn(
+          'radial-gradient rounded-md',
+          isMenuOpen && 'rounded-b-none'
+        )}
       >
         <div
           ref={innerRef}
@@ -58,8 +54,9 @@ function CustomControl(props: ControlProps) {
           data-is-disabled={isDisabled}
           data-is-focused={isFocused}
           className={cn(
-            'rounded-md relative',
-            true && 'radial-gradient',
+            'rounded-md relative bg-transparent border-none',
+            isMenuOpen && 'rounded-b-none',
+            !isFocused && 'linear-mask',
             className
           )}
         >

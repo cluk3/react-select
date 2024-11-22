@@ -36,14 +36,14 @@ export function MenuPortal() {
           >
             <Select
               inputId="portaled-menu-element-id"
-              defaultValue={colourOptions[0]}
+              defaultValue={colourOptions[8]}
               options={colourOptions}
               isClearable
               isSearchable
               menuPlacement={menuPlacement}
               menuPortalTarget={document.body}
+              menuIsOpen
               menuPosition={isFixed ? 'fixed' : 'absolute'}
-              menuShouldScrollIntoView={false}
             />
           </Field>
           <Inline gap="large">

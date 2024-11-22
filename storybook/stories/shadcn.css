@@ -1,0 +1,35 @@
+.shadcn-select {
+  --rs-primary: theme('colors.zinc.800');
+  --rs-primary75: theme('colors.zinc.600');
+  --rs-primary50: theme('colors.zinc.400');
+  --rs-primary25: theme('colors.zinc.100');
+  --rs-danger: theme('colors.red.500');
+  --rs-danger-light: theme('colors.red.200');
+  --rs-neutral0: theme('colors.white');
+  --rs-neutral5: theme('colors.zinc.100');
+  --rs-neutral10: theme('colors.zinc.200');
+  --rs-neutral20: theme('colors.zinc.300');
+  --rs-neutral30: theme('colors.zinc.400');
+  --rs-neutral40: theme('colors.zinc.500');
+  --rs-neutral50: theme('colors.zinc.600');
+  --rs-neutral60: theme('colors.zinc.700');
+  --rs-neutral70: theme('colors.zinc.800');
+  --rs-neutral80: theme('colors.zinc.900');
+  --rs-neutral90: theme('colors.zinc.950');
+  --rs-border-radius: 4px;
+
+  /* Used to calculate consistent margin/padding on elements */
+  --rs-base-unit: 4px;
+
+  /* The minimum height of the control */
+  --rs-control-height: 38px;
+
+  /*  The amount of space between the control and menu */
+  --rs-menu-gutter: calc(var(--rs-base-unit) * 2);
+
+  /* these variables are gonna be overridden in style
+      attribute of the component consuming the styles */
+  --rs-loading-indicator-size: 4px;
+  --rs-text-overflow: ellipsis;
+  --rs-menu-z-index: 9999;
+}

@@ -32,7 +32,7 @@ export function CustomSelectProps(props: Props<ColourOption>) {
         isSearchable
         options={colourOptions}
         classNames={classNames}
-        // @ts-ignore
+        // @ts-expect-error
         emoji={emoji}
         onEmojiClick={onClick}
       />
