@@ -92,7 +92,7 @@ export const useGetClassNames = <
   const kebabName = kebabize(name);
   const { getClassNames, unstyled, classNamePrefix, ...restContext } = context;
   return buildClassNames(
-    { componentName: kebabName, classNamePrefix, withStyledSuffix: true },
+    { componentName: kebabName, classNamePrefix, withStyledSuffix: !unstyled },
     getClassNames(name, {
       ...restContext,
       ...cleanComponentProps<Option, ComponentNames>(props),
